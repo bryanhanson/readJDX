@@ -1,0 +1,8 @@
+
+NEWS file for package readJDX
+Import data in the JCAMP-DX format.
+URL: github.com/bryanhanson/readJDX
+
+Changes in version 0.1.73 2016-07-14
+     + First draft of package.  Works on a wide variety of example files.
+
