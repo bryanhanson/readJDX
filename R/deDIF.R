@@ -41,7 +41,7 @@ deDIF <- function(string, debug, nlmd) {
 	string <- lapply(string, FUN)
 	names(string) <- paste("Line", nlmd + 1:length(string), sep = "_")
 	
-	if ((debug == 3) | (debug ==4)) message("Undoing DIF compression")
+	if ((debug == 3) | (debug ==4)) message("Undoing DIF compression\n")
 	
 	if (debug == 5) {
 		message("First 5 lines of data table (step 1 in deDIF):")
@@ -84,7 +84,7 @@ deDIF <- function(string, debug, nlmd) {
 			msg <- "\nY value check failed; nearby values:"
 			message(msg)
 			if (i <= 5) rpt <- 1:5
-			if (i > 6) rpt <- (i-2):(i+2)
+			if (i >= 6) rpt <- (i-2):(i+2)
 			if (i >= (length(first) - 2)) rpt <- (length(first) - 5):length(first)
 			DF <- data.frame(Line = rpt + nlmd,
 				FirstYonLine = first[rpt], LastYonPrevLine = last[rpt-1],

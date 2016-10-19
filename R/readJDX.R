@@ -77,8 +77,8 @@ readJDX <- function (file = "", debug = 0){
 ##### Store each separately as a list element
 
 	dblist <- findDataTable(jdx, file, debug)
-	nlmd <- length(dblist[[1]]) # save for other functions: will allow debug reporting by original line no.
-
+	nlmd <- lengths(dblist) # save for other functions: will allow debug reporting by original line no.
+	
 	# Get the string that comes after title, and use that as the name
 	# in the returned list.
 	# This code could be moved to findDataTable at some point.
@@ -95,23 +95,28 @@ readJDX <- function (file = "", debug = 0){
 	names(dblist) <- specnames
 	
 	# Remove comment-only lines from the data tables (these mess up processing later)
+	# They also pose challenges for reporting errors by original line no.
 	
-	DBL <<- dblist
-	
+	toss <- 0L
 	for (i in 2:length(dblist)) {
-		toss <- grep("^\\$\\$", dblist[[i]])
-		if (length(toss) != 0) dblist[[i]] <- dblist[[i]][-toss]
+		tmp <- grep("^\\$\\$", dblist[[i]])
+		toss <- c(toss, length(tmp))
+		if (length(tmp) != 0) dblist[[i]] <- dblist[[i]][-tmp]
 		}
-	
+		
 ##### Step 3. Extract the needed parameters
 
 	params <- extractParams(dblist[[1]], NMR, debug)
 	
 ##### Step 4.  Process the data table(s)
 
-	for (i in 2:length(dblist)) dblist[[i]] <- processDataTable(dblist[[i]], params, debug, nlmd)
-	
+	for (i in 2:length(dblist)) dblist[[i]] <- {
+		processDataTable(dblist[[i]], params, debug, sum(nlmd[1:(i-1)])+toss[i])
+		}
+		
 ##### And we're done!
+
+	if (debug >= 1) message("\n\nDone processing ", file, "\n")
 
 	return(dblist)
 	

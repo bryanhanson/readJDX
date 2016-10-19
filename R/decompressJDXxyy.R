@@ -28,12 +28,14 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd) {
 		
 	# Note that xString and yString are pieces corresponding to the individual lines
 	# of dt, each is of type character until fully decompressed.
-
-	if (debug >= 1) message("\nProcessing data table...")
 	
 	type <- dt[1]
 	dt <- dt[-1]
 	
+	if (type == "XRR") {if (debug >= 1) message("\nProcessing real data...")}
+	if (type == "XII") {if (debug >= 1) message("\nProcessing imaginary data...")}
+	if (type == "XYY") {if (debug >= 1) message("\nProcessing data table...")}
+
 	### Split each line of dt in an x part and y part
 	
 	numpat <- "[0-9]+[.,]?[0-9]*\\s*" # , needed for EU format (also need to pick up integers)

@@ -37,8 +37,8 @@ getJDXcompression <- function (string, debug = 0){
 
 	if (debug == 3) { 	# Reporting these now shows strings that will fail
 					# later when the format it not understood
-		message("\nChecking for compression method...")
-		cat("1st 5 lines:\n")
+		message("\nDetermining compression method...")
+		message("1st 5 lines:\n")
 		print(instring[1:5])
 		}
 

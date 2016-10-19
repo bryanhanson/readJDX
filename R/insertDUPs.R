@@ -35,6 +35,7 @@ insertDUPs <- function(string, debug, nlmd) {
 		message("Finding and expanding DUP codes")
 		cat("DUPs found on the following lines of the original file:\n")
 		print(dup + nlmd)
+		cat("\n")
 		}
 	
 	if (debug == 4) {
