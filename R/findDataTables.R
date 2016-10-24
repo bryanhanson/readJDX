@@ -20,7 +20,7 @@
 ##'
 ##' @noRd
 ##'
-findDataTable <- function (jdx, file, debug = 0){
+findDataTables <- function (jdx, file, debug = 0){
 
 	# A data table is defined by a variable list.
 	# The following is structured to make it easy to add other options.

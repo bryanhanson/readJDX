@@ -76,12 +76,12 @@ readJDX <- function (file = "", debug = 0){
 ##### Step 2. Locate the parameters and the data table
 ##### Store each separately as a list element
 
-	dblist <- findDataTable(jdx, file, debug)
+	dblist <- findDataTables(jdx, file, debug)
 	nlmd <- lengths(dblist) # save for other functions: will allow debug reporting by original line no.
 	
 	# Get the string that comes after title, and use that as the name
 	# in the returned list.
-	# This code could be moved to findDataTable at some point.
+	# This code could be moved to findDataTables at some point.
 	
 	if (!NMR) {
 		specnames <- jdx[blocks] # each line with title

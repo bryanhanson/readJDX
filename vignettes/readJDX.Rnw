@@ -87,7 +87,7 @@ e-mail: \href{mailto:hanson@depauw.edu}{hanson@depauw.edu}\\
 \href{http://CRAN.R-project.org/package=readJDX}{CRAN.R-project.org/package=readJDX}\\
 \end{multicols}
 
-The JCAMP-DX format was developed as an manufacturer-independent means of sharing spectroscopic data.  The standard is described in a series of publications.\cite{McDonald1988, Grasselli1991, Davies1993, Lampen1994, Lampen1999, Bumbach2001, Cammack2006, Woollett2012}  JCAMP-DX was developed during a time when data storage was expensive, and hence makes extensive use of compression schemes.  The original application was to IR spectroscopy, but the standard has evolved over time to accommodate other spectroscopies.  
+The JCAMP-DX format was developed as an manufacturer-independent means of sharing spectroscopic data (\href{http://www.jcamp-dx.org}{http://www.jcamp-dx.org}).  The standard is described in a series of publications.\cite{McDonald1988, Grasselli1991, Davies1993, Lampen1994, Lampen1999, Bumbach2001, Cammack2006, Woollett2012}  JCAMP-DX was developed during a time when data storage was expensive, and hence makes extensive use of compression schemes.  The original application was to IR spectroscopy, but the standard has evolved over time to accommodate other spectroscopies.  
 
 \section*{File Structure}
 
@@ -115,7 +115,7 @@ The JCAMP-DX standard allows a lot of flexibility and instrument manufacturers h
 \begin{enumerate}
   \item Data tables can be presented in several different formats.  The supported formats are:
     \begin{enumerate}
-      \item XYDATA=(X++(Y..Y)) Each line starts with an $x$ value, and is followed by as many $y$ values as can conveniently fit within the 80 character limite.  Subsequent $x$ values are incremented according to the $x$ resolution and the number of $y$ values that fit on the previous line (which in turn depends upon the compression scheme).  Each $x$ value is used as  a check point to verify that the correct number of $y$ values were read.
+      \item XYDATA=(X++(Y..Y)) Each line starts with an $x$ value, and is followed by as many $y$ values as can conveniently fit within the 80 character limit.  Subsequent $x$ values are incremented according to the $x$ resolution and the number of $y$ values that fit on the previous line (which in turn depends upon the compression scheme).  Each $x$ value is used as  a check point to verify that the correct number of $y$ values were read.
       \item DATA TABLE=(X++(R..R)) As above.  The real data from an NMR spectrum.
       \item DATA TABLE=(X++(I..I)) As above.  The imaginary data from an NMR spectrum.
     \end{enumerate}
@@ -153,7 +153,7 @@ Before release, \texttt{readJDX} is tested against a large collection of files w
 
 \begin{enumerate}
   \item Files containing "S" representing a DUP digit of 1 are not supported and will stop with a message.  Such files seem to be fairly rare.
-  \item Line number reporting during debugging is slightly off for NMR files that have lines which are solely composed of a comment. These start with "\$\$" and are deleted during processing.
+  \item Line number reporting (line numbers in the input file) during debugging is slightly off for NMR files that have lines which are solely composed of a comment. These start with "\$\$" and are deleted during processing.
 \end{enumerate}
 
 \begin{flushleft}

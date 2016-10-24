@@ -4,5 +4,9 @@ Import data in the JCAMP-DX format.
 URL: github.com/bryanhanson/readJDX
 
 Changes in version 0.1.000 2016-08-19
+     + findDataTable renamed to findDataTables to better reflect what it does.
+
+Changes in version 0.1.000 2016-08-19
      + First draft of package.  Works on a wide variety of example files.
+     + First release to GitHub.
 
