@@ -26,16 +26,16 @@ findDataTables <- function (jdx, file, debug = 0){
 	# The following is structured to make it easy to add other options.
 	
 	# Possibilities: Add other variable list patterns here
-	VL_pats <- c("^\\s*##XYDATA=\\s*\\(X\\+\\+\\(Y\\.\\.Y\\)\\)$", # IR, typically
-		"^\\s*##DATA\\s{1}TABLE=\\s*\\(X\\+\\+\\(R\\.\\.R\\))", # real NMR data
-		"^\\s*##DATA\\s{1}TABLE=\\s*\\(X\\+\\+\\(I\\.\\.I\\))") # imaginary NMR data
+	VL_pats <- c("^\\s*##XYDATA\\s*=\\s*\\(X\\+\\+\\(Y\\.\\.Y\\)\\)$", # IR, typically
+		"^\\s*##DATA\\s{1}TABLE\\s*=\\s*\\(X\\+\\+\\(R\\.\\.R\\))", # real NMR data
+		"^\\s*##DATA\\s{1}TABLE\\s*=\\s*\\(X\\+\\+\\(I\\.\\.I\\))") # imaginary NMR data
 		
 	# Possibilities: Add other variable list format short names here
 	VL_fmts <- c("XYY", "XRR", "XII")
 	
 	# Possibilities: Add other END patterns here (each associated with a specific VL_fmts entry)
 	# Note: this assumes imaginary always follows real data
-	END_pats <- c("^\\s*##END=", "^\\s*##PAGE=\\s*N=2", "^\\s*##END\\s{1}NTUPLES=")
+	END_pats <- c("^\\s*##END\\s*=", "^\\s*##PAGE\\s*=\\s*N=2", "^\\s*##END\\s{1}NTUPLES\\s*=")
 	
 	# Find the beginning & end of each individual data set
 	

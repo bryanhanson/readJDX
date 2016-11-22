@@ -11,6 +11,20 @@
 ##'
 ##' @param file Character.  The file name to import.
 ##'
+##' @param SOFC Logical.  "Stop on Failed Check" The JCAMP-DX standard requires
+##' several checks of the data as it is decompressed.  These checks are essential
+##' to obtaining the correct results.  However, some JCAMP-DX writing programs
+##' do not follow the standard to the letter (for instance we have observed that
+##' not all writers put FIRSTY into the metadata, even though it is required by
+##' the standard).
+##' This option is provided for those \pkg{advanced
+##' users} who have carefully checked their original files and want to skip the 
+##' required checks.  It may also be useful for troubleshooting.  
+##' The default is \code{TRUE} i.e. stop when something is not right.
+##' This ensures that correct data is returned.  Change to \code{FALSE} at your own risk.
+##' NOTE: Not all checks can be skipped via this option, as there are some
+##' parameters that must be available in order to return an answer.
+##'
 ##' @param debug Integer.  The level of debug reporting desired. 1
 ##' or higher = basic info about
 ##' each file, and import progress.  2 = detailed info about x values.
@@ -38,7 +52,7 @@
 ##'
 ##' @importFrom stringr str_trim
 ##' 
-readJDX <- function (file = "", debug = 0){
+readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 
 	if (!requireNamespace("stringr", quietly = TRUE)) {
 		stop("You need to install package stringr to use this function")
@@ -55,9 +69,11 @@ readJDX <- function (file = "", debug = 0){
 	# However, link blocks can be used to contain data blocks, in which
 	# case one has a compound file (not supported).
 	
+	# Consider searching for something more robust.
+	
 	cmpd <- FALSE
 	NMR <- FALSE
-	blocks <- grep("^\\s*##TITLE=.*", jdx)
+	blocks <- grep("^\\s*##TITLE\\s*=.*", jdx)
 	nb <- length(blocks)
 	if (nb == 0) stop("This does not appear to be a JCAMP-DX file")
 	if (nb > 1) {
@@ -106,12 +122,12 @@ readJDX <- function (file = "", debug = 0){
 		
 ##### Step 3. Extract the needed parameters
 
-	params <- extractParams(dblist[[1]], NMR, debug)
+	params <- extractParams(dblist[[1]], NMR, SOFC, debug)
 	
 ##### Step 4.  Process the data table(s)
 
 	for (i in 2:length(dblist)) dblist[[i]] <- {
-		processDataTable(dblist[[i]], params, debug, sum(nlmd[1:(i-1)])+toss[i])
+		processDataTable(dblist[[i]], params, debug, sum(nlmd[1:(i-1)])+toss[i], SOFC)
 		}
 		
 ##### And we're done!

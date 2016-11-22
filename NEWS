@@ -3,10 +3,12 @@ NEWS file for package readJDX
 Import data in the JCAMP-DX format.
 URL: github.com/bryanhanson/readJDX
 
-Changes in version 0.1.000 2016-08-19
+Changes in version 0.1.32 2016-10-21
      + findDataTable renamed to findDataTables to better reflect what it does.
+     + Added an argument SOFC with default TRUE.  SOFC = stop on failed check.  As currently implemented, it skips the FIRSTY check.  Suggested by Rustam as some JCAMP writers do not put FIRSTY into the file.
+     + Many additions to the decompression code based on additional testing, which uncovered some previously unseen issues.  There are still some files that won't process; these will require time to troubleshoot.
 
-Changes in version 0.1.000 2016-08-19
+Changes in version 0.1.0 2016-08-19
      + First draft of package.  Works on a wide variety of example files.
      + First release to GitHub.
 

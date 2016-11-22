@@ -13,7 +13,7 @@
 \usepackage[version = 3]{mhchem}
 \usepackage{fancyhdr}
 \usepackage{amssymb}
-\usepackage[parfill]{parskip} % Begin paragraphs with an empty line rather than an indent
+\usepackage[parfill]{parskip}
 \usepackage{multicol}
 \usepackage{titlesec}
 
@@ -139,7 +139,7 @@ The JCAMP-DX standard allows a lot of flexibility and instrument manufacturers h
       \item EMR, EPR, ESR spectroscopy\cite{Cammack2006}
       \item CD spectroscopy\cite{Woollett2012}
     \end{enumerate}
-  \item Data tables of simple $x$, $y$ pairs (denoted XY..XY) are not supported.  Your pull requests are welcomed.
+  \item Data tables of simple $x$, $y$ pairs (denoted XY..XY) are not supported.  Your pull requests to deal with this foramt are welcomed.
   \item \texttt{readJDX} is geared toward raw spectral data.  Therefore data table formats representing derived information like PEAK TABLE and PEAK ASSIGNMENTS are not supported (but your pull requests are welcomed!).
 \end{enumerate}
 
@@ -154,6 +154,7 @@ Before release, \texttt{readJDX} is tested against a large collection of files w
 \begin{enumerate}
   \item Files containing "S" representing a DUP digit of 1 are not supported and will stop with a message.  Such files seem to be fairly rare.
   \item Line number reporting (line numbers in the input file) during debugging is slightly off for NMR files that have lines which are solely composed of a comment. These start with "\$\$" and are deleted during processing.
+  \item Some test files in the author's possession fail when carrying out the y value check, for unknown reasons.  Troubleshooting will take some time.
 \end{enumerate}
 
 \begin{flushleft}

@@ -1,8 +1,8 @@
 Package: readJDX
 Type: Package
 Title: Import Data in the JCAMP-DX Format
-Version: 0.1.2
-Date: 2016-10-21
+Version: 0.1.32
+Date: 2016-11-21
 Authors@R: person("Bryan A.", "Hanson", role = c("aut", "cre"), email = "hanson@depauw.edu")
 Description: Import data written in the JCAMP-DX format. This is an instrument-
     independent format used in the field of spectroscopy. Examples include IR, NMR,
@@ -14,7 +14,6 @@ ByteCompile: TRUE
 Depends:
     R (>= 3.0)
 Suggests:
-    testthat,
     knitr
 Imports:
     stringr

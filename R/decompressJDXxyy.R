@@ -15,13 +15,15 @@
 ##'
 ##' @param nlmd Integer.  The number of lines of meta data.  Used in debug reporting.
 ##'
+##' @param SOFC Logical.  See \code{\link{readJDX}} for details.
+##'
 ##' @return A data frame with elements \code{x} and \code{y}.
 ##' 
 ##' @importFrom stringr str_locate str_trim
 ##'
 ##' @noRd
 
-decompressJDXxyy <- function (dt, params, debug = 0, nlmd) {
+decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 		
 	# For XYY, each line of the data table begins with a frequency
 	# followed by the y values in various compressed formats.
@@ -65,7 +67,7 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd) {
 	xValues <- as.numeric(xString)
 	
 	if (debug == 2) { # stop and report each line if requested (huge!)
-		for (i in 1:length(xString)) {
+		for (i in 1:length(xValues)) {
 			cat("\nParsing line", i + nlmd, "for x values\n")
 			cat("\tx value (character):", tmp[i], "\n")
 			cat("\tx value (numeric):", xValues[i], "\n")
@@ -118,6 +120,9 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd) {
 		# Put space ahead of SQZ codes preceeded by a number
 		yString <- gsub("([0-9]+)([@A-Ia-i]{1})", "\\1 \\2", yString)
 		
+		# Put a space between adjacent SQZ codes e.g. a215Hb513
+		yString <- gsub("([@A-Ia-i]{1})([@A-Ia-i]{1})", "\\1 \\2", yString)
+		
 		# When a single SQZ code is immediately followed by a DIF code,
 		# put a space between them, e.g. @j097795
 		yString <- gsub("([@A-Ia-i]{1})([%J-Rj-r]{1})", "\\1 \\2", yString)
@@ -152,16 +157,32 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd) {
 		# At this point, PAC needs no special handling, other formats have been handled
 		# Convert to numeric, if !DIF
 		
-		if (!NUM) {
-			yString <- paste(yString, collapse = " ") # turn into one long string
-			# This next step eliminates some extra white space that shows up in some PAC
-			yString <- str_trim(yString, side = "both")
-			yString <- unlist(strsplit(yString, "\\s+"))
-			yValues <- as.numeric(yString) 			
-			if (any(is.na(yValues))) stop("Conversion to numeric introduced NA")		
+	if (!NUM) {
+
+		# Do things one step at a time and combine at the end.
+		# This will be slower as it is not vectorized, but allows for
+		# line-by-line error reporting
+		
+		yValues <- NA_real_
+		
+		for (i in 1:length(yString)) {
+			ytmp <- unlist(strsplit(yString[i], "\\s+"))
+			if (ytmp[1] == "") ytmp <- ytmp[-1] # some PACs have an extra space
+			
+			ytmp <- as.numeric(ytmp)
+						
+			if (any(is.na(ytmp))) {
+				message("Problem: NA found at line no: ", i + nlmd, "!\n")
+				print(ytmp)
+				stop("Conversion to numeric introduced NA")
+				}
+				
+			yValues <- c(yValues, ytmp)					
 			}
-					
-		} # end of !"AFFN"	
+				
+		yValues <- yValues[-1]
+		}				
+	} # end of !"AFFN"	
  	
 	### Check the integrity of the results
 		
@@ -182,15 +203,22 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd) {
 		if (debug >= 1) cat("Actual no. data points found  =", length(yValues), "\n")
 		
 		if (!npoints == length(yValues)) stop("NPOINTS and length of yValues don't match")
+
+		# Check first y value
 		
-		tol <- 0.001*diff(range(yValues)) # apparently needed due to lots of character -> integer/numeric coercions
+		if (!SOFC) warning("SOFC is FALSE, skipping FIRSTY check")
 		
-		if (!isTRUE(all.equal(yValues[1]*factorY, firstY, check.names = FALSE, tolerance = tol))) {
-			cat("First y value from data table:", yValues[1]*factorY, "\n")
-			cat("First y value from metadata:", firstY, "\n")
-			stop("Error parsing yValues")
+		if (SOFC) {
+			tol <- 0.001*diff(range(yValues)) # apparently needed due to lots of
+											  # character -> integer/numeric coercions
+		
+			if (!isTRUE(all.equal(yValues[1]*factorY, firstY, check.names = FALSE, tolerance = tol))) {
+				cat("First y value from data table:", yValues[1]*factorY, "\n")
+				cat("First y value from metadata:", firstY, "\n")
+				stop("Error parsing yValues")
+				}			
 			}
-	
+
 		# Compute xValues based on params (see notes earlier); update yValues
 		
 		dx <- (lastX-firstX)/(npoints - 1)

@@ -4,10 +4,24 @@
 \alias{readJDX}
 \title{Import a File Written in the JCAMP-DX Format}
 \usage{
-readJDX(file = "", debug = 0)
+readJDX(file = "", SOFC = TRUE, debug = 0)
 }
 \arguments{
 \item{file}{Character.  The file name to import.}
+
+\item{SOFC}{Logical.  "Stop on Failed Check" The JCAMP-DX standard requires
+several checks of the data as it is decompressed.  These checks are essential
+to obtaining the correct results.  However, some JCAMP-DX writing programs
+do not follow the standard to the letter (for instance we have observed that
+not all writers put FIRSTY into the metadata, even though it is required by
+the standard).
+This option is provided for those \pkg{advanced
+users} who have carefully checked their original files and want to skip the 
+required checks.  It may also be useful for troubleshooting.  
+The default is \code{TRUE} i.e. stop when something is not right.
+This ensures that correct data is returned.  Change to \code{FALSE} at your own risk.
+NOTE: Not all checks can be skipped via this option, as there are some
+parameters that must be available in order to return an answer.}
 
 \item{debug}{Integer.  The level of debug reporting desired. 1
 or higher = basic info about

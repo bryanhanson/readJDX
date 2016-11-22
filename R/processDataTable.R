@@ -15,10 +15,12 @@
 ##'
 ##' @param nlmd Integer.  The number of lines of meta data.  Used in debug reporting.
 ##'
+##' @param SOFC Logical.  See \code{\link{readJDX}} for details.
+##'
 ##' @return A data frame with elements $x$ and $y$.
 ##' 
 ##' @noRd
-processDataTable <- function (dt, params, debug = 0, nlmd){
+processDataTable <- function (dt, params, debug = 0, nlmd, SOFC){
 
 	# This function is supervisory, does no real work
 	
@@ -26,7 +28,7 @@ processDataTable <- function (dt, params, debug = 0, nlmd){
 	
 	if ((fmt == "XRR") | (fmt == "XII")) fmt <- "XYY"
 	
-	if (fmt == "XYY") xydata <- decompressJDXxyy(dt, params, debug = debug, nlmd = nlmd)
+	if (fmt == "XYY") xydata <- decompressJDXxyy(dt, params, debug, nlmd, SOFC)
 	
 	# Add other variable list formats here
 		
