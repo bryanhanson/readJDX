@@ -78,6 +78,7 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 	# each line in the data table be checked to make sure no lines were skipped or dupped.
 		
 	if (anyDuplicated(xValues)) stop("Data table appears to have duplicated lines")
+	# Tecnically, this next line compares the row count, not the actual number of x and y values
 	if (length(yString) != length(xValues)) stop("The number of x values and y values aren't the same")
 	xValues <- NULL # safety mechanism; recomputed at end
 
@@ -224,7 +225,7 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 		dx <- (lastX-firstX)/(npoints - 1)
 		xValues <- seq(firstX, lastX, by = dx)
 		
-		xValues <- xValues*factorX
+		#xValues <- xValues*factorX
 		yValues <- yValues*factorY
 		
 		} # end of !NMR
@@ -292,7 +293,7 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 		
 		dx <- (lastX-firstX)/(pointsX - 1)
 		xValues <- seq(firstX, lastX, by = dx)
-		xValues = xValues*factorX
+		#xValues = xValues*factorX
 
 		} # end of NMR
 		
