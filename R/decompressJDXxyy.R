@@ -5,8 +5,8 @@
 ##' Users would not normally call this function.  See \code{\link{readJDX}}.
 ##' Documentation is provided for developers wishing to contribute to the package.
 ##' 
-##' @param dt Character.  The data table to be processed.  Includes pre-pended
-##' code giving the type of data (e.g. XYY, XRR, XII).
+##' @param dt Character.  The data table to be processed.  Includes one pre-pended
+##' line giving the type of data (e.g. XYY, XRR, XII).
 ##'
 ##' @param params Numeric. Vector of parameters extracted from file header.
 ##' NMR parameters are not the same as non-NMR parameters.
@@ -67,6 +67,7 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 	xValues <- as.numeric(xString)
 	
 	if (debug == 2) { # stop and report each line if requested (huge!)
+		message("Here come the raw x values, line by line from the file")
 		for (i in 1:length(xValues)) {
 			cat("\nParsing line", i + nlmd, "for x values\n")
 			cat("\tx value (character):", tmp[i], "\n")
@@ -74,11 +75,16 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 			}
 		}
 	
+	# Save the first and last xValues for checking in a bit
+	firstXcheck <- xValues[1]
+	lastXcheck <- xValues[length(xValues)]
+	xtol <- 0.0001*diff(range(xValues))
+	
 	# The standard requires that
 	# each line in the data table be checked to make sure no lines were skipped or dupped.
 		
 	if (anyDuplicated(xValues)) stop("Data table appears to have duplicated lines")
-	# Tecnically, this next line compares the row count, not the actual number of x and y values
+	# Technically, this next line compares the row count, not the actual number of x and y values
 	if (length(yString) != length(xValues)) stop("The number of x values and y values aren't the same")
 	xValues <- NULL # safety mechanism; recomputed at end
 
@@ -185,6 +191,8 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 		}				
 	} # end of !"AFFN"	
  	
+ 	ytol <- 0.0001*diff(range(yValues))
+
 	### Check the integrity of the results
 		
 	NMR <- FALSE
@@ -210,22 +218,37 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 		if (!SOFC) warning("SOFC is FALSE, skipping FIRSTY check")
 		
 		if (SOFC) {
-			tol <- 0.001*diff(range(yValues)) # apparently needed due to lots of
-											  # character -> integer/numeric coercions
 		
-			if (!isTRUE(all.equal(yValues[1]*factorY, firstY, check.names = FALSE, tolerance = tol))) {
+			if (!isTRUE(all.equal(yValues[1]*factorY, firstY, check.names = FALSE, tolerance = ytol))) {
 				cat("First y value from data table:", yValues[1]*factorY, "\n")
 				cat("First y value from metadata:", firstY, "\n")
 				stop("Error parsing yValues")
 				}			
 			}
-
+		
+		# Check first and last xValues (saved earlier).  The standard is ambiguous about doing this,
+		# but out of an abundance of caution we will do it.
+		
+		if (!isTRUE(all.equal(firstXcheck*factorX, firstX, check.names = FALSE, tolerance = xtol))) {
+			cat("First x value from data table:", firstXcheck*factorX, "\n")
+			cat("First x value from metadata:", firstX, "\n")
+			stop("Error parsing xValues (firstX)")
+			}			
+		
+		# Do a lastX check if DIF format (where there is a check point)
+		
+		if ("DIF" %in% fmt) {
+			if (!isTRUE(all.equal(lastXcheck*factorX, lastX, check.names = FALSE, tolerance = xtol))) {
+				cat("Last x value from data table:", lastXcheck*factorX, "\n")
+				cat("Last x value from metadata:", lastX, "\n")
+				stop("Error parsing xValues (lastX)")
+				}
+			}
+				
 		# Compute xValues based on params (see notes earlier); update yValues
 		
 		dx <- (lastX-firstX)/(npoints - 1)
 		xValues <- seq(firstX, lastX, by = dx)
-		
-		#xValues <- xValues*factorX
 		yValues <- yValues*factorY
 		
 		} # end of !NMR
@@ -249,18 +272,36 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 		if (debug >= 1) cat("Actual no. data points found  =", length(yValues), "\n")
 		
 		if (pointsX != length(yValues)) stop("Data points found != data points in metadata")
-
-		tol <- 0.001*diff(range(yValues)) # apparently needed due to lots of character -> integer/numeric coercions
+				
+		# Check first and last xValues (saved earlier).  The standard is ambiguous about doing this,
+		# but out of an abundance of caution we will do it.
 		
-		if (type == "XRR") {
+		if (!isTRUE(all.equal(firstXcheck*factorX, firstX, check.names = FALSE, tolerance = xtol))) {
+			cat("First x value from data table:", firstXcheck*factorX, "\n")
+			cat("First x value from metadata:", firstX, "\n")
+			stop("Error parsing xValues (firstX)")
+			}			
+		
+		# Do a lastX check if DIF format (where there is a check point)
+		
+		if ("DIF" %in% fmt) {
+			if (!isTRUE(all.equal(lastXcheck*factorX, lastX, check.names = FALSE, tolerance = xtol))) {
+				cat("Last x value from data table:", lastXcheck*factorX, "\n")
+				cat("Last x value from metadata:", lastX, "\n")
+				stop("Error parsing xValues (lastX)")
+				}
+			}
+				
+
+		if (type == "XRR") { # Check yValues (real)
 						
-			if (!isTRUE(all.equal(yValues[1]*factorR, firstR, check.names = FALSE, tolerance = tol))) {					
+			if (!isTRUE(all.equal(yValues[1]*factorR, firstR, check.names = FALSE, tolerance = ytol))) {			
 				cat("First real value from data table:", yValues[1]*factorR, "\n")
 				cat("First real value from metadata:", firstR, "\n")
 				stop("Error parsing real values")
 				}
 			
-			if (!isTRUE(all.equal(yValues[length(yValues)]*factorR, lastR, check.names = FALSE, tolerance = tol))) {		
+			if (!isTRUE(all.equal(yValues[length(yValues)]*factorR, lastR, check.names = FALSE, tolerance = ytol))) {		
 				cat("Last real value from data table:", yValues[length(yValues)]*factorR, "\n")
 				cat("Last real value from metadata:", lastR, "\n")
 				stop("Error parsing real values")
@@ -270,15 +311,15 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 			
 			} # end of XRR
 
-		if (type == "XII") {
+		if (type == "XII") { # Check yValues (imaginary)
 
-			if (!isTRUE(all.equal(yValues[1]*factorI, firstI, check.names = FALSE, tolerance = tol))) {		
+			if (!isTRUE(all.equal(yValues[1]*factorI, firstI, check.names = FALSE, tolerance = ytol))) {		
 				cat("First imaginary value from data table:", yValues[1]*factorI, "\n")
 				cat("First imaginary value from metadata:", firstI, "\n")
 				stop("Error parsing imaginary values")
 				}
 			
-			if (!isTRUE(all.equal(yValues[length(yValues)]*factorI, lastI, check.names = FALSE, tolerance = tol))) {		
+			if (!isTRUE(all.equal(yValues[length(yValues)]*factorI, lastI, check.names = FALSE, tolerance = ytol))) {		
 				cat("Last imaginary value from data table:", yValues[length(yValues)]*factorI, "\n")
 				cat("Last imaginary value from metadata:", lastI, "\n")
 				stop("Error parsing imaginary values")
@@ -293,7 +334,6 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 		
 		dx <- (lastX-firstX)/(pointsX - 1)
 		xValues <- seq(firstX, lastX, by = dx)
-		#xValues = xValues*factorX
 
 		} # end of NMR
 		

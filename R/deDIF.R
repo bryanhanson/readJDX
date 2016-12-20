@@ -23,7 +23,7 @@ deDIF <- function(string, debug, nlmd) {
 	# X, Y1, D1, D2, D3, D4...
 	# corresponding, after conversion, to:
 	# X, Y1, Y2, Y3, Y4, Y5...
-	# where D3 is the offset from D2. So to construct
+	# where D3 is the offset from D2 for example. So to construct
 	# Y4 you must do Y1 + D1 + D2 + D3
 
 	# Note: DUPs should be handled before arriving at this function,

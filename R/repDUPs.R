@@ -21,7 +21,7 @@ repDUPs <- function(string, dupchar) {
 	# Expand and return dupchar
 	
 	# Note: DUP value of S appears to have no purpose.
-	# Consistent with this, it doesn't appear in test files that I have checked
+	# It appears only in a few test files that I have checked
 	# other than SPECFILE.DX where it appears many times
 	
 	if (dupchar == "S") {

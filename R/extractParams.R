@@ -45,26 +45,6 @@ extractParams <- function (md, NMR, SOFC, debug = 0){
 		npoints <- sub("^\\s*##NPOINTS\\s*=", replacement = "", npoints)
 		npoints <- as.integer(npoints)
 
-		# The following parameters may be skipped with SOFC = FALSE
-		
-		if (!SOFC) {
-			#warning("SOFC is FALSE, skipping FIRSTY check") # warning issued in decompressJDXxyy
-			firstY <- NA_real_
-			# warning("SOFC is FALSE, setting FACTORY = 1.0")
-			# factorY <- 1.0
-			# warning("SOFC is FALSE, setting FACTORX = 1.0")
-			# factorX <- 1.0
-			}
-		
-		if (SOFC) {		
-			firstY <- grep("^\\s*##FIRSTY\\s*=", md)
-			if (firstY == 0) stop("Couldn't find FIRSTY")
-			firstY <- md[firstY]
-			firstY <- sub("^\\s*##FIRSTY\\s*=", replacement = "", firstY)
-			firstY <- gsub(",", ".", firstY) # for EU style files
-			firstY <- as.numeric(firstY)	
-			}
-
 		factorX <- grep("^\\s*##XFACTOR\\s*=", md)
 		if (factorX == 0) stop("Couldn't find XFACTOR")
 		factorX <- sub("^\\s*##XFACTOR\\s*=", replacement = "", md[factorX])
@@ -76,6 +56,21 @@ extractParams <- function (md, NMR, SOFC, debug = 0){
 		factorY <- sub("^\\s*##YFACTOR\\s*=", replacement = "", md[factorY])
 		factorY <- gsub(",", ".", factorY) # for EU style files
 		factorY <- as.numeric(factorY)
+
+		# The following parameters may be skipped by setting SOFC = FALSE
+		
+		if (!SOFC) {
+			firstY <- NA_real_ # warning issued in decompressJDXxyy
+			}
+		
+		if (SOFC) {		
+			firstY <- grep("^\\s*##FIRSTY\\s*=", md)
+			if (firstY == 0) stop("Couldn't find FIRSTY")
+			firstY <- md[firstY]
+			firstY <- sub("^\\s*##FIRSTY\\s*=", replacement = "", firstY)
+			firstY <- gsub(",", ".", firstY) # for EU style files
+			firstY <- as.numeric(firstY)	
+			}
 		
 		params <- c(as.numeric(npoints), firstX, lastX, firstY,  factorX, factorY)
 		names(params) <- c("npoints", "firstX", "lastX", "firstY", "factorX", "factorY")

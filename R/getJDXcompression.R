@@ -36,9 +36,9 @@ getJDXcompression <- function (string, debug = 0){
 	AFFN <- PAC <- SQZ <- DIF <- FMT <- DUP <- FALSE # FMT is a flag to indicate some format has been found
 
 	if (debug == 3) { 	# Reporting these now shows strings that will fail
-					# later when the format it not understood
+						# later when the format it not understood
 		message("\nDetermining compression method...")
-		message("1st 5 lines:\n")
+		message("1st 5 lines (x values stripped off):\n")
 		print(instring[1:5])
 		}
 
