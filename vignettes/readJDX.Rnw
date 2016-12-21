@@ -10,7 +10,6 @@
 \usepackage {hyperref, url} 
 \usepackage{graphicx}
 \usepackage[margin = 1.5 cm, letterpaper]{geometry}
-\usepackage[version = 3]{mhchem}
 \usepackage{fancyhdr}
 \usepackage{amssymb}
 \usepackage[parfill]{parskip}

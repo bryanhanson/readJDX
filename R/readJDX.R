@@ -49,17 +49,17 @@
 ##' references and supported formats.
 ##'
 ##' @section Included Data Files:
-##' The examples make use of data files included with the package. File \code{SBO.JDX}
+##' The examples make use of data files included with the package. File \code{SBO.jdx}
 ##' is an IR spectrum of Smart Balance Original spread (a butter substitute). The
 ##' spectrum is presented in transmission format, and was recorded on a ThermoFisher
 ##' instrument.  The file uses AFFN compression, and was written
 ##' with the JCAMP-DX 5.01 standard. Note that even though the y-axis is in 
 ##' percent transmission, in the JDX file it is stored on [0\ldots1].
-##' File \code{PCRF.JDX} is a 1H NMR
+##' File \code{PCRF.jdx} is a 1H NMR
 ##' spectrum of a hexane extract of a reduced fat potato chip.  The spectrum was
 ##' recorded on a JEOL instrument.  The file uses SQZ DIF compression, and was written
 ##' with the JCAMP-DX 6.00 standard.
-##' File \code{PCRF_line265.JDX} has a deliberate error in it.  See the examples.
+##' File \code{PCRF_line265.jdx} has a deliberate error in it.  See the examples.
 ##' 
 ##' @section Precision:
 ##' Internally, this package uses a tolerance factor when comparing values during certain checks.
@@ -74,12 +74,12 @@
 ##' @importFrom stringr str_trim
 ##'
 ##' @examples
-##' sbo <- system.file("extdata", "SBO.JDX", package = "readJDX")
+##' sbo <- system.file("extdata", "SBO.jdx", package = "readJDX")
 ##' chk <- readJDX(sbo)
 ##' plot(chk[[2]]$x, chk[[2]]$y/100, type = "l", main = "Original Smart Balance Spread",
 ##' 	xlab = "wavenumber", ylab = "Percent Transmission")
 ##' 
-##' pcrf <- system.file("extdata", "PCRF.JDX", package = "readJDX")
+##' pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
 ##' chk <- readJDX(pcrf)
 ##' plot(chk[[2]]$x, chk[[2]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
 ##' 	xlab = "ppm", ylab = "Intensity")
@@ -87,7 +87,7 @@
 ##' \dontrun{
 ##' # Line 265 has an N -> G typo.  Try with various levels of debug.
 ##' # Even with debug = 0 you get useful diagnostic info.
-##' problem <- system.file("extdata", "PCRF_line265.JDX", package = "readJDX")
+##' problem <- system.file("extdata", "PCRF_line265.jdx", package = "readJDX")
 ##' chk <- readJDX(problem)
 ##' }
 ##'
