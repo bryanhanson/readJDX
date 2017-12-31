@@ -1,0 +1,123 @@
+---
+title: An Introduction to readJDX
+
+# Use letters for affiliations
+author:
+  - name: Bryan A. Hanson
+    affiliation: a
+
+address:
+  - code: a
+    address: Dept. of Chemistry \& Biochemistry, DePauw University; \url{hanson@depauw.edu}
+
+# Place DOI URL or CRAN Package URL here
+doi: "github.com/bryanhanson/readJDX"
+
+# Font size of the document, values of 9pt (default), 10pt, 11pt and 12pt
+fontsize: 10pt
+
+# Optional: Force one-column layout, default is two-column
+#one_column: true
+
+# Optional: Enable one-sided layout, default is two-sided
+#one_sided: true
+
+# Optional: Enable section numbering, default is unnumbered
+#numbersections: true
+
+# Optional: Specify the depth of section number, default is 5
+#secnumdepth: 5
+
+# Optional: Bibliography
+bibliography: JCAMP-DX
+
+# Optional: Enable a 'Draft' watermark on the document
+watermark: false
+
+# Customize footer, eg by referencing the vignette
+footer_contents: "readJDX"
+
+# Produce a pinp document
+output: pinp::pinp
+
+# Required: Vignette metadata for inclusion in a package.
+vignette: >
+  %\VignetteIndexEntry{readJDX}
+  %\VignetteKeywords{readJDX, vignette, DX, NMR, IR, MS, Raman}
+  %\VignettePackage{readJDX}
+  %\VignetteEngine{knitr::rmarkdown}
+
+header-includes:
+  - \usepackage{stackengine}
+---
+
+```{r echo = FALSE}
+library("readJDX")
+desc <- packageDescription("readJDX")
+```
+
+This vignette is based on `readJDX` version `r desc$Version`.
+
+# Background
+
+The JCAMP-DX format was developed as an manufacturer-independent means of sharing spectroscopic data (\href{http://www.jcamp-dx.org}{www.jcamp-dx.org}).  The standard is described in a series of publications (\cite{McDonald1988, Grasselli1991, Davies1993, Lampen1994, Lampen1999, Bumbach2001, Cammack2006, Woollett2012}).  JCAMP-DX was developed during a time when data storage was expensive, and hence makes extensive use of compression schemes.  The original application was to IR spectroscopy, but the standard has evolved over time to accommodate other spectroscopies.  
+
+# File Structure
+
+JCAMP-DX files consist of two parts:  
+
+* A more-or-less human readible set of metadata which is needed to understand the data and carry out the decompression.  Besides required basic information about the data itself, most files contain instrument and manufacturer-specific parameters in the metadata.
+* A data table, compressed in various ways.
+
+# Challenges When Reading Files
+
+The JCAMP-DX standard allows a lot of flexibility and instrument manufacturers have written widely varying export functions.  Some of the challenges in reading a JCAMP-DX file include:
+
+* JCAMP-DX files can contain different kinds of data, including non-spectroscopic data (\cite{Gasteiger1991}) and more than one type of spectroscopic data.
+* JCAMP-DX files can contain more than one spectrum in the file.
+* Instruments may be configured to use . or , as the decimal point when writing files.  This is generally a geographical / cultural nuance.
+* Numbers may be written using E to signify exponent, but only in some compression formats.
+* The data table can be presented in several possible formats.
+* Some manufacturers take liberties with the required format.
+
+
+# Supported Formats
+
+* Data tables can be presented in several different formats.  The supported formats are:
+    * XYDATA=(X++(Y..Y)) Each line starts with an $x$ value, and is followed by as many $y$ values as can conveniently fit within the 80 character limit.  Subsequent $x$ values are incremented according to the $x$ resolution and the number of $y$ values that fit on the previous line (which in turn depends upon the compression scheme).  Each $x$ value is used as  a check point to verify that the correct number of $y$ values were read.
+    * DATA TABLE=(X++(R..R)) As above.  The real data from a 1D NMR spectrum.
+    * DATA TABLE=(X++(I..I)) As above.  The imaginary data from a 1D NMR spectrum.
+    * DATA TABLE=(F2++(Y..Y)) As above.  Format used for the slices of a 2D NMR spectrum.
+* Within a data table, several different compression schemes can be employed.  The following are supported:
+    * AFFN: ASCII numbers separated by at least one space.
+    * PAC: Numbers separated by exactly one space, + or -.
+    * SQZ: Delimiter, leading digit and sign are replaced by a pseudo-digit.
+    * DIF: DIF uses a SQZ pseudo-digit for the first $y$ value, but subsequent $y$ entries are differences between each data value after the first.  Sometimes referred to as SQZDIF.
+    * DUP: Not a format, but a method of signifying repeated values.
+    * DIFDUP: A combination of DIF and DUP.  Widely used, as it permits the greatest amount of compression.
+
+# Formats That are Not Supported
+
+* Mixed spectroscopic types and non-spectroscopic entries (such as structures) are not supported by `readJDX` and will not be supported in the future.
+* Compound files: JCAMP-DX files may contain more than one spectrum in the file.  These types of files are not currently supported (however, 1D and 2D NMR data are supported, even though they contain more than one spectrum).  The following JCAMP-DX standards require a compound file and are therefore not supported:
+    * EMR, EPR, ESR spectroscopy (\cite{Cammack2006})
+    * CD spectroscopy (\cite{Woollett2012})
+* Data tables of simple $x$, $y$ pairs (denoted XY..XY) are not supported.  Your pull requests to deal with this format are welcomed.
+* `readJDX` is geared toward raw spectral data.  Therefore data table formats representing derived information like PEAK TABLE and PEAK ASSIGNMENTS are not supported (but your pull requests are welcomed!).
+
+# Practical Matters
+
+`readJDX` tries its best to deal with all these options.  If you have a file that you believe should be supported but gives an error, please e-mail or file an issue.  Be sure to attach the file that is giving you problems.  Contributions to improve or expand the package, including pull requests, are always welcome!
+
+Before release, `readJDX` is tested against a large collection of files with varying formats.  A few of these files were obtained locally.  Others were collected from publically available sources (e.g. \href{http://www.jcamp-dx.org/testdata.html}{http://www.jcamp-dx.org/testdata.html}).  These files are not included with the package to save space, and in addition, while they are publically available, for many of them the licensing status is unclear (i.e. the OWNER entry).
+
+# Known Issues
+
+* Files containing "S" representing a DUP digit of 1 are not supported and will stop with a message.  Such files seem to be fairly rare.
+* Line number reporting (line numbers in the input file) during debugging is slightly off for NMR files that have lines which are solely composed of a comment. Such lines start with "\$\$" and are deleted during processing.
+* Some test files in the author's possession fail when carrying out the y value check, for unknown reasons.
+
+<!-- local tweak to the pnasbreak command -->
+\renewcommand{\pnasbreak}{\begin{strip}\vskip0pt\end{strip}}
+
+\phantom{xxx} <!-- if this isn't here the next para runs in-->

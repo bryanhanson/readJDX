@@ -76,13 +76,13 @@
 ##' @examples
 ##' sbo <- system.file("extdata", "SBO.jdx", package = "readJDX")
 ##' chk <- readJDX(sbo)
-##' plot(chk[[2]]$x, chk[[2]]$y/100, type = "l", main = "Original Smart Balance Spread",
-##' 	xlab = "wavenumber", ylab = "Percent Transmission")
+##' #plot(chk[[2]]$x, chk[[2]]$y/100, type = "l", main = "Original Smart Balance Spread",
+##' #	xlab = "wavenumber", ylab = "Percent Transmission")
 ##' 
 ##' pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
 ##' chk <- readJDX(pcrf)
-##' plot(chk[[2]]$x, chk[[2]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
-##' 	xlab = "ppm", ylab = "Intensity")
+##' #plot(chk[[2]]$x, chk[[2]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
+##' #	xlab = "ppm", ylab = "Intensity")
 ##' 
 ##' \dontrun{
 ##' # Line 265 has an N -> G typo.  Try with various levels of debug.
@@ -106,29 +106,28 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 
 	# A data block consists of ##TITLE= up to ##END=
 	# However, link blocks can be used to contain data blocks, in which
-	# case one has a compound file (not supported).
+	# case one has a compound file.  I have never seen this in the wild.
+	# 2D NMR data sets use a different format.
 	
 	# Consider searching for something more robust.
 	
-	cmpd <- FALSE
+	IR <- TRUE # until proven otherwise
 	NMR <- FALSE
+	NMR2D <- FALSE
+	
 	blocks <- grep("^\\s*##TITLE\\s*=.*", jdx)
 	nb <- length(blocks)
 	if (nb == 0) stop("This does not appear to be a JCAMP-DX file")
-	if (nb > 1) {
-		cmpd <- TRUE
-		if (cmpd) stop("Compound (multi-block / multi-spectra) data sets not supported")
-		}
+	if (nb > 1) stop("Compound (multi-block / multi-spectra) data sets not supported")
 
 	ntup <- grepl("^\\s*##NTUPLES", jdx)
-	if (any(ntup)) {
-		NMR <- TRUE
-		nb <- 2 # real & imaginary data
-		}
-		
+	nD <- grepl("^\\s*##NTUPLES=\\s*nD", jdx)
+	if (any(ntup) & !any(nD)) NMR <- TRUE
+	if (any(ntup) & any(nD)) NMR2D <- TRUE
+			
 	if (debug >= 1) message("\n\nProcessing file ", file, "\n")
 			
-##### Step 2. Locate the parameters and the data table
+##### Step 2. Locate the parameters and the data table(s)
 ##### Store each separately as a list element
 
 	dblist <- findDataTables(jdx, file, debug)
@@ -138,15 +137,16 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 	# in the returned list.
 	# This code could be moved to findDataTables at some point.
 	
-	if (!NMR) {
+	if (IR) {
 		specnames <- jdx[blocks] # each line with title
 		specnames <- str_trim(substring(specnames, 9, nchar(specnames)))
 		}
 		
 	if (NMR) specnames <- c("real", "imaginary")
+	#if (NMR2D) specnames <- c("real", "imaginary") # WILL NEED THIS
 	
 	specnames <- c("metadata", specnames)
-	if (length(specnames) != nb+1) stop("Something went setting up the data list")
+	# if (length(specnames) != nb+1) stop("Something went setting up the data list")
 	names(dblist) <- specnames
 	
 	# Remove comment-only lines from the data tables (these mess up processing later)
@@ -161,7 +161,12 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 		
 ##### Step 3. Extract the needed parameters
 
-	params <- extractParams(dblist[[1]], NMR, SOFC, debug)
+	if (IR) mode <- "IR"
+	if (NMR) mode <- "NMR"
+	if (NMR2D) mode <- "NMR2D"
+	params <- extractParams(dblist[[1]], mode, SOFC, debug)
+	
+	return(dblist)
 	
 ##### Step 4.  Process the data table(s)
 

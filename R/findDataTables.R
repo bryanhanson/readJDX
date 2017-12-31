@@ -27,15 +27,19 @@ findDataTables <- function (jdx, file, debug = 0){
 	
 	# Possibilities: Add other variable list patterns here
 	VL_pats <- c("^\\s*##XYDATA\\s*=\\s*\\(X\\+\\+\\(Y\\.\\.Y\\)\\)$", # IR, typically
-		"^\\s*##DATA\\s{1}TABLE\\s*=\\s*\\(X\\+\\+\\(R\\.\\.R\\))", # real NMR data
-		"^\\s*##DATA\\s{1}TABLE\\s*=\\s*\\(X\\+\\+\\(I\\.\\.I\\))") # imaginary NMR data
-		
+		"^\\s*##DATA\\s{1}TABLE\\s*=\\s*\\(X\\+\\+\\(R\\.\\.R\\))", # real NMR data # CHECK \\)
+		"^\\s*##DATA\\s{1}TABLE\\s*=\\s*\\(X\\+\\+\\(I\\.\\.I\\))", # imaginary NMR data
+		"^\\s*##DATA\\s{1}TABLE\\s*=\\s*\\(F2\\+\\+\\(Y\\.\\.Y\\)\\)") # 2D NMR data (real) JEOL style
+
 	# Possibilities: Add other variable list format short names here
-	VL_fmts <- c("XYY", "XRR", "XII")
+	VL_fmts <- c("XYY", "XRR", "XII", "F2")
 	
 	# Possibilities: Add other END patterns here (each associated with a specific VL_fmts entry)
 	# Note: this assumes imaginary always follows real data
-	END_pats <- c("^\\s*##END\\s*=", "^\\s*##PAGE\\s*=\\s*N=2", "^\\s*##END\\s{1}NTUPLES\\s*=")
+	END_pats <- c("^\\s*##END\\s*=",
+		"^\\s*##PAGE\\s*=\\s*N=2",
+		"^\\s*##END\\s{1}NTUPLES\\s*=",
+		"\\$\\$\\s{1}checkpoint")
 	
 	# Find the beginning & end of each individual data set
 	
@@ -55,7 +59,8 @@ findDataTables <- function (jdx, file, debug = 0){
 	
 	spec_st <- spec_st[-1]
 	if (length(spec_st) == 0) {
-		msg <- paste("Couldn't find the data table start.  Supported formats are:", VL_fmts, "\n", sep = " ")
+		fmts <- paste(VL_fmts, collapse = ", ")
+		msg <- paste("Couldn't find the data table start.  Supported formats are:", fmts, sep = " ")
 		stop(msg)
 		}
 	spec_st <- spec_st + 1 # drop variable list format statement, leaving only numbers

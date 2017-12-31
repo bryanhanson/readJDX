@@ -77,16 +77,17 @@ This appears to be necessary because the original values in the files
 are text strings of varying lengths which get converted to numerical values.  Some precision
 may be lost but it appears trivial with the current settings.
 }
+
 \examples{
 sbo <- system.file("extdata", "SBO.jdx", package = "readJDX")
 chk <- readJDX(sbo)
-plot(chk[[2]]$x, chk[[2]]$y/100, type = "l", main = "Original Smart Balance Spread",
-	xlab = "wavenumber", ylab = "Percent Transmission")
+#plot(chk[[2]]$x, chk[[2]]$y/100, type = "l", main = "Original Smart Balance Spread",
+#	xlab = "wavenumber", ylab = "Percent Transmission")
 
 pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
 chk <- readJDX(pcrf)
-plot(chk[[2]]$x, chk[[2]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
-	xlab = "ppm", ylab = "Intensity")
+#plot(chk[[2]]$x, chk[[2]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
+#	xlab = "ppm", ylab = "Intensity")
 
 \dontrun{
 # Line 265 has an N -> G typo.  Try with various levels of debug.
@@ -100,4 +101,3 @@ chk <- readJDX(problem)
 Do \code{browseVignettes("readJCAMPDX")} for background information,
 references and supported formats.
 }
-

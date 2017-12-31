@@ -8,7 +8,7 @@
 ##' @param md Character.  A vector of character strings which contains
 ##' the metadata.
 ##'
-##' @param NMR Logical. Is this NMR data?
+##' @param mode The type of data being extracted; one of c("IR", "NMR", "NMR2D").
 ##'
 ##' @param SOFC Logical. Stop on Failed Check.   See \code{\link{readJDX}} for details.
 ##'
@@ -19,9 +19,9 @@
 ##' 
 ##' @noRd
 ##'
-extractParams <- function (md, NMR, SOFC, debug = 0){
+extractParams <- function (md, mode, SOFC, debug = 0){
 
-	if (!NMR) {
+	if (mode == "IR") {
 		
 		# The following parameters must be found
 		
@@ -80,9 +80,9 @@ extractParams <- function (md, NMR, SOFC, debug = 0){
 			print(params)
 			}
 	
-		} # end of !NMR
+		} # end of mode == IR
 
-	if (NMR)	 {
+	if (mode == "NMR")	 {
 		
 		# This section needs the EU conversion; watch out for strsplit choice
 		# No parameters in this section can be skipped via SOFC
@@ -144,7 +144,64 @@ extractParams <- function (md, NMR, SOFC, debug = 0){
 
 		if ((pointsX != pointsR) | (pointsX != pointsI)) stop("No. of frequency, real, imaginary points are not the same")
 
-		} # end of NMR
+		} # end of mode == "NMR"
 	
+	if (mode == "NMR2D")	 {
+		
+		# This section needs the EU conversion; watch out for strsplit choice
+		# No parameters in this section can be skipped via SOFC
+		
+		npoints <- grep("^\\s*##VAR(\\s{1}|_)DIM\\s*=", md)
+		# JEOL seems to use a space, not underscore
+		if (npoints == 0) stop("Couldn't find VAR_DIM")
+		npoints <- md[npoints]
+		npoints <- sub("^\\s*##VAR(\\s{1}|_)DIM\\s*=", replacement = "", npoints)
+		npoints <- as.numeric(unlist(strsplit(npoints, ",")))
+		npoints <- npoints[-length(npoints)]
+
+		firsts <- grep("^\\s*##FIRST\\s*=", md)
+		if (length(firsts) == 0) stop("Couldn't find FIRST")
+		firsts <- md[firsts]
+		firsts <- sub("^\\s*##FIRST\\s*=", replacement = "", firsts)
+		firsts <- as.numeric(unlist(strsplit(firsts, ",")))
+		firsts <- firsts[-length(firsts)]
+
+		lasts <- grep("^\\s*##LAST\\s*=", md)
+		if (lasts == 0) stop("Couldn't find LAST")
+		lasts <- md[lasts]
+		lasts <- sub("^\\s*##LAST\\s*=", replacement = "", lasts)
+		lasts <- as.numeric(unlist(strsplit(lasts, ",")))
+
+		factors <- grep("^\\s*##FACTOR\\s*=", md)
+		if (factors == 0) stop("Couldn't find FACTOR")
+		factors <- md[factors]
+		factors <- sub("^\\s*##FACTOR\\s*=", replacement = "", factors)
+		factors <- as.numeric(unlist(strsplit(factors, ",")))
+		
+		pointsF1 <- npoints[1]
+		pointsF2 <- npoints[2]
+
+		firstF1 <- firsts[1]
+		firstF2 <- firsts[2]
+
+		lastF1 <- lasts[1]
+		lastF2 <- lasts[2]
+
+		factorF1 <- factors[1]
+		factorF2 <- factors[2]
+		factorZ <- factors[3]
+		
+		params <- c(as.numeric(pointsF1), as.numeric(pointsF2),
+			firstF1, firstF2, lastF1, lastF2, factorF1, factorF2, factorZ)
+		names(params) <- c("pointsF1", "pointsF2", "firstF1", "firstF2",
+			"lastF1", "lastF2", "factorF1", "factorF2", "factorZ")
+			
+		if (debug >= 1) {
+			message("Extracted parameters:")
+			print(params)
+			}
+
+		} # end of mode == "NMR2D"
+		
 	return(params)
 	} # end of extractParams
