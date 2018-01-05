@@ -9,7 +9,8 @@
 ##' line giving the type of data (e.g. XYY, XRR, XII).
 ##'
 ##' @param params Numeric. Vector of parameters extracted from file header.
-##' NMR parameters are not the same as non-NMR parameters.
+##'
+##' @param mode Character. One of c("IR", "NMR", "NMR2D")
 ##'
 ##' @param debug Integer.  See \code{\link{readJDX}} for details.
 ##'
@@ -23,7 +24,7 @@
 ##'
 ##' @noRd
 
-decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
+decompressJDXxyy <- function (dt, params, mode, SOFC, debug = 0, nlmd) {
 		
 	# For XYY, each line of the data table begins with a frequency
 	# followed by the y values in various compressed formats.
@@ -37,6 +38,7 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 	if (type == "XRR") {if (debug >= 1) message("\nProcessing real data...")}
 	if (type == "XII") {if (debug >= 1) message("\nProcessing imaginary data...")}
 	if (type == "XYY") {if (debug >= 1) message("\nProcessing data table...")}
+	if (type == "F2") {if (debug >= 1) message("\nProcessing F2 spectra...")}
 
 	### Split each line of dt in an x part and y part
 	
@@ -188,17 +190,15 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 			}
 				
 		yValues <- yValues[-1]
-		}				
+		}
+						
 	} # end of !"AFFN"	
  	
  	ytol <- 0.0001*diff(range(yValues))
 
 	### Check the integrity of the results
-		
-	NMR <- FALSE
-	if (length(params) == 12) NMR <- TRUE
-	
-	if (!NMR) {
+			
+	if (mode == "IR") {
 		
 		# Check that we got the right number of y values
 		
@@ -251,9 +251,9 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 		xValues <- seq(firstX, lastX, by = dx)
 		yValues <- yValues*factorY
 		
-		} # end of !NMR
+		} # end of mode = "IR"
 		
-	if (NMR) {
+	if (mode == "NMR") {
 		
 		pointsX <- as.integer(params[1])
 		pointsR <- as.integer(params[2])
@@ -335,9 +335,56 @@ decompressJDXxyy <- function (dt, params, debug = 0, nlmd, SOFC) {
 		dx <- (lastX-firstX)/(pointsX - 1)
 		xValues <- seq(firstX, lastX, by = dx)
 
-		} # end of NMR
+		} # end of mode = "NMR"
 		
+	if (mode == "NMR2D") {
+		
+		pointsF1 <- as.integer(params[1])
+		pointsF2 <- as.integer(params[2])
+		firstF1 <- params[3]
+		firstF2 <- params[4]
+		lastF1 <- params[5]
+		lastF2 <- params[6]
+		factorF1 <- params[7]
+		factorF2 <- params[8]
+		factorZ <- params[9]
+		
+		if (debug >= 1) cat("\nNo. F2 points from metadata =", pointsF2, "\n")
+		if (debug >= 1) cat("Actual F2 points found  =", length(yValues), "\n")
+		
+		if (pointsF2 != length(yValues)) stop("Data points found != data points in metadata")
+				
+		# Check first and last xValues (saved earlier).  The standard is ambiguous about doing this,
+		# but out of an abundance of caution we will do it.
+		
+		if (!isTRUE(all.equal(firstXcheck*factorF2, firstF2, check.names = FALSE, tolerance = xtol))) {
+			cat("First F2 value from data table:", firstXcheck*factorF2, "\n")
+			cat("First F2 value from metadata:", firstF2, "\n")
+			stop("Error parsing xValues (firstF2)")
+			}			
+		
+		# Do a lastX check if DIF format (where there is a check point)
+		
+		if ("DIF" %in% fmt) {
+			if (!isTRUE(all.equal(lastXcheck*factorF2, lastF2, check.names = FALSE, tolerance = xtol))) {
+				cat("Last F2 value from data table:", lastXcheck*factorF2, "\n")
+				cat("Last F2 value from metadata:", lastF2, "\n")
+				stop("Error parsing xValues (lastF2)")
+				}
+			}
+				
+		# There is a poorly-documented check of the first y value in the 2D NMR format.
+		# For the time-being we will not do the check, as it only checks one value.
+			
+		yValues = yValues*factorZ
+						
+		# Compute xValues based on params (see notes earlier)
+		
+		dx <- (lastF2-firstF2)/(pointsF2 - 1)
+		xValues <- seq(firstF2, lastF2, by = dx)
 
+		} # end of mode = "NMR2D"
+		
 	### And we're done...
 	
 	xydata <-data.frame(x = xValues, y = yValues)

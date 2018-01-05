@@ -34,15 +34,29 @@ stop execution, you get additional information regardless of
 the \code{debug} value.}
 }
 \value{
-A list.  The first element is the file metadata.  Additional elements
-contain the extracted \code{x,y} data in one or more data frames as follows.
-If the file contains multiple spectra
+A list.  The first element is a guide to the structure of the file,
+followed by the file metadata.  Additional elements
+contain the extracted \code{x,y} data as follows:
+
+\itemize{
+
+\item If the file contains multiple spectra
 (not currently supported), there will be one data frame for each spectrum.
-If the file contains the real and imaginary
+
+\item If the file contains the real and imaginary
 parts of a 1D NMR spectrum, there will be two data frames, one containing the real portion
-and the other the imaginary portion.  If the file contains one non-NMR spectrum,
-a single data frame will be returned.  In all cases the data frame has
+and the other the imaginary portion.
+
+\item If the file contains one non-NMR spectrum,
+a single data frame will be returned.
+
+\item In all cases above, the data frame has
 elements \code{x} and \code{y}.
+
+\item In the case of 2D NMR data, additional list elements are returned including
+the F2 frequency values, the F1 frequency values, and a matrix containing the 2D data.
+
+}
 }
 \description{
 This is the function users should call, and supervises the entire import process.
@@ -81,13 +95,13 @@ may be lost but it appears trivial with the current settings.
 \examples{
 sbo <- system.file("extdata", "SBO.jdx", package = "readJDX")
 chk <- readJDX(sbo)
-#plot(chk[[2]]$x, chk[[2]]$y/100, type = "l", main = "Original Smart Balance Spread",
-#	xlab = "wavenumber", ylab = "Percent Transmission")
+plot(chk[[2]]$x, chk[[2]]$y/100, type = "l", main = "Original Smart Balance Spread",
+	xlab = "wavenumber", ylab = "Percent Transmission")
 
 pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
 chk <- readJDX(pcrf)
-#plot(chk[[2]]$x, chk[[2]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
-#	xlab = "ppm", ylab = "Intensity")
+plot(chk[[2]]$x, chk[[2]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
+	xlab = "ppm", ylab = "Intensity")
 
 \dontrun{
 # Line 265 has an N -> G typo.  Try with various levels of debug.

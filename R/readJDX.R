@@ -35,15 +35,29 @@
 ##' stop execution, you get additional information regardless of
 ##' the \code{debug} value.
 ##'
-##' @return A list.  The first element is the file metadata.  Additional elements
-##' contain the extracted \code{x,y} data in one or more data frames as follows.
-##' If the file contains multiple spectra
+##' @return A list.  The first element is a guide to the structure of the file,
+##' followed by the file metadata.  Additional elements
+##' contain the extracted \code{x,y} data as follows:
+##'
+##' \itemize{
+##'
+##' \item If the file contains multiple spectra
 ##' (not currently supported), there will be one data frame for each spectrum.
-##' If the file contains the real and imaginary
+##'
+##' \item If the file contains the real and imaginary
 ##' parts of a 1D NMR spectrum, there will be two data frames, one containing the real portion
-##' and the other the imaginary portion.  If the file contains one non-NMR spectrum,
-##' a single data frame will be returned.  In all cases the data frame has
+##' and the other the imaginary portion.
+##' 
+##' \item If the file contains one non-NMR spectrum,
+##' a single data frame will be returned.
+##'
+##' \item In all cases above, the data frame has
 ##' elements \code{x} and \code{y}.
+##'
+##' \item In the case of 2D NMR data, additional list elements are returned including
+##' the F2 frequency values, the F1 frequency values, and a matrix containing the 2D data.
+##'
+##' }
 ##'
 ##' @seealso Do \code{browseVignettes("readJCAMPDX")} for background information,
 ##' references and supported formats.
@@ -76,13 +90,13 @@
 ##' @examples
 ##' sbo <- system.file("extdata", "SBO.jdx", package = "readJDX")
 ##' chk <- readJDX(sbo)
-##' #plot(chk[[2]]$x, chk[[2]]$y/100, type = "l", main = "Original Smart Balance Spread",
-##' #	xlab = "wavenumber", ylab = "Percent Transmission")
+##' plot(chk[[2]]$x, chk[[2]]$y/100, type = "l", main = "Original Smart Balance Spread",
+##' 	xlab = "wavenumber", ylab = "Percent Transmission")
 ##' 
 ##' pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
 ##' chk <- readJDX(pcrf)
-##' #plot(chk[[2]]$x, chk[[2]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
-##' #	xlab = "ppm", ylab = "Intensity")
+##' plot(chk[[2]]$x, chk[[2]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
+##' 	xlab = "ppm", ylab = "Intensity")
 ##' 
 ##' \dontrun{
 ##' # Line 265 has an N -> G typo.  Try with various levels of debug.
@@ -107,11 +121,9 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 	# A data block consists of ##TITLE= up to ##END=
 	# However, link blocks can be used to contain data blocks, in which
 	# case one has a compound file.  I have never seen this in the wild.
-	# 2D NMR data sets use a different format.
+	# Link blocks are not supported. 2D NMR data sets use a different format.
 	
-	# Consider searching for something more robust.
-	
-	IR <- TRUE # until proven otherwise
+	IR <- TRUE # until proven otherwise; IR stands in Raman, UV, etc
 	NMR <- FALSE
 	NMR2D <- FALSE
 	
@@ -130,49 +142,52 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 ##### Step 2. Locate the parameters and the data table(s)
 ##### Store each separately as a list element
 
-	dblist <- findDataTables(jdx, file, debug)
-	nlmd <- lengths(dblist) # save for other functions: will allow debug reporting by original line no.
-	
-	# Get the string that comes after title, and use that as the name
-	# in the returned list.
-	# This code could be moved to findDataTables at some point.
-	
-	if (IR) {
-		specnames <- jdx[blocks] # each line with title
-		specnames <- str_trim(substring(specnames, 9, nchar(specnames)))
-		}
-		
-	if (NMR) specnames <- c("real", "imaginary")
-	#if (NMR2D) specnames <- c("real", "imaginary") # WILL NEED THIS
-	
-	specnames <- c("metadata", specnames)
-	# if (length(specnames) != nb+1) stop("Something went setting up the data list")
-	names(dblist) <- specnames
-	
-	# Remove comment-only lines from the data tables (these mess up processing later)
-	# They also pose challenges for reporting errors by original line no.
-	
-	toss <- 0L
-	for (i in 2:length(dblist)) {
-		tmp <- grep("^\\$\\$", dblist[[i]])
-		toss <- c(toss, length(tmp))
-		if (length(tmp) != 0) dblist[[i]] <- dblist[[i]][-tmp]
-		}
-		
-##### Step 3. Extract the needed parameters
-
 	if (IR) mode <- "IR"
 	if (NMR) mode <- "NMR"
 	if (NMR2D) mode <- "NMR2D"
-	params <- extractParams(dblist[[1]], mode, SOFC, debug)
 	
-	return(dblist)
-	
-##### Step 4.  Process the data table(s)
+	dblist <- findDataTables(jdx, file, debug)
+			
+##### Step 3. Extract the needed parameters
 
-	for (i in 2:length(dblist)) dblist[[i]] <- {
-		processDataTable(dblist[[i]], params, debug, sum(nlmd[1:(i-1)])+toss[i], SOFC)
+	params <- extractParams(dblist[[2]], mode, SOFC, debug)
+		
+##### Step 4.  Process the data table(s) into the final lists
+
+	if ((mode == "IR") | (mode == "NMR")) {
+		# Return value is a list: dataGuide, metadata + data frames of x, y
+		# metadata already in place; process each data table
+		for (i in 3:length(dblist)) {
+			dblist[[i]] <- processDataTable(dblist[[i]], params, mode, SOFC, debug, 0)
 		}
+
+		# Fix up names
+		if (mode == "IR") {
+			specnames <- jdx[blocks] # each line with title
+			specnames <- str_trim(substring(specnames, 9, nchar(specnames)))		
+		}
+
+		if (mode == "NMR") specnames <- c("real", "imaginary")
+	
+		names(dblist) <- c("dataGuide", "metadata", specnames)
+	}
+
+		
+	if (mode == "NMR2D") {
+		# Return value is a list: dataGuide, metadata, F2, F1, + a matrix w/2D data
+		# dataGuide & metadata already in place; add F2, F1, M and drop extra stuff
+		M <- matrix(NA_real_, ncol = params[2], nrow = params[1]) # matrix to store result
+		for (i in 3:length(dblist)) {
+			tmp <- processDataTable(dblist[[i]], params, mode, SOFC, debug, nlmd = 0)
+			M[i,] <- tmp$y
+		}
+		# Update dblist
+		dblist[[3]] <- seq(params[4], params[6], length.out = params[2]) # add F2
+		dblist[[4]] <- seq(params[3], params[5], length.out = params[1]) # add F1
+		dblist[[5]] <- M
+		dblist <- dblist[1:5] # toss the other stuff
+		names(dblist) <- c("dataGuide", "metadata", "F2", "F1", "Matrix")
+	}
 		
 ##### And we're done!
 

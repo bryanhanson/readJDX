@@ -11,6 +11,8 @@
 ##'
 ##' @param params Numeric. Vector of parameters from file header.
 ##'
+##' @param mode Character. One of c("IR", "NMR", "NMR2D")
+##'
 ##' @param debug Integer.  See \code{\link{readJDX}} for details.
 ##'
 ##' @param nlmd Integer.  The number of lines of meta data.  Used in debug reporting.
@@ -20,17 +22,18 @@
 ##' @return A data frame with elements $x$ and $y$.
 ##' 
 ##' @noRd
-processDataTable <- function (dt, params, debug = 0, nlmd, SOFC){
+processDataTable <- function (dt, params, mode, SOFC, debug = 0, nlmd){
 
 	# This function is supervisory, does no real work
 	
 	fmt <- dt[1] # Get the format & dispatch based on it
 	
-	if ((fmt == "XRR") | (fmt == "XII")) fmt <- "XYY"
+	if ((fmt == "XRR") | (fmt == "XII") | (fmt == "F2")) fmt <- "XYY"
 	
-	if (fmt == "XYY") xydata <- decompressJDXxyy(dt, params, debug, nlmd, SOFC)
-	
-	# Add other variable list formats here
-		
-	return(xydata)	
+	if (fmt == "XYY") {
+		xydata <- decompressJDXxyy(dt, params, mode, SOFC, debug, nlmd)
+		return(xydata)
+	}
+				
+	stop("Did not find a valid format")	# Should never reach this line...
 	}

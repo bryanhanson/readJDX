@@ -8,7 +8,7 @@
 ##' @param md Character.  A vector of character strings which contains
 ##' the metadata.
 ##'
-##' @param mode The type of data being extracted; one of c("IR", "NMR", "NMR2D").
+##' @param mode Character. One of c("IR", "NMR", "NMR2D").
 ##'
 ##' @param SOFC Logical. Stop on Failed Check.   See \code{\link{readJDX}} for details.
 ##'
@@ -148,8 +148,8 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 	
 	if (mode == "NMR2D")	 {
 		
-		# This section needs the EU conversion; watch out for strsplit choice
-		# No parameters in this section can be skipped via SOFC
+		# This section needs the EU conversion; watch out for strsplit choice ???
+		# No parameters in this section can be skipped via SOFC ???
 		
 		npoints <- grep("^\\s*##VAR(\\s{1}|_)DIM\\s*=", md)
 		# JEOL seems to use a space, not underscore
