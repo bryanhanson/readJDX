@@ -90,12 +90,12 @@
 ##' @examples
 ##' sbo <- system.file("extdata", "SBO.jdx", package = "readJDX")
 ##' chk <- readJDX(sbo)
-##' plot(chk[[2]]$x, chk[[2]]$y/100, type = "l", main = "Original Smart Balance Spread",
+##' plot(chk[[3]]$x, chk[[3]]$y/100, type = "l", main = "Original Smart Balance Spread",
 ##' 	xlab = "wavenumber", ylab = "Percent Transmission")
 ##' 
 ##' pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
 ##' chk <- readJDX(pcrf)
-##' plot(chk[[2]]$x, chk[[2]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
+##' plot(chk[[3]]$x, chk[[3]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
 ##' 	xlab = "ppm", ylab = "Intensity")
 ##' 
 ##' \dontrun{
@@ -154,11 +154,13 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 		
 ##### Step 4.  Process the data table(s) into the final lists
 
+#return(dblist)
+
 	if ((mode == "IR") | (mode == "NMR")) {
 		# Return value is a list: dataGuide, metadata + data frames of x, y
-		# metadata already in place; process each data table
+		# dataGuide & metadata already in place; process each data table
 		for (i in 3:length(dblist)) {
-			dblist[[i]] <- processDataTable(dblist[[i]], params, mode, SOFC, debug, 0)
+			dblist[[i]] <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-1, c(2,3)], SOFC, debug)
 		}
 
 		# Fix up names
@@ -177,9 +179,15 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 		# Return value is a list: dataGuide, metadata, F2, F1, + a matrix w/2D data
 		# dataGuide & metadata already in place; add F2, F1, M and drop extra stuff
 		M <- matrix(NA_real_, ncol = params[2], nrow = params[1]) # matrix to store result
+		
 		for (i in 3:length(dblist)) {
-			tmp <- processDataTable(dblist[[i]], params, mode, SOFC, debug, nlmd = 0)
-			M[i,] <- tmp$y
+			tmp <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-1, c(2,3)], SOFC, debug)
+			
+			print(dim(M))
+			print(i)
+			print(length(tmp$y))
+			
+			M[i-2,] <- tmp$y
 		}
 		# Update dblist
 		dblist[[3]] <- seq(params[4], params[6], length.out = params[2]) # add F2

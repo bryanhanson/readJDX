@@ -95,12 +95,12 @@ may be lost but it appears trivial with the current settings.
 \examples{
 sbo <- system.file("extdata", "SBO.jdx", package = "readJDX")
 chk <- readJDX(sbo)
-plot(chk[[2]]$x, chk[[2]]$y/100, type = "l", main = "Original Smart Balance Spread",
+plot(chk[[3]]$x, chk[[3]]$y/100, type = "l", main = "Original Smart Balance Spread",
 	xlab = "wavenumber", ylab = "Percent Transmission")
 
 pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
 chk <- readJDX(pcrf)
-plot(chk[[2]]$x, chk[[2]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
+plot(chk[[3]]$x, chk[[3]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
 	xlab = "ppm", ylab = "Intensity")
 
 \dontrun{

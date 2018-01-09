@@ -10,13 +10,14 @@
 ##'
 ##' @param debug Integer.  See \code{\link{readJDX}} for details.
 ##'
-##' @param nlmd Integer.  The number of lines of meta data.  Used in debug reporting.
+##' @param params lineNos. A vector containing the original line numbers of this
+##'        data table in the original file.  Used for debugging responses.
 ##'
 ##' @return A string.
 ##' 
 ##' @noRd
 
-insertDUPs <- function(string, debug, nlmd) {					
+insertDUPs <- function(string, lineNos, debug) {					
 	# Take a character vector with DUPs and expand them.
 	# This function will not be efficient b/c we don't know the final length
 	# in advance
@@ -34,7 +35,8 @@ insertDUPs <- function(string, debug, nlmd) {
 	if ((debug == 3) | (debug == 4)) {
 		message("Finding and expanding DUP codes")
 		cat("DUPs found on the following lines of the original file:\n")
-		print(dup + nlmd)
+		print(lineNos[dup])
+		print(string[dup])
 		cat("\n")
 		}
 	
@@ -63,9 +65,9 @@ insertDUPs <- function(string, debug, nlmd) {
 					}
 				}
 			if (debug == 4) {
-				cat("\nOriginal line:", i + nlmd, "\n")
+				cat("\nOriginal line:", lineNos[i], "\n")
 				cat("\t", line, "\n")
-				cat("\nLine", i + nlmd, "with DUPs inserted:\n")
+				cat("\nLine", lineNos[i], "with DUPs inserted:\n")
 				cat("\t", newline[-1], "\n")
 				cat("\n--------------------\n")
 				}

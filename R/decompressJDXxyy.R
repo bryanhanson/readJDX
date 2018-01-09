@@ -10,11 +10,12 @@
 ##'
 ##' @param params Numeric. Vector of parameters extracted from file header.
 ##'
+##' @param params lineNos. A vector containing the original line numbers of this
+##'        data table in the original file.  Used for debugging responses.
+##'
 ##' @param mode Character. One of c("IR", "NMR", "NMR2D")
 ##'
 ##' @param debug Integer.  See \code{\link{readJDX}} for details.
-##'
-##' @param nlmd Integer.  The number of lines of meta data.  Used in debug reporting.
 ##'
 ##' @param SOFC Logical.  See \code{\link{readJDX}} for details.
 ##'
@@ -24,9 +25,10 @@
 ##'
 ##' @noRd
 
-decompressJDXxyy <- function (dt, params, mode, SOFC, debug = 0, nlmd) {
-		
-	# For XYY, each line of the data table begins with a frequency
+decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
+	
+	
+	# For XYY, each line of the data table begins with a frequency (x value)
 	# followed by the y values in various compressed formats.
 		
 	# Note that xString and yString are pieces corresponding to the individual lines
@@ -34,17 +36,27 @@ decompressJDXxyy <- function (dt, params, mode, SOFC, debug = 0, nlmd) {
 	
 	type <- dt[1]
 	dt <- dt[-1]
+		
+	if (length(dt) != length(lineNos)) stop("lineNos doesn't match data table")
 	
 	if (type == "XRR") {if (debug >= 1) message("\nProcessing real data...")}
 	if (type == "XII") {if (debug >= 1) message("\nProcessing imaginary data...")}
 	if (type == "XYY") {if (debug >= 1) message("\nProcessing data table...")}
-	if (type == "F2") {if (debug >= 1) message("\nProcessing F2 spectra...")}
+	if (type == "F2") {
+		if (debug >= 1) {
+			message("\nProcessing F2 spectra...")
+			message("\n", dt[1])
+		}
+		dt <- dt[-1] # Remove e.g. ##PAGE= F1= 4.7865152724775
+		lineNos <- lineNos[-1] # Now just numbers remain to be processed
+		}
 
 	### Split each line of dt in an x part and y part
 	
 	numpat <- "[0-9]+[.,]?[0-9]*\\s*" # , needed for EU format (also need to pick up integers)
 	xString <- yString <- rep(NA_character_, length(dt))
 	for (i in 1:length(dt)) {
+		if (grepl("^\\$\\$", dt[i])) next # skip over comment (probably not necessary here)
 		pos <- str_locate(dt[i], numpat)[1,2]
 		xString[i] <- substring(dt[i], 1, pos)
 		yString[i] <- substring(dt[i], pos + 1, nchar(dt[i]))
@@ -71,7 +83,7 @@ decompressJDXxyy <- function (dt, params, mode, SOFC, debug = 0, nlmd) {
 	if (debug == 2) { # stop and report each line if requested (huge!)
 		message("Here come the raw x values, line by line from the file")
 		for (i in 1:length(xValues)) {
-			cat("\nParsing line", i + nlmd, "for x values\n")
+			cat("\nParsing line", lineNos[i], "for x values\n")
 			cat("\tx value (character):", tmp[i], "\n")
 			cat("\tx value (numeric):", xValues[i], "\n")
 			}
@@ -79,8 +91,9 @@ decompressJDXxyy <- function (dt, params, mode, SOFC, debug = 0, nlmd) {
 	
 	# Save the first and last xValues for checking in a bit
 	firstXcheck <- xValues[1]
-	lastXcheck <- xValues[length(xValues)]
-	xtol <- 0.0001*diff(range(xValues))
+#	lastXcheck <- xValues[length(xValues)]
+	lastXcheck <- xValues[length(xValues[!is.na(xValues)])] # Clunky work around for comments -> NA
+	xtol <- 0.0001*diff(range(xValues, na.rm = TRUE)) # Comments lead to NAs
 	
 	# The standard requires that
 	# each line in the data table be checked to make sure no lines were skipped or dupped.
@@ -149,7 +162,7 @@ decompressJDXxyy <- function (dt, params, mode, SOFC, debug = 0, nlmd) {
 		yString <- gsub("([S-Zs])", " \\1 ", yString)
 
  		# Check for DUP pseudo-digits and process if found.  This must be done first!
- 		if ("DUP" %in% fmt) yString <- insertDUPs(yString, debug, nlmd)
+ 		if ("DUP" %in% fmt) yString <- insertDUPs(yString, lineNos, debug = debug)
 
 		# Now process SQZ	
  		if ("SQZ" %in% fmt) yString <- unSQZ(yString) # if pure SQZ this is sufficient
@@ -158,7 +171,7 @@ decompressJDXxyy <- function (dt, params, mode, SOFC, debug = 0, nlmd) {
 		# Done last, since only now do we have a number at what was the beginning of the line
 		
  		if ("DIF" %in% fmt) {
-  			yValues <- deDIF(yString, debug, nlmd) #  Returns a numeric vector
+  			yValues <- deDIF(yString, lineNos, debug) #  Returns a numeric vector
  			# deDIF has it's own error checking, problems there will stop there.
 			NUM <- TRUE
 			}
@@ -181,7 +194,7 @@ decompressJDXxyy <- function (dt, params, mode, SOFC, debug = 0, nlmd) {
 			ytmp <- as.numeric(ytmp)
 						
 			if (any(is.na(ytmp))) {
-				message("Problem: NA found at line no: ", i + nlmd, "!\n")
+				message("Problem: NA found at line no: ", lineNos[i], "!\n")
 				print(ytmp)
 				stop("Conversion to numeric introduced NA")
 				}

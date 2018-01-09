@@ -164,7 +164,7 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 		firsts <- md[firsts]
 		firsts <- sub("^\\s*##FIRST\\s*=", replacement = "", firsts)
 		firsts <- as.numeric(unlist(strsplit(firsts, ",")))
-		firsts <- firsts[-length(firsts)]
+		#firsts <- firsts[-length(firsts)]
 
 		lasts <- grep("^\\s*##LAST\\s*=", md)
 		if (lasts == 0) stop("Couldn't find LAST")

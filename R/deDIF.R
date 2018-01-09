@@ -9,13 +9,11 @@
 ##'
 ##' @param debug Integer.  See \code{\link{readJDX}} for details.
 ##'
-##' @param nlmd Integer.  The number of lines of meta data.  Used in debug reporting.
-##'
 ##' @return A numeric vector.
 ##' 
 ##' @noRd
 ##'
-deDIF <- function(string, debug, nlmd) {
+deDIF <- function(string, lineNos, debug) {
 	
 	# The JCAMP std states that in DIF form the first entry on a line
 	# is an X value (already removed here), the 2nd value is in SQZ form
@@ -39,7 +37,7 @@ deDIF <- function(string, debug, nlmd) {
 	string <- as.list(string)
 	FUN <- function(x) {unlist(strsplit(x, "\\s+"))}
 	string <- lapply(string, FUN)
-	names(string) <- paste("Line", nlmd + 1:length(string), sep = "_")
+	names(string) <- paste("Line", lineNos, sep = "_")
 	
 	if ((debug == 3) | (debug ==4)) message("Undoing DIF compression\n")
 	
@@ -79,14 +77,15 @@ deDIF <- function(string, debug, nlmd) {
 	last <- unlist(lapply(yValues, fun), use.names = FALSE)
 		
 	for (i in 2:length(first)) {
+		if (is.na(first[i])) next # These originate from comment lines e.g. Bruker NMR
 		ychk <- isTRUE(all.equal(first[i], last[i-1]))
 		if (!ychk) {
 			msg <- "\nY value check failed; nearby values:"
 			message(msg)
-			if (i <= 5) rpt <- 1:5
+			if (i <= 5) rpt <- 2:6
 			if (i >= 6) rpt <- (i-2):(i+2)
 			if (i >= (length(first) - 2)) rpt <- (length(first) - 5):length(first)
-			DF <- data.frame(Line = rpt + nlmd,
+			DF <- data.frame(Line = lineNos[rpt],
 				FirstYonLine = first[rpt], LastYonPrevLine = last[rpt-1],
 				Problem = ifelse(first[rpt] == last[rpt-1], "", "*"))
 			print(DF)
