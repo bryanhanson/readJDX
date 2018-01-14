@@ -3,9 +3,9 @@ NEWS file for package readJDX
 Import data in the JCAMP-DX format.
 URL: github.com/bryanhanson/readJDX
 
-Changes in version 0.3.???
-     + The following changes are in progress:
-     + Will now read 2D NMR spectra in NTUPLES format.
+Changes in version 0.3.103 2017-01-13
+     + Return structure now includes a data guide giving the lines where each piece of the file was parsed (improves error reporting, but needs further tweaking).
+     + Will now read 2D NMR spectra in NTUPLES format (at least in the only case I have available right now).
      + Updated vignette to pinp style.  
 
 Changes in version 0.2.1 2016-12-21

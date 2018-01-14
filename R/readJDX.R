@@ -182,11 +182,6 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 		
 		for (i in 3:length(dblist)) {
 			tmp <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-1, c(2,3)], SOFC, debug)
-			
-			print(dim(M))
-			print(i)
-			print(length(tmp$y))
-			
 			M[i-2,] <- tmp$y
 		}
 		# Update dblist

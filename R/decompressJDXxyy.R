@@ -108,14 +108,18 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	NUM <- FALSE # flag to indicate we now have a numeric vector "answer"
 
  	yString <- gsub(",", ".", yString) # Replace ',' with '.' for EU style files
-
-	fmt <- getJDXcompression(yString, debug = debug) # Get the compression format
 	
 	# Check to see if yString has any comments in it: $$
 	# remove it and any following characters if found
 	
 	yString <- gsub("\\$\\$.*", "", yString)
 	
+	# And, be sure there are no NA's present (clunky; seems to be related to comments)
+	
+	yString[is.na(yString)] <- " " # Cannot just delete
+	
+	fmt <- getJDXcompression(yString, debug = debug) # Get the compression format
+		
 	# Now deal with the various compression options
 	
 	# Note AFFN is separated by any amount of white space so no special action needed,
