@@ -56,7 +56,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	numpat <- "[0-9]+[.,]?[0-9]*\\s*" # , needed for EU format (also need to pick up integers)
 	xString <- yString <- rep(NA_character_, length(dt))
 	for (i in 1:length(dt)) {
-		if (grepl("^\\$\\$", dt[i])) next # skip over comment (probably not necessary here)
+		if (grepl("^\\$\\$", dt[i])) next # skip over comment only line, NA remains
 		pos <- str_locate(dt[i], numpat)[1,2]
 		xString[i] <- substring(dt[i], 1, pos)
 		yString[i] <- substring(dt[i], pos + 1, nchar(dt[i]))
@@ -72,13 +72,13 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	# checked for integrity (but see later for a work-around).
 	
 	# Important: these xValues are only used to verify parsing is correct,
-	# e.g. there were no characters caught and no NA generated.
+	# e.g. there were no alpha characters caught and no NA generated when doing as.numeric.
 	# They are not used to construct the actual x values, that is done at
 	# the very end using the parameters.
 	
-	tmp <- xString # hold for debug reporting
+	tmp <- xString # copy for debug reporting
 	xString <- gsub(",", ".", xString) # replace ',' with '.' -- needed for EU style files
-	xValues <- as.numeric(xString)
+	xValues <- as.numeric(xString) # NA from comments remain
 	
 	if (debug == 2) { # stop and report each line if requested (huge!)
 		message("Here come the raw x values, line by line from the file")
@@ -91,42 +91,38 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	
 	# Save the first and last xValues for checking in a bit
 	firstXcheck <- xValues[1]
-#	lastXcheck <- xValues[length(xValues)]
-	lastXcheck <- xValues[length(xValues[!is.na(xValues)])] # Clunky work around for comments -> NA
+	
+	lastXcheck <- xValues[length(xValues)]
 	xtol <- 0.0001*diff(range(xValues, na.rm = TRUE)) # Comments lead to NAs
 	
-	# The standard requires that
-	# each line in the data table be checked to make sure no lines were skipped or dupped.
+	# The standard requires that each line in the data table be checked to make
+	# sure no lines were skipped or duplicated.
 		
-	if (anyDuplicated(xValues)) stop("Data table appears to have duplicated lines")
+	if (anyDuplicated(xValues[!is.na(xValues)])) stop("Data table appears to have duplicated lines")
 	# Technically, this next line compares the row count, not the actual number of x and y values
 	if (length(yString) != length(xValues)) stop("The number of x values and y values aren't the same")
-	xValues <- NULL # safety mechanism; recomputed at end
+	xValues <- NULL # safety mechanism; recomputed at end at higher resolution
 
 	### Process the y values to numeric
 	
-	NUM <- FALSE # flag to indicate we now have a numeric vector "answer"
+	NUM <- FALSE # flag to indicate we now have a numeric vector "answer" instead of character
 
  	yString <- gsub(",", ".", yString) # Replace ',' with '.' for EU style files
 	
-	# Check to see if yString has any comments in it: $$
-	# remove it and any following characters if found
-	
-	yString <- gsub("\\$\\$.*", "", yString)
-	
-	# And, be sure there are no NA's present (clunky; seems to be related to comments)
-	
-	yString[is.na(yString)] <- " " # Cannot just delete
-	
 	fmt <- getJDXcompression(yString, debug = debug) # Get the compression format
-		
+	
+	# comOnly <- grep("^\\$\\$", yString) # remove comment only lines
+	# if (length(comOnly) > 0) yString <- yString[-comOnly] # This messes up lineNos reporting REMOVE
+	
+	yString <- gsub("\\s*\\$\\$.*", "", yString) # remove comments at end of lines
+
 	# Now deal with the various compression options
 	
 	# Note AFFN is separated by any amount of white space so no special action needed,
 	# can proceed immediately to conversion to numeric, exponents handled automatically,
 	# and white space stripped off automatically.  It appears AFFN is never mixed
 	# with other formats; the other formats are collectively called ASDF in the standard.
-	
+		
 	if ("AFFN" %in% fmt) {
 		yString <- paste(yString, collapse = " ") # turn into one long string
 		yString <- strsplit(yString, split = " ")
@@ -139,8 +135,8 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	if (!"AFFN" %in% fmt) {
 		# Break into pieces corresponding to individual numbers by inserting spaces
 		
-		# This PAC approach will not catch 123-j123 
 		# Put space ahead of +|- signs (PAC)
+		# This PAC approach will not catch 123-j123 
 		yString <- gsub("(\\+|-)([0-9]+)", " \\1\\2", yString)
 		
 		# Put space ahead of SQZ codes preceeded by a number
@@ -173,6 +169,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 			
 		# Finally, take care of any DIFs
 		# Done last, since only now do we have a number at what was the beginning of the line
+		# However, at this point, we are still dealing with character strings, not numbers
 		
  		if ("DIF" %in% fmt) {
   			yValues <- deDIF(yString, lineNos, debug) #  Returns a numeric vector
@@ -180,9 +177,9 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 			NUM <- TRUE
 			}
 
-		# At this point, PAC needs no special handling, other formats have been handled
-		# Convert to numeric, if !DIF
-		
+		# At this point, PAC needs no special handling, other formats have been converted to
+		# numbers as characters except for DIF which is numeric
+
 	if (!NUM) {
 
 		# Do things one step at a time and combine at the end.
@@ -208,10 +205,11 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 				
 		yValues <- yValues[-1]
 		}
-						
+					
+	
 	} # end of !"AFFN"	
  	
- 	ytol <- 0.0001*diff(range(yValues))
+ 	ytol <- 0.0001*diff(range(yValues, na.rm = TRUE))
 
 	### Check the integrity of the results
 			

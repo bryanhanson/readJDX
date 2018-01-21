@@ -16,7 +16,7 @@
 deDIF <- function(string, lineNos, debug) {
 	
 	# The JCAMP std states that in DIF form the first entry on a line
-	# is an X value (already removed here), the 2nd value is in SQZ form
+	# is an X value (already removed), the 2nd value is in SQZ form
 	# and the subsequent values are differences between *adjacent* values:
 	# X, Y1, D1, D2, D3, D4...
 	# corresponding, after conversion, to:
@@ -39,7 +39,7 @@ deDIF <- function(string, lineNos, debug) {
 	string <- lapply(string, FUN)
 	names(string) <- paste("Line", lineNos, sep = "_")
 	
-	if ((debug == 3) | (debug ==4)) message("Undoing DIF compression\n")
+	if ((debug == 3) | (debug == 4)) message("Undoing DIF compression\n")
 	
 	if (debug == 5) {
 		message("First 5 lines of data table (step 1 in deDIF):")
@@ -69,7 +69,7 @@ deDIF <- function(string, lineNos, debug) {
 	# First value on a line should = last value on the prev. line.
 	# Names must be stripped for the all.equal check below.
 
-	if ((debug == 3) | (debug ==4)) message("Carrying out y value check")
+	if ((debug == 3) | (debug == 4)) message("Carrying out y value check")
 	
 	fun <- function(x) {x[1]}
 	first <- unlist(lapply(yValues, fun), use.names = FALSE)
@@ -77,7 +77,7 @@ deDIF <- function(string, lineNos, debug) {
 	last <- unlist(lapply(yValues, fun), use.names = FALSE)
 		
 	for (i in 2:length(first)) {
-		if (is.na(first[i])) next # These originate from comment lines e.g. Bruker NMR
+		if (is.na(first[i])) next # These originate from comment only lines e.g. Bruker NMR
 		ychk <- isTRUE(all.equal(first[i], last[i-1]))
 		if (!ychk) {
 			msg <- "\nY value check failed; nearby values:"
@@ -104,6 +104,8 @@ deDIF <- function(string, lineNos, debug) {
 
 	# Step 6: Wrap up and return
 
+	# Note: comments are still NA and lineNos is still correct
+	
 	return(unlist(yValues))		
 	
 	} # end of deDIF

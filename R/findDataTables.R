@@ -8,9 +8,6 @@
 ##' @param jdx Character.  A vector of character strings which hopefully contains
 ##' the data table.  Each string is a line of the complete original file.
 ##'
-##' @param file Character.  The name of the file being processed.  Only used for
-##' debugging output.
-##'
 ##' @param debug Integer.  See \code{\link{readJDX}} for details.
 ##'
 ##' @return A list.  First element is a data frame giving information about the structure of the file.
@@ -21,7 +18,7 @@
 ##'
 ##' @noRd
 ##'
-findDataTables <- function (jdx, file, debug = 0){
+findDataTables <- function (jdx, debug = 0){
 
 	# A data table is defined by a variable list.
 	# The following is structured to make it easy to add other options.
@@ -82,6 +79,11 @@ findDataTables <- function (jdx, file, debug = 0){
 	
 	DF <- data.frame(Format, FirstLine, LastLine, stringsAsFactors = FALSE)
 
+	# Find all comment only lines exclusive of metadata; these cause a variety of problems.  Keep original lineNos
+	
+	comOnly <-  grep("^\\$\\$", jdx)
+	comOnly <- setdiff(comOnly, 1:(spec_st[1]-1))
+	
 	# Up to this point, processing has been generic & spec_st, spec_end reflect grep'ing of patterns
 	# Now we need to tweak things depending upon the format
 	
@@ -90,7 +92,11 @@ findDataTables <- function (jdx, file, debug = 0){
 		if (DF$Format[i] == "XRR") {
 			DF$LastLine[i] <- DF$LastLine[i] - 1
 		}
-
+		
+		# Check to see if the apparent last row(s) of a data table is actually a comment.
+		
+		while(DF$LastLine[i] %in% comOnly) DF$LastLine[i] <- DF$LastLine[i] - 1
+		
 	}
 
 	if (debug >= 1) {
@@ -99,12 +105,13 @@ findDataTables <- function (jdx, file, debug = 0){
 		cat("\n")
 		}
 		
-	dtlist <- vector("list", nrow(DF) + 1)
+	dtlist <- vector("list", nrow(DF) + 2)
 	dtlist[[1]] <- DF # dataGuide
 	dtlist[[2]] <- metadata
+	dtlist[[3]] <- comOnly
 	
-	for (i in 3:length(dtlist)) {
-		dtlist[[i]] <- c(DF$Format[i-1], jdx[DF$FirstLine[i-1]:DF$LastLine[i-1]])
+	for (i in 4:length(dtlist)) {
+		dtlist[[i]] <- c(DF$Format[i-2], jdx[DF$FirstLine[i-2]:DF$LastLine[i-2]])
 	}
 
 	return(dtlist)

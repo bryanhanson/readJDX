@@ -90,12 +90,12 @@
 ##' @examples
 ##' sbo <- system.file("extdata", "SBO.jdx", package = "readJDX")
 ##' chk <- readJDX(sbo)
-##' plot(chk[[3]]$x, chk[[3]]$y/100, type = "l", main = "Original Smart Balance Spread",
+##' plot(chk[[4]]$x, chk[[4]]$y/100, type = "l", main = "Original Smart Balance Spread",
 ##' 	xlab = "wavenumber", ylab = "Percent Transmission")
 ##' 
 ##' pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
 ##' chk <- readJDX(pcrf)
-##' plot(chk[[3]]$x, chk[[3]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
+##' plot(chk[[4]]$x, chk[[4]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
 ##' 	xlab = "ppm", ylab = "Intensity")
 ##' 
 ##' \dontrun{
@@ -146,21 +146,19 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 	if (NMR) mode <- "NMR"
 	if (NMR2D) mode <- "NMR2D"
 	
-	dblist <- findDataTables(jdx, file, debug)
-			
+	dblist <- findDataTables(jdx, debug)
+	
 ##### Step 3. Extract the needed parameters
 
 	params <- extractParams(dblist[[2]], mode, SOFC, debug)
 		
 ##### Step 4.  Process the data table(s) into the final lists
 
-#return(dblist)
-
 	if ((mode == "IR") | (mode == "NMR")) {
-		# Return value is a list: dataGuide, metadata + data frames of x, y
-		# dataGuide & metadata already in place; process each data table
-		for (i in 3:length(dblist)) {
-			dblist[[i]] <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-1, c(2,3)], SOFC, debug)
+		# Return value is a list: dataGuide, metadata, comment lines + data frames of x, y
+		# dataGuide, metadata & comments already in place; process each data table
+		for (i in 4:length(dblist)) {
+			dblist[[i]] <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-2, c(2,3)], SOFC, debug)
 		}
 
 		# Fix up names
@@ -171,16 +169,16 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 
 		if (mode == "NMR") specnames <- c("real", "imaginary")
 	
-		names(dblist) <- c("dataGuide", "metadata", specnames)
+		names(dblist) <- c("dataGuide", "metadata", "commentLines", specnames)
 	}
 
 		
 	if (mode == "NMR2D") {
-		# Return value is a list: dataGuide, metadata, F2, F1, + a matrix w/2D data
-		# dataGuide & metadata already in place; add F2, F1, M and drop extra stuff
+		# Return value is a list: dataGuide, metadata, comment lines, F2, F1, + a matrix w/2D data
+		# dataGuide, metadata & comments already in place; add F2, F1, M and drop extra stuff
 		M <- matrix(NA_real_, ncol = params[2], nrow = params[1]) # matrix to store result
 		
-		for (i in 3:length(dblist)) {
+		for (i in 4:length(dblist)) {
 			tmp <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-1, c(2,3)], SOFC, debug)
 			M[i-2,] <- tmp$y
 		}
@@ -189,7 +187,7 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 		dblist[[4]] <- seq(params[3], params[5], length.out = params[1]) # add F1
 		dblist[[5]] <- M
 		dblist <- dblist[1:5] # toss the other stuff
-		names(dblist) <- c("dataGuide", "metadata", "F2", "F1", "Matrix")
+		names(dblist) <- c("dataGuide", "metadata", "commentLines", "F2", "F1", "Matrix")
 	}
 		
 ##### And we're done!
