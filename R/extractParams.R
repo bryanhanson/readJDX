@@ -14,8 +14,8 @@
 ##'
 ##' @param debug Integer.  See \code{\link{readJDX}} for details.
 ##'
-##' @return A numeric vector containing the extracted parameters.
-##' Contents will be different if NMR data is being processed.
+##' @return A named numeric vector containing the extracted parameters.
+##' Contents will vary by \code{mode}.
 ##' 
 ##' @noRd
 ##'
@@ -84,7 +84,7 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 
 	if (mode == "NMR")	 {
 		
-		# This section needs the EU conversion; watch out for strsplit choice
+		# This section does NOT currently make the EU conversion; watch out for strsplit choice
 		# No parameters in this section can be skipped via SOFC
 		
 		npoints <- grep("^\\s*##VAR(\\s{1}|_)DIM\\s*=", md)
@@ -148,8 +148,8 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 	
 	if (mode == "NMR2D")	 {
 		
-		# This section needs the EU conversion; watch out for strsplit choice ???
-		# No parameters in this section can be skipped via SOFC ???
+		# This section does NOT currently make the EU conversion; watch out for strsplit choice
+		# No parameters in this section can be skipped via SOFC
 		
 		npoints <- grep("^\\s*##VAR(\\s{1}|_)DIM\\s*=", md)
 		# JEOL seems to use a space, not underscore
@@ -164,7 +164,6 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 		firsts <- md[firsts]
 		firsts <- sub("^\\s*##FIRST\\s*=", replacement = "", firsts)
 		firsts <- as.numeric(unlist(strsplit(firsts, ",")))
-		#firsts <- firsts[-length(firsts)]
 
 		lasts <- grep("^\\s*##LAST\\s*=", md)
 		if (lasts == 0) stop("Couldn't find LAST")

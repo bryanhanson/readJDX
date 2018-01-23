@@ -121,7 +121,8 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 	# A data block consists of ##TITLE= up to ##END=
 	# However, link blocks can be used to contain data blocks, in which
 	# case one has a compound file.  I have never seen this in the wild.
-	# Link blocks are not supported. 2D NMR data sets use a different format.
+	# Link blocks are not supported. NMR data sets, including 2D NMR data sets,
+	# use a different scheme to hold multiple data sets.
 	
 	IR <- TRUE # until proven otherwise; IR stands in Raman, UV, etc
 	NMR <- FALSE
@@ -140,14 +141,13 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 	if (debug >= 1) message("\n\nProcessing file ", file, "\n")
 			
 ##### Step 2. Locate the parameters and the data table(s)
-##### Store each separately as a list element
 
 	if (IR) mode <- "IR"
 	if (NMR) mode <- "NMR"
 	if (NMR2D) mode <- "NMR2D"
 	
 	dblist <- findDataTables(jdx, debug)
-	
+		
 ##### Step 3. Extract the needed parameters
 
 	params <- extractParams(dblist[[2]], mode, SOFC, debug)
@@ -157,8 +157,10 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 	if ((mode == "IR") | (mode == "NMR")) {
 		# Return value is a list: dataGuide, metadata, comment lines + data frames of x, y
 		# dataGuide, metadata & comments already in place; process each data table
+
 		for (i in 4:length(dblist)) {
-			dblist[[i]] <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-2, c(2,3)], SOFC, debug)
+			if (i == 4) print(dblist[[1]][i-2, c(2,3)])
+			dblist[[i]] <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-2, c(2,3)], dblist[[3]], SOFC, debug)
 		}
 
 		# Fix up names
@@ -179,14 +181,14 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 		M <- matrix(NA_real_, ncol = params[2], nrow = params[1]) # matrix to store result
 		
 		for (i in 4:length(dblist)) {
-			tmp <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-1, c(2,3)], SOFC, debug)
-			M[i-2,] <- tmp$y
+			tmp <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-2, c(2,3)], dblist[[3]], SOFC, debug)
+			M[i-3,] <- tmp$y
 		}
 		# Update dblist
-		dblist[[3]] <- seq(params[4], params[6], length.out = params[2]) # add F2
-		dblist[[4]] <- seq(params[3], params[5], length.out = params[1]) # add F1
-		dblist[[5]] <- M
-		dblist <- dblist[1:5] # toss the other stuff
+		dblist[[4]] <- seq(params[4], params[6], length.out = params[2]) # add F2
+		dblist[[5]] <- seq(params[3], params[5], length.out = params[1]) # add F1
+		dblist[[6]] <- M
+		dblist <- dblist[1:6] # toss the other stuff
 		names(dblist) <- c("dataGuide", "metadata", "commentLines", "F2", "F1", "Matrix")
 	}
 		
