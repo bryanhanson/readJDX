@@ -1,12 +1,12 @@
 ##'
-##' Locate Data Tables etc in a JCAMP-DX File
+##' Locate Variable Lists and Related Information in a JCAMP-DX File
 ##'
 ##' This function is NOT EXPORTED.
 ##' Users would not normally call this function.  See \code{\link{readJDX}}.
 ##' Documentation is provided for developers wishing to contribute to the package.
 ##' 
 ##' @param jdx Character.  A vector of character strings which hopefully contains
-##' one or more data tables.  Each string is a line of the complete original file.
+##' one or more variable lists.  Each string is a line of the complete original file.
 ##'
 ##' @param debug Integer.  See \code{\link{readJDX}} for details.
 ##'
@@ -16,7 +16,7 @@
 ##'         Format, FirstLine, LastLine.
 ##'   \item The metadata
 ##'   \item The line numbers of comments (excluding comments in the metadata).
-##'   \item Each data table that was found, with the format pre-pended.
+##'   \item Each variable list that was found, with the format pre-pended.
 ##'  }
 ##'
 ##' @importFrom stats na.omit
@@ -70,7 +70,7 @@ findDataTables <- function (jdx, debug = 0){
 	spec_end <- spec_end[-1]
 	fmt <- fmt[-1]
 	
-	if (length(spec_st) == 0) { # Check to see if we actually found any data tables
+	if (length(spec_st) == 0) { # Check to see if we actually found any variable lists
 		fmts <- paste(VL_fmts, collapse = ", ")
 		msg <- paste("Couldn't find any variable lists.  Supported formats are:", fmts, sep = " ")
 		stop(msg)
@@ -85,7 +85,7 @@ findDataTables <- function (jdx, debug = 0){
 	DF <- data.frame(Format, FirstLine, LastLine, stringsAsFactors = FALSE)
 
 	# Find all comment only lines exclusive of metadata; these cause a variety of problems.
-	# Keep original line numbers.
+	# Keep original line numbers. CURRENTLY NOT USED OUTSIDE THIS FUNCTION
 	
 	comOnly <-  grep("^\\$\\$", jdx)
 	comOnly <- setdiff(comOnly, 1:(spec_st[1]-1))
@@ -100,7 +100,7 @@ findDataTables <- function (jdx, debug = 0){
 			DF$LastLine[i] <- DF$LastLine[i] - 1
 		}
 		
-		# Check to see if the apparent last row(s) of a data table is actually a comment,
+		# Check to see if the apparent last row(s) of a variable list is actually a comment,
 		# and adjust accordingly.  Occurs for example in BRUKERNTUP.DX
 		
 		while(DF$LastLine[i] %in% comOnly) DF$LastLine[i] <- DF$LastLine[i] - 1
@@ -120,8 +120,6 @@ findDataTables <- function (jdx, debug = 0){
 	
 	for (i in 4:length(dtlist)) {
 		dtlist[[i]] <- c(DF$Format[i-2], jdx[DF$FirstLine[i-2]:DF$LastLine[i-2]])
-		
-		#if (i == 4) print(DF$FirstLine[2])
 	}
 
 	return(dtlist)

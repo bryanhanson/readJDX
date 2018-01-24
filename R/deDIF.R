@@ -42,7 +42,7 @@ deDIF <- function(string, lineNos, debug) {
 	if ((debug == 3) | (debug == 4)) message("Undoing DIF compression\n")
 	
 	if (debug == 5) {
-		message("First 5 lines of data table (step 1 in deDIF):")
+		message("First 5 lines of variable list (step 1 in deDIF):")
 		print(string[1:5])
 		}
 	
@@ -52,7 +52,7 @@ deDIF <- function(string, lineNos, debug) {
 	values <- lapply(string, as.numeric)
 
 	if (debug == 5) {
-		message("First 5 lines of data table (step 2 in deDIF):")
+		message("First 5 lines of variable list (step 2 in deDIF):")
 		print(values[1:5])
 		}
 			
@@ -61,7 +61,7 @@ deDIF <- function(string, lineNos, debug) {
 	yValues <- lapply(values, cumsum)
 	
 	if (debug == 5) {
-		message("First 5 lines of data table (step 3 in deDIF):")
+		message("First 5 lines of varible list (step 3 in deDIF):")
 		print(yValues[1:5])
 		}
 		

@@ -140,7 +140,7 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 			
 	if (debug >= 1) message("\n\nProcessing file ", file, "\n")
 			
-##### Step 2. Locate the parameters and the data table(s)
+##### Step 2. Locate the parameters and the variable list(s)
 
 	if (IR) mode <- "IR"
 	if (NMR) mode <- "NMR"
@@ -152,15 +152,14 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 
 	params <- extractParams(dblist[[2]], mode, SOFC, debug)
 		
-##### Step 4.  Process the data table(s) into the final lists
+##### Step 4.  Process the variable list(s) into the final lists
 
 	if ((mode == "IR") | (mode == "NMR")) {
 		# Return value is a list: dataGuide, metadata, comment lines + data frames of x, y
-		# dataGuide, metadata & comments already in place; process each data table
+		# dataGuide, metadata & comments already in place; process each variable list
 
 		for (i in 4:length(dblist)) {
-			if (i == 4) print(dblist[[1]][i-2, c(2,3)])
-			dblist[[i]] <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-2, c(2,3)], dblist[[3]], SOFC, debug)
+			dblist[[i]] <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-2, c(2,3)], SOFC, debug)
 		}
 
 		# Fix up names
@@ -181,7 +180,7 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 		M <- matrix(NA_real_, ncol = params[2], nrow = params[1]) # matrix to store result
 		
 		for (i in 4:length(dblist)) {
-			tmp <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-2, c(2,3)], dblist[[3]], SOFC, debug)
+			tmp <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-2, c(2,3)], SOFC, debug)
 			M[i-3,] <- tmp$y
 		}
 		# Update dblist

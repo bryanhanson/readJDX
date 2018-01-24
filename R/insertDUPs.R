@@ -6,12 +6,12 @@
 ##' Documentation is provided for developers wishing to contribute to the package.
 ##' 
 ##' @param string Character vector.  Partially processed lines from the
-##' original data table.
+##' original variable list.
 ##'
 ##' @param debug Integer.  See \code{\link{readJDX}} for details.
 ##'
 ##' @param params lineNos. A vector containing the original line numbers of this
-##'        data table in the original file.  Used for debugging responses.
+##'        variable list in the original file.  Used for debugging responses.
 ##'
 ##' @return A string.
 ##' 

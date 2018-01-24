@@ -6,14 +6,14 @@
 ##' Documentation is provided for developers wishing to contribute to the package.
 ##' 
 ##' @param dt Character.  A vector of character strings which contains
-##' the data table.  First line should be the format code (an
+##' the variable list.  First line should be the format code (an
 ##' extra line inserted by this package).  Depending upon mode, there
 ##' may be some other stuff that still needs to be stripped off to get to just numbers.
 ##'
 ##' @param params Numeric. Vector of parameters from file header.
 ##'
 ##' @param params lineNos. Two integers giving the first and last lines
-##'        of the data table in the original file.  Used for debugging responses.
+##'        of the variable list in the original file.  Used for debugging responses.
 ##'
 ##' @param mode Character. One of c("IR", "NMR", "NMR2D")
 ##'
@@ -25,7 +25,7 @@
 ##' 
 ##' @noRd
 ##'
-processDataTable <- function (dt, params, mode, lineNos, comLines, SOFC, debug = 0){
+processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 
 	# Strip off non-numerical lines at beginning and end,
 	# and adjust lineNos accordingly.
@@ -88,7 +88,7 @@ processDataTable <- function (dt, params, mode, lineNos, comLines, SOFC, debug =
 	if ((fmt == "XRR") | (fmt == "XII") | (fmt == "F2")) fmt <- "XYY"
 	
 	if (fmt == "XYY") {
-		xydata <- decompressJDXxyy(dt, params, mode, lineNos, comLines, SOFC, debug = debug)
+		xydata <- decompressJDXxyy(dt, params, mode, lineNos, SOFC, debug = debug)
 		return(xydata)
 	}
 				

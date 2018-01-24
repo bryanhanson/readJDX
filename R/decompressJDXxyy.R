@@ -1,17 +1,17 @@
 ##'
-##' Extract the values in JCAMP-DX file with an XYY data table.
+##' Extract the values in JCAMP-DX file with an XYY variable list.
 ##'
 ##' This function is NOT EXPORTED.
 ##' Users would not normally call this function.  See \code{\link{readJDX}}.
 ##' Documentation is provided for developers wishing to contribute to the package.
 ##' 
-##' @param dt Character.  The data table to be processed.  Includes one pre-pended
+##' @param dt Character.  The variable list to be processed.  Includes one pre-pended
 ##' line giving the type of data (e.g. XYY, XRR, XII).
 ##'
 ##' @param params Numeric. Vector of parameters extracted from file header.
 ##'
 ##' @param params lineNos. A vector containing the original line numbers of this
-##'        data table in the original file.  Used for debugging responses.
+##'        variable list in the original file.  Used for debugging responses.
 ##'
 ##' @param mode Character. One of c("IR", "NMR", "NMR2D")
 ##'
@@ -25,10 +25,10 @@
 ##'
 ##' @noRd
 
-decompressJDXxyy <- function (dt, params, mode, lineNos, comLines, SOFC, debug = 0) {
+decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	
 	
-	# For XYY, each line of the data table begins with a frequency (x value)
+	# For XYY, each line of the variable list begins with a frequency (x value)
 	# followed by the y values in various compressed formats.
 		
 	# Note that xString and yString are pieces corresponding to the individual lines
@@ -40,7 +40,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, comLines, SOFC, debug =
 		
 	if (type == "XRR") {if (debug >= 1) message("\nProcessing real data...")}
 	if (type == "XII") {if (debug >= 1) message("\nProcessing imaginary data...")}
-	if (type == "XYY") {if (debug >= 1) message("\nProcessing data table...")}
+	if (type == "XYY") {if (debug >= 1) message("\nProcessing variable list...")}
 	if (type == "F2") {
 		if (debug >= 1) {
 			message("\nProcessing F2 spectra...")
@@ -70,11 +70,11 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, comLines, SOFC, debug =
 		
 	#### Process the x values to numeric
 
-	# The x values in the data table appear in most cases to
+	# The x values in the variable list appear in most cases to
 	# be significantly rounded relative to FIRSTX.
 	# It appears as though the intent of the standard is to construct the sequence of 
 	# x values from FIRSTX, LASTX, and NPOINTS, not the actual values in the
-	# in the data table. The values in the data table however must be
+	# in the variable list. The values in the variable list however must be
 	# checked for integrity.
 	
 	# Important: these xValues are only used to verify parsing is correct,
@@ -100,7 +100,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, comLines, SOFC, debug =
 	lastXcheck <- xValues[length(xValues)]
 	xtol <- 0.0001*diff(range(xValues, na.rm = TRUE)) # Comments lead to NAs
 	
-	# The standard requires that each line in the data table be checked to make
+	# The standard requires that each line in the variable list be checked to make
 	# sure no lines were skipped or duplicated.	
 	if (anyDuplicated(xValues[!is.na(xValues)])) stop("Variable list appears to have duplicated lines")
 	
@@ -239,7 +239,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, comLines, SOFC, debug =
 		if (SOFC) {
 		
 			if (!isTRUE(all.equal(yValues[1]*factorY, firstY, check.names = FALSE, tolerance = ytol))) {
-				cat("First y value from data table:", yValues[1]*factorY, "\n")
+				cat("First y value from variable list:", yValues[1]*factorY, "\n")
 				cat("First y value from metadata:", firstY, "\n")
 				stop("Error parsing yValues")
 				}			
@@ -249,7 +249,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, comLines, SOFC, debug =
 		# but out of an abundance of caution we will do it.
 		
 		if (!isTRUE(all.equal(firstXcheck*factorX, firstX, check.names = FALSE, tolerance = xtol))) {
-			cat("First x value from data table:", firstXcheck*factorX, "\n")
+			cat("First x value from variable list:", firstXcheck*factorX, "\n")
 			cat("First x value from metadata:", firstX, "\n")
 			stop("Error parsing xValues (firstX)")
 			}			
@@ -258,7 +258,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, comLines, SOFC, debug =
 		
 		if ("DIF" %in% fmt) {
 			if (!isTRUE(all.equal(lastXcheck*factorX, lastX, check.names = FALSE, tolerance = xtol))) {
-				cat("Last x value from data table:", lastXcheck*factorX, "\n")
+				cat("Last x value from variable list:", lastXcheck*factorX, "\n")
 				cat("Last x value from metadata:", lastX, "\n")
 				stop("Error parsing xValues (lastX)")
 				}
@@ -296,7 +296,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, comLines, SOFC, debug =
 		# but out of an abundance of caution we will do it.
 		
 		if (!isTRUE(all.equal(firstXcheck*factorX, firstX, check.names = FALSE, tolerance = xtol))) {
-			cat("First x value from data table:", firstXcheck*factorX, "\n")
+			cat("First x value from variable list:", firstXcheck*factorX, "\n")
 			cat("First x value from metadata:", firstX, "\n")
 			stop("Error parsing xValues (firstX)")
 			}			
@@ -305,7 +305,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, comLines, SOFC, debug =
 		
 		if ("DIF" %in% fmt) {
 			if (!isTRUE(all.equal(lastXcheck*factorX, lastX, check.names = FALSE, tolerance = xtol))) {
-				cat("Last x value from data table:", lastXcheck*factorX, "\n")
+				cat("Last x value from variable list:", lastXcheck*factorX, "\n")
 				cat("Last x value from metadata:", lastX, "\n")
 				stop("Error parsing xValues (lastX)")
 				}
@@ -315,13 +315,13 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, comLines, SOFC, debug =
 		if (type == "XRR") { # Check yValues (real)
 						
 			if (!isTRUE(all.equal(yValues[1]*factorR, firstR, check.names = FALSE, tolerance = ytol))) {			
-				cat("First real value from data table:", yValues[1]*factorR, "\n")
+				cat("First real value from variable list:", yValues[1]*factorR, "\n")
 				cat("First real value from metadata:", firstR, "\n")
 				stop("Error parsing real values")
 				}
 			
 			if (!isTRUE(all.equal(yValues[length(yValues)]*factorR, lastR, check.names = FALSE, tolerance = ytol))) {		
-				cat("Last real value from data table:", yValues[length(yValues)]*factorR, "\n")
+				cat("Last real value from variable list:", yValues[length(yValues)]*factorR, "\n")
 				cat("Last real value from metadata:", lastR, "\n")
 				stop("Error parsing real values")
 				}
@@ -333,13 +333,13 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, comLines, SOFC, debug =
 		if (type == "XII") { # Check yValues (imaginary)
 
 			if (!isTRUE(all.equal(yValues[1]*factorI, firstI, check.names = FALSE, tolerance = ytol))) {		
-				cat("First imaginary value from data table:", yValues[1]*factorI, "\n")
+				cat("First imaginary value from variable list:", yValues[1]*factorI, "\n")
 				cat("First imaginary value from metadata:", firstI, "\n")
 				stop("Error parsing imaginary values")
 				}
 			
 			if (!isTRUE(all.equal(yValues[length(yValues)]*factorI, lastI, check.names = FALSE, tolerance = ytol))) {		
-				cat("Last imaginary value from data table:", yValues[length(yValues)]*factorI, "\n")
+				cat("Last imaginary value from variable list:", yValues[length(yValues)]*factorI, "\n")
 				cat("Last imaginary value from metadata:", lastI, "\n")
 				stop("Error parsing imaginary values")
 				}
@@ -377,7 +377,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, comLines, SOFC, debug =
 		# but out of an abundance of caution we will do it.
 		
 		if (!isTRUE(all.equal(firstXcheck*factorF2, firstF2, check.names = FALSE, tolerance = xtol))) {
-			cat("First F2 value from data table:", firstXcheck*factorF2, "\n")
+			cat("First F2 value from variable list:", firstXcheck*factorF2, "\n")
 			cat("First F2 value from metadata:", firstF2, "\n")
 			stop("Error parsing xValues (firstF2)")
 			}			
@@ -386,7 +386,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, comLines, SOFC, debug =
 		
 		if ("DIF" %in% fmt) {
 			if (!isTRUE(all.equal(lastXcheck*factorF2, lastF2, check.names = FALSE, tolerance = xtol))) {
-				cat("Last F2 value from data table:", lastXcheck*factorF2, "\n")
+				cat("Last F2 value from variable list:", lastXcheck*factorF2, "\n")
 				cat("Last F2 value from metadata:", lastF2, "\n")
 				stop("Error parsing xValues (lastF2)")
 				}
