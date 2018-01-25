@@ -3,6 +3,10 @@ NEWS file for package readJDX
 Import data in the JCAMP-DX format.
 URL: github.com/bryanhanson/readJDX
 
+Changes in version 0.3.215 2017-01-24
+     + Improvements to vignette and documentation.
+     + Improvements to the debugging output options.
+
 Changes in version 0.3.194 2017-01-23
      + Return structure now includes the comment only lines found outside of the metadata.
      + Much more robust handling of comments.

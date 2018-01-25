@@ -85,7 +85,7 @@ findDataTables <- function (jdx, debug = 0){
 	DF <- data.frame(Format, FirstLine, LastLine, stringsAsFactors = FALSE)
 
 	# Find all comment only lines exclusive of metadata; these cause a variety of problems.
-	# Keep original line numbers. CURRENTLY NOT USED OUTSIDE THIS FUNCTION
+	# Keep original line numbers. CURRENTLY NOT USED OTHER THAN THIS FUNCTION
 	
 	comOnly <-  grep("^\\$\\$", jdx)
 	comOnly <- setdiff(comOnly, 1:(spec_st[1]-1))
@@ -107,7 +107,7 @@ findDataTables <- function (jdx, debug = 0){
 		
 	}
 
-	if (debug >= 1) {
+	if (debug >= 2) {
 		message("Apparent data chunks:")
 		print(DF)
 		cat("\n")

@@ -1,13 +1,13 @@
 ##'
 ##' Import a File Written in the JCAMP-DX Format
 ##'
-##' This is the function users should call, and supervises the entire import process.
+##' This function supervises the entire import process.
 ##' The JCAMP-DX standard allows quite a bit of lattitude and there are many
 ##' possible formats. Not all possible formats are supported; error messages will
 ##' generally let you know what's going on.  If you have a file that you feel should be
 ##' supported but gives an error, please file an issue at Github.
 ##' The standard allows many
-##' variations and its impossible to test them all.
+##' variations and it is impossible to anticipate all configurations.
 ##'
 ##' @param file Character.  The file name to import.
 ##'
@@ -23,21 +23,34 @@
 ##' The default is \code{TRUE} i.e. stop when something is not right.
 ##' This ensures that correct data is returned.  Change to \code{FALSE} at your own risk.
 ##' NOTE: Only a few checks can be skipped via this option, as there are some
-##' parameters that must be available in order to return an answer.
+##' parameters that must be available in order to return any answer.
 ##'
-##' @param debug Integer.  The level of debug reporting desired. 1
-##' or higher = basic info about
-##' each file, and import progress.  2 = detailed info about x values.
-##' 3 = detailed info about y values. 4 = details about the DUP expansion
-##' process. 5 = details about the calculation of differences when DIF
-##' is in use.
+##' @param debug Integer.  The level of debug reporting desired.
+##' 1 or higher = import progress is reported.
+##' 2 or higher = details about the variable lists, compression formats and
+##' parameters that were found.
+##' 3 = detailed info about processing of the x values.
+##' 4 = detailed view of the first five lines containing y values; may be helpful if
+##' the compression is not figured out correctly (via \code{getJDXcompression}).
+##' 5 = detailed info about processing the y values when DUP is in use.
+##' 6 = detailed info about processing the y values when DIF is in use.
 ##' In cases where an error is about to
 ##' stop execution, you get additional information regardless of
 ##' the \code{debug} value.
 ##'
-##' @return A list.  The first element is a guide to the structure of the file,
-##' followed by the file metadata.  Additional elements
-##' contain the extracted \code{x,y} data as follows:
+##' @return A list, as follows: 
+##'
+##' \itemize{
+##'
+##' \item The first element is a data frame summarizing the pieces of the imported file.
+##'
+##' \item The second element is the file metadata.
+##'
+##' \item The third element is a integer vector giving the comment lines found
+##'       (exclusive of the metdata, which typically contains many comments).
+##' }
+##'
+##'  Additional elements contain the extracted data as follows:
 ##'
 ##' \itemize{
 ##'
@@ -67,7 +80,7 @@
 ##' is an IR spectrum of Smart Balance Original spread (a butter substitute). The
 ##' spectrum is presented in transmission format, and was recorded on a ThermoFisher
 ##' instrument.  The file uses AFFN compression, and was written
-##' with the JCAMP-DX 5.01 standard. Note that even though the y-axis is in 
+##' with the JCAMP-DX 5.01 standard. Note that even though the y-axis was recorded in 
 ##' percent transmission, in the JDX file it is stored on [0\ldots1].
 ##' File \code{PCRF.jdx} is a 1H NMR
 ##' spectrum of a hexane extract of a reduced fat potato chip.  The spectrum was
@@ -78,8 +91,8 @@
 ##' @section Precision:
 ##' Internally, this package uses a tolerance factor when comparing values during certain checks.
 ##' This is currently hardwired to \code{0.0001*diff(range(values))}.  This value works fine
-##' in the test files.
-##' This appears to be necessary because the original values in the files
+##' for test files.
+##' This is necessary because the original values in the files
 ##' are text strings of varying lengths which get converted to numerical values.  Some precision
 ##' may be lost but it appears trivial with the current settings.
 ##' 

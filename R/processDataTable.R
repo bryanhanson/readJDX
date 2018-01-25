@@ -40,9 +40,10 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 		st <- lineNos[1] + 1
 		end <- lineNos[2] - 1
 		lineNos <- c(NA_integer_, st:end)
-		if (debug == 1) {
-			message("Need a message here")
+		if (debug == 2) {
+			message("Head of the variable list:")
 			print(data.frame(lineNo = lineNos[1:10], first30characters = substring(dt[1:10], 1, 30)))
+			cat("\n")
 		}
 	}
 	
@@ -53,9 +54,10 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 			st <- lineNos[1] + 2
 			end <- lineNos[2]
 			lineNos <- c(NA_integer_, st:end)
-			if (debug == 1) {
-				message("Need a message here")
+			if (debug == 2) {
+				message("Head of the variable list:")
 				print(data.frame(lineNo = lineNos[1:10], first30characters = substring(dt[1:10], 1, 30)))
+				cat("\n")
 			}
 		}
 		
@@ -64,9 +66,10 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 			st <- lineNos[1] + 2
 			end <- lineNos[2] - 1
 			lineNos <- c(NA_integer_, st:end)
-			if (debug == 1) {
-				message("Need a message here")
+			if (debug == 2) {
+				message("Head of the variable list:")
 				print(data.frame(lineNo = lineNos[1:10], first30characters = substring(dt[1:10], 1, 30)))
+				cat("\n")
 			}
 		}
 	}
@@ -77,9 +80,10 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 		st <- lineNos[1]
 		end <- lineNos[2]
 		lineNos <- c(NA_integer_, st, (st + 3L):end)
-		if (debug == 1) {
-			message("Need a message here")
+		if (debug == 2) {
+			message("Head of the variable list:")
 			print(data.frame(lineNo = lineNos[1:10], first30characters = substring(dt[1:10], 1, 30)))
+			cat("\n")
 		}
 	}
 	

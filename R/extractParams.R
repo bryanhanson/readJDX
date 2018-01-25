@@ -78,6 +78,7 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 		if (debug >= 1) {
 			message("Extracted parameters:")
 			print(params)
+			cat("\n")
 			}
 	
 		} # end of mode == IR
@@ -140,6 +141,7 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 		if (debug >= 1) {
 			message("Extracted parameters:")
 			print(params)
+			cat("\n")
 			}
 
 		if ((pointsX != pointsR) | (pointsX != pointsI)) stop("No. of frequency, real, imaginary points are not the same")
@@ -198,6 +200,7 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 		if (debug >= 1) {
 			message("Extracted parameters:")
 			print(params)
+			cat("\n")
 			}
 
 		} # end of mode == "NMR2D"

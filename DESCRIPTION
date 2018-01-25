@@ -1,8 +1,8 @@
 Package: readJDX
 Type: Package
 Title: Import Data in the JCAMP-DX Format
-Version: 0.3.198
-Date: 2018-01-23
+Version: 0.3.215
+Date: 2018-01-24
 Authors@R: person("Bryan A.", "Hanson", role = c("aut", "cre"), email = "hanson@depauw.edu")
 Description: Import data written in the JCAMP-DX format. This is an instrument-independent format used in the field of spectroscopy. Examples include IR, NMR, and Raman spectroscopy. See the vignette for background and supported formats.  The official JCAMP-DX site is <http://www.jcamp-dx.org/>.
 URL: https://github.com/bryanhanson/readJDX

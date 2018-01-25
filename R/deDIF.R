@@ -39,11 +39,10 @@ deDIF <- function(string, lineNos, debug) {
 	string <- lapply(string, FUN)
 	names(string) <- paste("Line", lineNos, sep = "_")
 	
-	if ((debug == 3) | (debug == 4)) message("Undoing DIF compression\n")
-	
-	if (debug == 5) {
-		message("First 5 lines of variable list (step 1 in deDIF):")
-		print(string[1:5])
+	if (debug == 6) {
+		message("Undoing DIF compression, including y value check...\n")
+		# message("First 5 lines of variable list (step 1 in deDIF):")
+		# print(string[1:5])
 		}
 	
 	# Step 2: Convert the DIF characters to the corresponding numbers
@@ -51,25 +50,25 @@ deDIF <- function(string, lineNos, debug) {
 	string <- lapply(string, unDIF)
 	values <- lapply(string, as.numeric)
 
-	if (debug == 5) {
-		message("First 5 lines of variable list (step 2 in deDIF):")
-		print(values[1:5])
-		}
+	# if (debug == 5) {
+		# message("First 5 lines of variable list (step 2 in deDIF):")
+		# print(values[1:5])
+		# }
 			
 	# Step 3: Fix the offsets
 	
 	yValues <- lapply(values, cumsum)
 	
-	if (debug == 5) {
-		message("First 5 lines of varible list (step 3 in deDIF):")
-		print(yValues[1:5])
-		}
+	# if (debug == 5) {
+		# message("First 5 lines of varible list (step 3 in deDIF):")
+		# print(yValues[1:5])
+		# }
 		
 	# Step 4: Carry out the y value check required by the standard
 	# First value on a line should = last value on the prev. line.
 	# Names must be stripped for the all.equal check below.
 
-	if ((debug == 3) | (debug == 4)) message("Carrying out y value check")
+	# if ((debug == 3) | (debug == 4)) message("Carrying out y value check")
 	
 	fun <- function(x) {x[1]}
 	first <- unlist(lapply(yValues, fun), use.names = FALSE)

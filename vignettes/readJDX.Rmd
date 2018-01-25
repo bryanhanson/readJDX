@@ -49,6 +49,7 @@ vignette: >
 
 header-includes:
   - \usepackage{stackengine}
+  - \usepackage{amsmath}
 ---
 
 ```{r echo = FALSE}
@@ -67,7 +68,7 @@ The JCAMP-DX format was developed as an manufacturer-independent means of sharin
 JCAMP-DX files consist of two parts:  
 
 * A more-or-less human readible set of metadata which is needed to understand the data and carry out the decompression.  Besides required basic information about the data itself, most files contain instrument and manufacturer-specific parameters in the metadata.
-* A data table, compressed in various ways.
+* A variable list, compressed in various ways.
 
 # Challenges When Reading Files
 
@@ -77,21 +78,21 @@ The JCAMP-DX standard allows a lot of flexibility and instrument manufacturers h
 * JCAMP-DX files can contain more than one spectrum in the file.
 * Instruments may be configured to use . or , as the decimal point when writing files.  This is generally a geographical / cultural nuance.
 * Numbers may be written using E to signify exponent, but only in some compression formats.
-* The data table can be presented in several possible formats.
+* The variable list can be presented in several possible formats.
 * Some manufacturers take liberties with the required format.
 
 
 # Supported Formats
 
-* Data tables can be presented in several different formats.  The supported formats are:
-    * XYDATA=(X++(Y..Y)) Each line starts with an $x$ value, and is followed by as many $y$ values as can conveniently fit within the 80 character limit.  Subsequent $x$ values are incremented according to the $x$ resolution and the number of $y$ values that fit on the previous line (which in turn depends upon the compression scheme).  Each $x$ value is used as  a check point to verify that the correct number of $y$ values were read.
+* Variable lists can be presented in several different formats.  The supported formats are:
+    * XYDATA=(X++(Y..Y)) Each line starts with an $x$ value, and is followed by as many $y$ values as can conveniently fit within the 80 character per line limit.  Subsequent $x$ values are incremented according to the $x$ resolution and the number of $y$ values that fit on the previous line (which in turn depends upon the compression scheme).
     * DATA TABLE=(X++(R..R)) As above.  The real data from a 1D NMR spectrum.
     * DATA TABLE=(X++(I..I)) As above.  The imaginary data from a 1D NMR spectrum.
     * DATA TABLE=(F2++(Y..Y)) As above.  Format used for the slices of a 2D NMR spectrum.
-* Within a data table, several different compression schemes can be employed.  The following are supported:
+* Within a variable list, several different compression schemes can be employed.  The following are supported:
     * AFFN: ASCII numbers separated by at least one space.
     * PAC: Numbers separated by exactly one space, + or -.
-    * SQZ: Delimiter, leading digit and sign are replaced by a pseudo-digit.
+    * SQZ: Delimiter, leading digit and sign are replaced by a pseudo-digit. A pseudo-digit is typically a letter.
     * DIF: DIF uses a SQZ pseudo-digit for the first $y$ value, but subsequent $y$ entries are differences between each data value after the first.  Sometimes referred to as SQZDIF.
     * DUP: Not a format, but a method of signifying repeated values.
     * DIFDUP: A combination of DIF and DUP.  Widely used, as it permits the greatest amount of compression.
@@ -102,20 +103,37 @@ The JCAMP-DX standard allows a lot of flexibility and instrument manufacturers h
 * Compound files: JCAMP-DX files may contain more than one spectrum in the file.  These types of files are not currently supported (however, 1D and 2D NMR data are supported, even though they contain more than one spectrum).  The following JCAMP-DX standards require a compound file and are therefore not supported:
     * EMR, EPR, ESR spectroscopy (\cite{Cammack2006})
     * CD spectroscopy (\cite{Woollett2012})
-* Data tables of simple $x$, $y$ pairs (denoted XY..XY) are not supported.  Your pull requests to deal with this format are welcomed.
-* `readJDX` is geared toward raw spectral data.  Therefore data table formats representing derived information like PEAK TABLE and PEAK ASSIGNMENTS are not supported (but your pull requests are welcomed!).
+* Variable lists of simple $x$, $y$ pairs (format XY..XY) are not supported.  Your pull requests to deal with this format are welcomed.
+* `readJDX` is geared toward raw spectral data.  Therefore variable lists formats representing derived information like PEAK TABLE and PEAK ASSIGNMENTS are not supported (but your pull requests are welcomed!).
 
 # Practical Matters
 
-`readJDX` tries its best to deal with all these options.  If you have a file that you believe should be supported but gives an error, please e-mail or file an issue.  Be sure to attach the file that is giving you problems.  Contributions to improve or expand the package, including pull requests, are always welcome!
+`readJDX` tries its best to deal with all these options.  If you have a file that you believe should be supported but gives an error, please file an issue at GitHub.  Be sure to attach the file that is giving you problems.
 
 Before release, `readJDX` is tested against a large collection of files with varying formats.  A few of these files were obtained locally.  Others were collected from publically available sources (e.g. \href{http://www.jcamp-dx.org/testdata.html}{http://www.jcamp-dx.org/testdata.html}).  These files are not included with the package to save space, and in addition, while they are publically available, for many of them the licensing status is unclear (i.e. the OWNER entry).
+
+The JCAMP standard requires a number of checks on the integrity of the data decompression process.  `readJDX` implements most of these either directly or indirectly.  Verification is important, and we have found JCAMP files that were not written correctly in the process of checking integrity.  For details about how data decompression is checked, please see the original source files.
 
 # Known Issues
 
 * Files containing "S" representing a DUP digit of 1 are not supported and will stop with a message.  Such files seem to be fairly rare.
-* Line number reporting (line numbers in the input file) during debugging is slightly off for NMR files that have lines which are solely composed of a comment. Such lines start with "\$\$" and are deleted during processing.
 * Some test files in the author's possession fail when carrying out the y value check, for unknown reasons.
+
+# Program Flow
+
+`readJDX` is coded in such a way that it should be easy to add features.  Contributions to improve or expand the package, including pull requests, are always welcome!  The scheme below shows how control of the program is organized. The $\rightarrow$ means "calls" and $\xrightarrow{?}$ means "may call".  
+`readJDX`  
+$\rightarrow$ `findDataTables`  
+$\rightarrow$ `extractParams`  
+$\rightarrow$ `processDataTable`  
+&nbsp;&nbsp;&nbsp;&nbsp;$\xrightarrow{?}$ `decompressJDXxyy`  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\rightarrow$ `getJDXcompression`  
+&nbsp;&nbsp;&nbsp;&nbsp;$\xrightarrow{?}$ `insertDUPs`  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\rightarrow$ `repDUPs`  
+&nbsp;&nbsp;&nbsp;&nbsp;$\xrightarrow{?}$ `unSQZ`  
+&nbsp;&nbsp;&nbsp;&nbsp;$\xrightarrow{?}$ `deDIF`  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\rightarrow$ `unDIF`  
+&nbsp;&nbsp;&nbsp;&nbsp;$\xrightarrow{?}$ functions to decompress other formats (future?)   
 
 <!-- local tweak to the pnasbreak command -->
 \renewcommand{\pnasbreak}{\begin{strip}\vskip0pt\end{strip}}

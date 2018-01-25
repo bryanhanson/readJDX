@@ -32,18 +32,15 @@ insertDUPs <- function(string, lineNos, debug) {
 	
 	yS <- NA_character_
 
-	if ((debug == 3) | (debug == 4)) {
-		message("Finding and expanding DUP codes")
-		cat("DUPs found on the following lines of the original file:\n")
-		print(lineNos[dup])
-		print(string[dup])
-		cat("\n")
-		}
+	# if (debug == 5) {
+		# message("Finding and expanding DUP codes")
+		# cat("DUPs found on the following lines of the original file:\n")
+		# print(lineNos[dup])
+		# print(string[dup])
+		# cat("\n")
+		# }
 	
-	if (debug == 4) {
-		cat("\n")
-		message("Original lines & expanded lines:")
-		}
+	if (debug == 5) message("Processing DUP values...")
 		
 	for (i in 1:length(string)) {
 
@@ -64,7 +61,7 @@ insertDUPs <- function(string, lineNos, debug) {
 					newline <- c(newline[-c((lnl-1):lnl)], tmp)
 					}
 				}
-			if (debug == 4) {
+			if (debug == 5) {
 				cat("\nOriginal line:", lineNos[i], "\n")
 				cat("\t", line, "\n")
 				cat("\nLine", lineNos[i], "with DUPs inserted:\n")

@@ -42,10 +42,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	if (type == "XII") {if (debug >= 1) message("\nProcessing imaginary data...")}
 	if (type == "XYY") {if (debug >= 1) message("\nProcessing variable list...")}
 	if (type == "F2") {
-		if (debug >= 1) {
-			message("\nProcessing F2 spectra...")
-			message("\n", dt[1])
-		}
+		if (debug >= 1) {message("\nProcessing F2 spectra...", dt[1])}
 		dt <- dt[-1] # Remove e.g. ##PAGE= F1= 4.7865152724775
 		lineNos <- lineNos[-1] # Now just numbers remain to be processed
 		}
@@ -86,7 +83,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	xString <- gsub(",", ".", xString) # replace ',' with '.' -- needed for EU style files
 	xValues <- as.numeric(xString) # NA from comments remain
 	
-	if (debug == 2) { # stop and report each line if requested (huge!)
+	if (debug == 3) { # stop and report each line if requested (huge!)
 		message("Here come the raw x values, line by line from the file")
 		for (i in 1:length(xValues)) {
 			cat("\nParsing line", lineNos[i], "for x values\n")
@@ -227,8 +224,8 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		firstY <- params[4]
 		factorX <- params[5]
 		factorY <- params[6]
-		if (debug >= 1) cat("\nNPOINTS =", npoints, "\n")
-		if (debug >= 1) cat("Actual no. data points found  =", length(yValues), "\n")
+		if (debug >= 2) cat("\nNPOINTS =", npoints, "\n")
+		if (debug >= 2) cat("Actual no. data points found  =", length(yValues), "\n")
 		
 		if (!npoints == length(yValues)) stop("NPOINTS and length of yValues don't match")
 
@@ -287,8 +284,8 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		factorR <- params[11]
 		factorI <- params[12]
 		
-		if (debug >= 1) cat("\nNo. data points from metadata =", pointsX, "\n")
-		if (debug >= 1) cat("Actual no. data points found  =", length(yValues), "\n")
+		if (debug >= 2) cat("\nNo. data points from metadata =", pointsX, "\n")
+		if (debug >= 2) cat("Actual no. data points found  =", length(yValues), "\n")
 		
 		if (pointsX != length(yValues)) stop("Data points found != data points in metadata")
 				
@@ -368,8 +365,8 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		factorF2 <- params[8]
 		factorZ <- params[9]
 		
-		if (debug >= 1) cat("\nNo. F2 points from metadata =", pointsF2, "\n")
-		if (debug >= 1) cat("Actual F2 points found  =", length(yValues), "\n")
+		if (debug >= 2) cat("\nNo. F2 points from metadata =", pointsF2, "\n")
+		if (debug >= 2) cat("Actual F2 points found  =", length(yValues), "\n")
 		
 		if (pointsF2 != length(yValues)) stop("Data points found != data points in metadata")
 				
