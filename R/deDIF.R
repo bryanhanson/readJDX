@@ -33,42 +33,36 @@ deDIF <- function(string, lineNos, debug) {
 	# Step 1: Convert to a list which keeps the original lines intact but
 	# allows us to split the lines
 	
-	
 	string <- as.list(string)
 	FUN <- function(x) {unlist(strsplit(x, "\\s+"))}
 	string <- lapply(string, FUN)
 	names(string) <- paste("Line", lineNos, sep = "_")
+		
+	# Step 2: Convert the DIF characters to the corresponding numbers
+	# and fix offset
+
+	if (debug == 6) tmp_string <- string # save copy for reporting
+	
+	yValues <- lapply(string, unDIF)
 	
 	if (debug == 6) {
-		message("Undoing DIF compression, including y value check...\n")
-		# message("First 5 lines of variable list (step 1 in deDIF):")
-		# print(string[1:5])
+		message("\nUndoing DIF compression:")
+		message("\nLines passed to deDIF:")
+		print(tmp_string)
+		message("\nLines processed by deDIF:")
+		print(yValues)		
+		# FD <- data.frame(
+			# string = unlist(tmp, use.names = FALSE),
+			# string_as_num = unlist(values, use.names = FALSE),
+			# final_value = unlist(yValues, use.names = FALSE))
+		# print(FD)
 		}
-	
-	# Step 2: Convert the DIF characters to the corresponding numbers
-	
-	string <- lapply(string, unDIF)
-	values <- lapply(string, as.numeric)
-
-	# if (debug == 5) {
-		# message("First 5 lines of variable list (step 2 in deDIF):")
-		# print(values[1:5])
-		# }
-			
-	# Step 3: Fix the offsets
-	
-	yValues <- lapply(values, cumsum)
-	
-	# if (debug == 5) {
-		# message("First 5 lines of varible list (step 3 in deDIF):")
-		# print(yValues[1:5])
-		# }
 		
-	# Step 4: Carry out the y value check required by the standard
+	# Step 3: Carry out the y value check required by the standard
 	# First value on a line should = last value on the prev. line.
 	# Names must be stripped for the all.equal check below.
 
-	# if ((debug == 3) | (debug == 4)) message("Carrying out y value check")
+	if (debug == 6) message("\nCarrying out y value check...")
 	
 	fun <- function(x) {x[1]}
 	first <- unlist(lapply(yValues, fun), use.names = FALSE)
@@ -79,8 +73,7 @@ deDIF <- function(string, lineNos, debug) {
 		if (is.na(first[i])) next # These originate from comment only lines e.g. Bruker NMR
 		ychk <- isTRUE(all.equal(first[i], last[i-1]))
 		if (!ychk) {
-			msg <- "\nY value check failed; nearby values:"
-			message(msg)
+			message("\nY value check failed; nearby values:")
 			if (i <= 5) rpt <- 2:6
 			if (i >= 6) rpt <- (i-2):(i+2)
 			if (i >= (length(first) - 2)) rpt <- (length(first) - 5):length(first)
@@ -93,15 +86,17 @@ deDIF <- function(string, lineNos, debug) {
 			stop("Y value check failed")
 			}
 		}
+
+	if (debug == 6) message("\ny value check successful...")
 		
-	# Step 5: Remove extra y values that were needed for the check
+	# Step 4: Remove extra y values that were needed for the check
 			
 	verylast <- yValues[[length(yValues)]] # save to replace in a moment
 	fun <- function(x) {x[-length(x)]}
 	yValues <- lapply(yValues, fun) # removes all values in last element
 	yValues[[length(yValues)]] <- verylast
 
-	# Step 6: Wrap up and return
+	# Step 5: Wrap up and return
 
 	# Note: comments are still NA and lineNos is still correct
 	

@@ -42,7 +42,7 @@ getJDXcompression <- function (string, debug = 0){
 	if (debug == 4) { 	# Reporting these now shows strings that will fail
 						# later when the format it not understood
 		message("\nDetermining compression method...")
-		message("1st 5 lines (x values stripped off):\n")
+		message("1st 5 lines (x values stripped off):")
 		print(instring[1:5])
 		}
 
@@ -59,14 +59,13 @@ getJDXcompression <- function (string, debug = 0){
 	# Check to see if DUP is in use
 	if (grepl("[S-Zs]", string)) DUP <- TRUE
 
-	if (debug >= 1) {
+	if (debug >= 2) {
 		message("\nCompression formats in use:")
 		cat("AFFN =", AFFN, "\n")
 		cat("PAC =", PAC, "\n")
 		cat("SQZ =", SQZ, "\n")
 		cat("DIF =", DIF, "\n")
 		cat("DUP =", DUP, "\n")
-		cat("\n")
 		}
 
 	# Check that some format was recognized.

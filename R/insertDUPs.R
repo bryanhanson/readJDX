@@ -40,8 +40,10 @@ insertDUPs <- function(string, lineNos, debug) {
 		# cat("\n")
 		# }
 	
-	if (debug == 5) message("Processing DUP values...")
-		
+	if (debug == 5) message("\nProcessing DUP values...")
+	
+	# Better if string was named here as it is elsewhere for debug reporting (see below)
+	
 	for (i in 1:length(string)) {
 
 		if (!i %in% dup) {

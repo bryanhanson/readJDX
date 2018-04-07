@@ -108,9 +108,8 @@ findDataTables <- function (jdx, debug = 0){
 	}
 
 	if (debug >= 2) {
-		message("Apparent data chunks:")
+		message("\nApparent data chunks:")
 		print(DF)
-		cat("\n")
 		}
 		
 	dtlist <- vector("list", nrow(DF) + 2)

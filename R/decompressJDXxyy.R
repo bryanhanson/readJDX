@@ -84,12 +84,14 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	xValues <- as.numeric(xString) # NA from comments remain
 	
 	if (debug == 3) { # stop and report each line if requested (huge!)
-		message("Here come the raw x values, line by line from the file")
-		for (i in 1:length(xValues)) {
-			cat("\nParsing line", lineNos[i], "for x values\n")
-			cat("\tx value (character):", tmp[i], "\n")
-			cat("\tx value (numeric):", xValues[i], "\n")
-			}
+		message("\nHere are the x values:")
+		DF <- data.frame(lineNo = lineNos, X_as_Char = tmp, X_as_Num = xValues)
+		print(DF)
+		# for (i in 1:length(xValues)) {
+			# cat("\nParsing line", lineNos[i], "for x values\n")
+			# cat("\tx value (character):", tmp[i], "\n")
+			# cat("\tx value (numeric):", xValues[i], "\n")
+			# }
 		}
 	
 	# Save the first and last xValues for checking in a bit
@@ -162,6 +164,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		yString <- gsub("([S-Zs])", " \\1 ", yString)
 
  		# Check for DUP pseudo-digits and process if found.  This must be done first!
+ 		
  		if ("DUP" %in% fmt) yString <- insertDUPs(yString, lineNos, debug = debug)
 
 		# Now process SQZ	
@@ -196,7 +199,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 			ytmp <- as.numeric(ytmp)
 						
 			if (any(is.na(ytmp))) {
-				message("Problem: NA found at line no: ", lineNos[i], "!\n")
+				message("\nProblem: NA found at line no: ", lineNos[i], "!")
 				print(ytmp)
 				stop("Conversion to numeric introduced NA")
 				}
