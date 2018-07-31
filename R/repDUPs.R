@@ -38,7 +38,7 @@ repDUPs <- function(string, dupstr) {
 	if (nchar(dupstr) > 1) { # uncommon situation, but possible
 		firstc <- substring(dupstr, 1, 1) # first character
 		firsti <- NA_integer_ # first character as integer, momentarily
-		rest <- <- substring(dupstr, 2, nchar(dupstr)) # rest of the string
+		rest <- substring(dupstr, 2, nchar(dupstr)) # rest of the string
 		if (firstc == "S") firsti <- 1L
 		if (firstc == "T") firsti <- 2L
 		if (firstc == "U") firsti <- 3L

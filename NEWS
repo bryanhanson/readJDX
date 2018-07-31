@@ -3,7 +3,7 @@ NEWS file for package readJDX
 Import data in the JCAMP-DX format.
 URL: github.com/bryanhanson/readJDX
 
-Changes in version 
+Changes in version 0.3.247 2018-06-30
      + Rebuilt how duplicates are handled, so that S2, which is a valid DUP string = 12, is handled correctly.
 
 Changes in version 0.3.215 2017-01-24
