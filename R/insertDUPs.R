@@ -10,7 +10,7 @@
 ##'
 ##' @param debug Integer.  See \code{\link{readJDX}} for details.
 ##'
-##' @param params lineNos. A vector containing the original line numbers of this
+##' @param lineNos A vector containing the original line numbers of this
 ##'        variable list in the original file.  Used for debugging responses.
 ##'
 ##' @return A string.
@@ -18,27 +18,24 @@
 ##' @noRd
 
 insertDUPs <- function(string, lineNos, debug) {					
-	# Take a character vector with DUPs and expand them.
-	# This function will not be efficient b/c we don't know the final length
-	# in advance
+	# Inspect a character vector for DUPs and expand them if found.
+	# This function will not be efficient b/c we can't know the final
+	# string length in advance.
 
-	# There are 2 cases to keep in mind:
- 	# 1. DUP character has a number ahead of it.  Duplicate this number.
- 	# 2. DUP character has a DIF character ahead of it.
- 	# Either way, just repeat whatever is ahead of the DIF character.
- 	# The other unpacking steps are handled elsewhere.
+	# DUPs are [S-Zs].  T means repeat the value 2x, but this includes the
+	# original value (see sec. 5.9 of McDonald 1988).  The meaning of S, 
+	# repeat 1x including the original value, was at first opaque since
+	# it amounts to doing nothing at all.  However, it was
+	# pointed out in an e-mail from XXXX that S2 is a valid
+ 	# DUP string which is translated as 12 repeats.  While this is
+ 	# unlikely, we must handle these possibilities.
  	
-	dup <- grep("[S-Zs]{1}", string)
-	
-	yS <- NA_character_
+ 	# When a DUP string is found we duplicate whatever is ahead of it.
 
-	# if (debug == 5) {
-		# message("Finding and expanding DUP codes")
-		# cat("DUPs found on the following lines of the original file:\n")
-		# print(lineNos[dup])
-		# print(string[dup])
-		# cat("\n")
-		# }
+	pat <- "[S-Zs]{1}[0123456789]*"
+	dup <- grep(pat, string) # identify which string elements have a DUPss
+	
+	yS <- NA_character_ # new y string ready to grow
 	
 	if (debug == 5) message("\nProcessing DUP values...")
 	
@@ -47,16 +44,16 @@ insertDUPs <- function(string, lineNos, debug) {
 	for (i in 1:length(string)) {
 
 		if (!i %in% dup) {
-			yS <- c(yS, string[i]) # no DUPs this line
+			yS <- c(yS, string[i]) # no DUPs this line, just append the current piece
 			}
 			
 		if (i %in% dup) {
 			line <- string[i]
 			line <- unlist(strsplit(line, "\\s+"))
-			newline <- NA_character_
+			newline <- NA_character_ # grow this string
 			for (j in 1:length(line)) {
 				newline <- c(newline, line[j]) # build up the new string one char at a time (ugly)
-				if (grepl("[S-Zs]", line[j])) {
+				if (grepl(pat, line[j])) {
 					tmp <- repDUPs(line[j-1], line[j])
 					# Remove the value you are replacing (DUP count / tmp includes it)
 					lnl <- length(newline)
