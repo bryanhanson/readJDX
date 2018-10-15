@@ -194,7 +194,9 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 			firstF1, firstF2, lastF1, lastF2, factorF1, factorF2, factorZ)
 		names(params) <- c("pointsF1", "pointsF2", "firstF1", "firstF2",
 			"lastF1", "lastF2", "factorF1", "factorF2", "factorZ")
-			
+		
+		if (debug >= 1) message("readJDX has been tested against a limited number of 2D NMR data sets.  We encourage you to file issues and help us improve readJDX.")
+		
 		if (debug >= 2) {
 			message("\nExtracted parameters:")
 			print(params)

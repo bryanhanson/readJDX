@@ -85,7 +85,7 @@ The JCAMP-DX standard allows a lot of flexibility and instrument manufacturers h
 # Supported Formats
 
 * Variable lists can be presented in several different formats.  The supported formats are:
-    * XYDATA=(X++(Y..Y)) Each line starts with an $x$ value, and is followed by as many $y$ values as can conveniently fit within the 80 character per line limit.  Subsequent $x$ values are incremented according to the $x$ resolution and the number of $y$ values that fit on the previous line (which in turn depends upon the compression scheme).
+    * XYDATA=(X++(Y..Y)) Each line starts with an $x$ value, and is followed by as many $y$ values as can fit within the 80 character per line limit.  Subsequent $x$ values are incremented according to the $x$ resolution and the number of $y$ values that fit on the previous line (which in turn depends upon the compression scheme).
     * DATA TABLE=(X++(R..R)) As above.  The real data from a 1D NMR spectrum.
     * DATA TABLE=(X++(I..I)) As above.  The imaginary data from a 1D NMR spectrum.
     * DATA TABLE=(F2++(Y..Y)) As above.  Format used for the slices of a 2D NMR spectrum.
@@ -104,7 +104,7 @@ The JCAMP-DX standard allows a lot of flexibility and instrument manufacturers h
     * EMR, EPR, ESR spectroscopy (\cite{Cammack2006})
     * CD spectroscopy (\cite{Woollett2012})
 * Variable lists of simple $x$, $y$ pairs (format XY..XY) are not supported.  Your pull requests to deal with this format are welcomed.
-* `readJDX` is geared toward raw spectral data.  Therefore variable lists formats representing derived information like PEAK TABLE and PEAK ASSIGNMENTS are not supported (but your pull requests are welcomed!).
+* `readJDX` is geared toward raw spectral data.  Therefore variable lists formats representing derived information like PEAK TABLE and PEAK ASSIGNMENTS are not supported (but again, your pull requests are welcomed!).
 
 # Practical Matters
 
@@ -116,7 +116,6 @@ The JCAMP standard requires a number of checks on the integrity of the data deco
 
 # Known Issues
 
-* Files containing "S" representing a DUP digit of 1 are not supported and will stop with a message.  Such files seem to be fairly rare.
 * Some test files in the author's possession fail when carrying out the y value check, for unknown reasons.
 
 # Program Flow

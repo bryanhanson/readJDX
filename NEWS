@@ -3,6 +3,14 @@ NEWS file for package readJDX
 Import data in the JCAMP-DX format.
 URL: github.com/bryanhanson/readJDX
 
+
+Changes in version 0.3.250 2018-10--15
+     + Checked against R devel r75432 which is R 3.5.1 patched.
+     + README.md updated.
+     + Checked against testbank.
+     + ORCID added to DESCRIPTION.
+     + Minor update to the vignette.
+
 Changes in version 0.3.248 2018-08-24
      + Checked against R devel r75161 which is R 3.5.1 patched.
 
