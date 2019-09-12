@@ -13,7 +13,7 @@
 ##' @param params lineNos. A vector containing the original line numbers of this
 ##'        variable list in the original file.  Used for debugging responses.
 ##'
-##' @param mode Character. One of c("IR", "NMR", "NMR2D")
+##' @param mode Character. One of c("IR_etc", "NMR", "NMR2D")
 ##'
 ##' @param debug Integer.  See \code{\link{readJDX}} for details.
 ##'
@@ -25,7 +25,7 @@
 ##'
 ##' @noRd
 
-decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
+decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	
 	
 	# For XYY, each line of the variable list begins with a frequency (x value)
@@ -41,7 +41,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	if (type == "XRR") {if (debug >= 1) message("\nProcessing real data...")}
 	if (type == "XII") {if (debug >= 1) message("\nProcessing imaginary data...")}
 	if (type == "XYY") {if (debug >= 1) message("\nProcessing variable list...")}
-	if (type == "F2") {
+	if (type == "NMR_2D") {
 		if (debug >= 1) {message("\nProcessing F2 spectra...", dt[1])}
 		dt <- dt[-1] # Remove e.g. ##PAGE= F1= 4.7865152724775
 		lineNos <- lineNos[-1] # Now just numbers remain to be processed
@@ -64,7 +64,10 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		xString[i] <- substring(dt[i], 1, pos)
 		yString[i] <- substring(dt[i], pos + 1, nchar(dt[i]))
 		}
-		
+	
+	names(xString) <- paste("Line", lineNos, sep = "_")
+	names(yString) <- names(xString)
+	
 	#### Process the x values to numeric
 
 	# The x values in the variable list appear in most cases to
@@ -97,7 +100,8 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	# Save the first and last xValues for checking in a bit
 	firstXcheck <- xValues[1]
 	lastXcheck <- xValues[length(xValues)]
-	xtol <- 0.0001*diff(range(xValues, na.rm = TRUE)) # Comments lead to NAs
+	# xtol <- 0.0001*diff(range(xValues, na.rm = TRUE)) # Comments lead to NAs ## changed Sept 2019
+	xtol <- 1.5 * abs(mean(diff(xValues), na.rm = TRUE)) # Comments lead to NAs
 	
 	# The standard requires that each line in the variable list be checked to make
 	# sure no lines were skipped or duplicated.	
@@ -137,39 +141,89 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	if (!"AFFN" %in% fmt) {
 		# Break into pieces corresponding to individual numbers by inserting spaces
 		
+		if (debug == 5) {
+			message("\n y value string w/o processing:")
+			print(yString[1:5])
+		}
+		
 		# Put space ahead of +|- signs (PAC)
 		# This PAC approach will not catch 123-j123 
 		yString <- gsub("(\\+|-)([0-9]+)", " \\1\\2", yString)
+
+		if (debug == 5) {
+			message("\n y value string after inserting spaces ahead of +|- signs:")
+			print(yString[1:5])
+		}
 		
 		# Put space ahead of SQZ codes preceeded by a number
 		yString <- gsub("([0-9]+)([@A-Ia-i]{1})", "\\1 \\2", yString)
 		
+		if (debug == 5) {
+			message("\n y value string after inserting space ahead of SQZ code preceeed by a number:")
+			print(yString[1:5])
+		}
+
 		# Put a space between adjacent SQZ codes e.g. a215Hb513
 		yString <- gsub("([@A-Ia-i]{1})([@A-Ia-i]{1})", "\\1 \\2", yString)
 		
+		if (debug == 5) {
+			message("\n y value string after inserting space between adjacent SQZ codes:")
+			print(yString[1:5])
+		}
+
 		# When a single SQZ code is immediately followed by a DIF code,
 		# put a space between them, e.g. @j097795
 		yString <- gsub("([@A-Ia-i]{1})([%J-Rj-r]{1})", "\\1 \\2", yString)
 				                                                            
+		if (debug == 5) {
+			message("\n y value string after inserting space between a SQZ code followed by a DIF code:")
+			print(yString[1:5])
+		}
+
 		# Put space ahead of DIF codes preceeded by a number
 		yString <- gsub("([0-9]+)([%J-Rj-r]{1})", "\\1 \\2", yString)
 		                                                            
+		if (debug == 5) {
+			message("\n y value string after inserting space ahead of DIF codes preceeded by a number:")
+			print(yString[1:5])
+		}
+		
 		# Put space ahead and behind DIF codes followed by another DIF code
 		# but, CRITICALLY, leave a DIF code followed by a number attached
 		# to that number e.g. "1jj%j32rR15MNOP5" j32 and R15 and P5 
 		# must stay together
 		yString <- gsub("([%J-Rj-r]{1})(?=[%J-Rj-r]+)", " \\1 ", yString, perl = TRUE)
 
+		if (debug == 5) {
+			message("\n y value string after inserting a space ahead and behind a DIF code followed by a DIF code:")
+			print(yString[1:5])
+		}
+
 		# Separate DUP entries
 		yString <- gsub("([S-Zs])", " \\1 ", yString)
+
+		if (debug == 5) {
+			message("\n y value string after separating DUP entries:")
+			print(yString[1:5])
+		}
 
  		# Check for DUP pseudo-digits and process if found.  This must be done first!
  		
  		if ("DUP" %in% fmt) yString <- insertDUPs(yString, lineNos, debug = debug)
 
-		# Now process SQZ	
+		if (debug == 5) {
+			message("\n y value string after inserting DUP numbers:")
+			print(yString[1:5])
+		}
+ 
+ 		# Now process SQZ	
  		if ("SQZ" %in% fmt) yString <- unSQZ(yString) # if pure SQZ this is sufficient
 			
+		if (debug == 5) {
+			message("\n y value string after processing SQZ codes:")
+			print(yString[1:5])
+		}
+
 		# Finally, take care of any DIFs
 		# Done last, since only now do we have a number at what was the beginning of the line,
 		# which is the starting point for calculating the offsets.
@@ -180,6 +234,11 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
  			# deDIF has it's own error checking, problems there will stop there.
 			NUM <- TRUE
 			}
+
+		if (debug == 5) {
+			message("\n y values (numeric) after doing the DIF operation:")
+			print(yString[1:5])
+		}
 
 		# At this point, PAC needs no special handling, other formats have been converted to
 		# numbers as characters except for DIF which is already numeric and NUM = TRUE.
@@ -213,11 +272,11 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	
 	} # end of !"AFFN"	
  	
- 	ytol <- 0.0001*diff(range(yValues, na.rm = TRUE))
+ 	ytol <- 0.0001*diff(range(yValues, na.rm = TRUE)) # might need to revise to be similar to xtol
 
 	### Check the integrity of the results
 			
-	if (mode == "IR") {
+	if (mode == "IR_etc") {
 		
 		# Check that we got the right number of y values
 		
@@ -227,8 +286,8 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		firstY <- params[4]
 		factorX <- params[5]
 		factorY <- params[6]
-		if (debug >= 2) cat("\nNPOINTS =", npoints, "\n")
-		if (debug >= 2) cat("Actual no. data points found  =", length(yValues), "\n")
+		if (debug == 2) cat("\nNPOINTS =", npoints, "\n")
+		if (debug == 2) cat("Actual no. data points found  =", length(yValues), "\n")
 		
 		if (!npoints == length(yValues)) stop("NPOINTS and length of yValues don't match")
 
@@ -246,7 +305,8 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 			}
 		
 		# Check first and last xValues (saved earlier).  The standard is ambiguous about doing this,
-		# but out of an abundance of caution we will do it.
+		# but out of an abundance of caution we will do it.  xtol is set pretty high due to 
+		# precision loss; x values at start of lines is heavily rounded
 		
 		if (!isTRUE(all.equal(firstXcheck*factorX, firstX, check.names = FALSE, tolerance = xtol))) {
 			cat("First x value from variable list:", firstXcheck*factorX, "\n")
@@ -270,7 +330,7 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		xValues <- seq(firstX, lastX, by = dx)
 		yValues <- yValues*factorY
 		
-		} # end of mode = "IR"
+		} # end of mode = "IR_etc"
 		
 	if (mode == "NMR") {
 		
@@ -287,8 +347,8 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		factorR <- params[11]
 		factorI <- params[12]
 		
-		if (debug >= 2) cat("\nNo. data points from metadata =", pointsX, "\n")
-		if (debug >= 2) cat("Actual no. data points found  =", length(yValues), "\n")
+		if (debug == 2) cat("\nNo. data points from metadata =", pointsX, "\n")
+		if (debug == 2) cat("Actual no. data points found  =", length(yValues), "\n")
 		
 		if (pointsX != length(yValues)) stop("Data points found != data points in metadata")
 				
@@ -368,8 +428,8 @@ decompressJDXxyy <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		factorF2 <- params[8]
 		factorZ <- params[9]
 		
-		if (debug >= 2) cat("\nNo. F2 points from metadata =", pointsF2, "\n")
-		if (debug >= 2) cat("Actual F2 points found  =", length(yValues), "\n")
+		if (debug == 2) cat("\nNo. F2 points from metadata =", pointsF2, "\n")
+		if (debug == 2) cat("Actual F2 points found  =", length(yValues), "\n")
 		
 		if (pointsF2 != length(yValues)) stop("Data points found != data points in metadata")
 				

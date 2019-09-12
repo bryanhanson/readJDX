@@ -20,7 +20,7 @@ repDUPs <- function(string, dupstr) {
 	
 	if (length(string) > 1) stop("repDUPs only accepts a length 1 string")
 	
-	# Expand dupstr into an actual number if needed, then duplicate string accordingly.
+	# Expand dupstr into an actual number, then duplicate string accordingly.
 	# See insertDUPs for a discussion of the meaning and use of S and some other issues.
 	
 	if (nchar(dupstr) == 1) { # common situation
@@ -35,7 +35,7 @@ repDUPs <- function(string, dupstr) {
 		if (dupstr == "s") return(rep(string, 9))	
 	}
 	
-	if (nchar(dupstr) > 1) { # uncommon situation, but possible
+	if (nchar(dupstr) > 1) {
 		firstc <- substring(dupstr, 1, 1) # first character
 		firsti <- NA_integer_ # first character as integer, momentarily
 		rest <- substring(dupstr, 2, nchar(dupstr)) # rest of the string
@@ -49,9 +49,10 @@ repDUPs <- function(string, dupstr) {
 		if (firstc == "Z") firsti <- 8L
 		if (firstc == "s") firsti <- 9L
 		
-		if (is.na(firsti)) stop("Could not find the DUP signal")
+		if (is.na(firsti)) stop("Could not find the DUP code")
 		
-		return(paste(firsti, rest, sep = "")) # paste gives char type
+		repval <- as.numeric(paste(firsti, rest, sep = ""))
+		return(rep(string, repval))
 		
 	}
 	

@@ -1,3 +1,4 @@
+
 ##'
 ##' Import a File Written in the JCAMP-DX Format
 ##'
@@ -26,14 +27,19 @@
 ##' parameters that must be available in order to return any answer.
 ##'
 ##' @param debug Integer.  The level of debug reporting desired.
-##' 1 or higher = import progress is reported.
-##' 2 or higher = details about the variable lists, compression formats and
-##' parameters that were found.
-##' 3 = detailed info about processing of the x values (huge!).
-##' 4 = detailed view of the first five lines containing y values; may be helpful if
-##' the compression is not figured out correctly (via \code{getJDXcompression}).
-##' 5 = detailed info about processing the y values when DUP is in use (huge!).
-##' 6 = detailed info about processing the y values when DIF is in use (huge!).
+##' \itemize{
+##'   \item 1 or higher = import progress is reported.
+##'   \item 2 = details about the variable lists, compression formats and
+##'             parameters that were found.
+##'   \item 3 = detailed info about processing of the x values (huge!).
+##'   \item 4 = detailed view of the first five lines containing y values; may be helpful if
+##'             the compression is not figured out correctly (via \code{getJDXcompression}).
+##'   \item 5 = detailed view of the y value processing if the internal format is not \code{AFFN}.
+##'             Reports the first five y value strings before and after each step in the process,
+##'             so output is considerable.
+##'   \item 6 = detailed info about processing the y values when DUP is in use (huge!).
+##'   \item 7 = detailed info about processing the y values when DIF is in use (huge!).
+##' }
 ##' In cases where an error is about to
 ##' stop execution, you get additional information regardless of
 ##' the \code{debug} value.  With debug values that give a lot of information
@@ -138,9 +144,7 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 	# Link blocks are not supported. NMR data sets, including 2D NMR data sets,
 	# use a different scheme to hold multiple data sets.
 	
-	IR <- TRUE # until proven otherwise; IR stands in Raman, UV, etc
-	NMR <- FALSE
-	NMR2D <- FALSE
+	mode <- "IR_etc" # until proven otherwise; IR includes Raman, UV, pretty much anything other than NMR or 2D NMR
 	
 	blocks <- grep("^\\s*##TITLE\\s*=.*", jdx)
 	nb <- length(blocks)
@@ -149,16 +153,15 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 
 	ntup <- grepl("^\\s*##NTUPLES", jdx)
 	nD <- grepl("^\\s*##NTUPLES=\\s*nD", jdx)
-	if (any(ntup) & !any(nD)) NMR <- TRUE
-	if (any(ntup) & any(nD)) NMR2D <- TRUE
+	if (any(ntup) & !any(nD)) mode <- "NMR"
+	if (any(ntup) & any(nD)) {
+		mode <- "NMR2D"
+		if (debug >= 1) message("\nreadJDX has been tested against a limited number of 2D NMR data sets.  We encourage you to file issues on Github, share problematic files and help us improve readJDX.")
+	}
 			
-	if (debug >= 1) message("\n\nProcessing file ", file)
+	if (debug >= 1) message("\n\nProcessing file ", file, "which appears to contain", mode, "data")
 			
 ##### Step 2. Locate the parameters and the variable list(s)
-
-	if (IR) mode <- "IR"
-	if (NMR) mode <- "NMR"
-	if (NMR2D) mode <- "NMR2D"
 	
 	dblist <- findDataTables(jdx, debug)
 		
@@ -168,7 +171,7 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 		
 ##### Step 4.  Process the variable list(s) into the final lists
 
-	if ((mode == "IR") | (mode == "NMR")) {
+	if ((mode == "IR_etc") | (mode == "NMR")) {
 		# Return value is a list: dataGuide, metadata, comment lines + data frames of x, y
 		# dataGuide, metadata & comments already in place; process each variable list
 
@@ -177,7 +180,7 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 		}
 
 		# Fix up names
-		if (mode == "IR") {
+		if (mode == "IR_etc") {
 			specnames <- jdx[blocks] # each line with title
 			specnames <- str_trim(substring(specnames, 9, nchar(specnames)))		
 		}

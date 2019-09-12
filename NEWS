@@ -3,6 +3,13 @@ NEWS file for package readJDX
 Import data in the JCAMP-DX format.
 URL: github.com/bryanhanson/readJDX
 
+Changes in version 0.3.xx 2019-xx-xx
+     + Can now read Bruker 2D NMR spectra exported from TopSpin vis "tojdx".
+     + Debug options are now more consistent, documentation improved, and a new debug level was added.
+     + Checking of x values was relaxed a bit, and made more sensible.
+     + Fixed a bug in which DUP codes longer than a single character (e.g. "S2") returned the wrong answer.
+     + Internal handling of mode/fmt was simplified.
+     + decompressJDXxyy renamed decompressXYY.
 
 Changes in version 0.3.250 2018-10--15
      + Checked against R devel r75432 which is R 3.5.1 patched.

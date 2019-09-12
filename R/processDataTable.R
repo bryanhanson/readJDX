@@ -15,13 +15,13 @@
 ##' @param params lineNos. Two integers giving the first and last lines
 ##'        of the variable list in the original file.  Used for debugging responses.
 ##'
-##' @param mode Character. One of c("IR", "NMR", "NMR2D")
+##' @param mode Character. One of c("IR_etc", "NMR", "NMR2D")
 ##'
 ##' @param debug Integer.  See \code{\link{readJDX}} for details.
 ##'
 ##' @param SOFC Logical.  See \code{\link{readJDX}} for details.
 ##'
-##' @return A data frame with elements $x$ and $y$.
+##' @return A data frame with elements $x$ and $y$, unless the input is 2D NMR, in which case a matrix.
 ##' 
 ##' @noRd
 ##'
@@ -35,7 +35,7 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 	
 	lineNos <- unlist(lineNos)
 	
-	if (mode == "IR") {
+	if (mode == "IR_etc") {
 		dt <- dt[-c(2, length(dt))]
 		st <- lineNos[1] + 1
 		end <- lineNos[2] - 1
@@ -83,12 +83,14 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 		}
 	}
 	
-	fmt <- dt[1] # Get the format & dispatch based on it
+	# From here on, lineNos could be used to name dt and simplify things... maybe
+	
+	fmt <- dt[1] # Get the format & dispatch based on it -- At this point only XYY is understood
 
-	if ((fmt == "XRR") | (fmt == "XII") | (fmt == "F2")) fmt <- "XYY"
+	if ((fmt == "XRR") | (fmt == "XII") | (fmt == "NMR_2D")) fmt <- "XYY"
 	
 	if (fmt == "XYY") {
-		xydata <- decompressJDXxyy(dt, params, mode, lineNos, SOFC, debug = debug)
+		xydata <- decompressXYY(dt, params, mode, lineNos, SOFC, debug = debug)
 		return(xydata)
 	}
 				

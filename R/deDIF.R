@@ -41,11 +41,11 @@ deDIF <- function(string, lineNos, debug) {
 	# Step 2: Convert the DIF characters to the corresponding numbers
 	# and fix offset
 
-	if (debug == 6) tmp_string <- string # save copy for reporting
+	if (debug == 7) tmp_string <- string # save copy for reporting
 	
 	yValues <- lapply(string, unDIF)
 	
-	if (debug == 6) {
+	if (debug == 7) {
 		message("\nUndoing DIF compression:")
 		message("\nLines passed to deDIF:")
 		print(tmp_string)
@@ -62,7 +62,7 @@ deDIF <- function(string, lineNos, debug) {
 	# First value on a line should = last value on the prev. line.
 	# Names must be stripped for the all.equal check below.
 
-	if (debug == 6) message("\nCarrying out y value check...")
+	if (debug == 7) message("\nCarrying out y value check...")
 	
 	fun <- function(x) {x[1]}
 	first <- unlist(lapply(yValues, fun), use.names = FALSE)
@@ -87,7 +87,7 @@ deDIF <- function(string, lineNos, debug) {
 			}
 		}
 
-	if (debug == 6) message("\ny value check successful...")
+	if (debug == 7) message("\ny value check successful...")
 		
 	# Step 4: Remove extra y values that were needed for the check
 			

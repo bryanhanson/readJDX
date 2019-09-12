@@ -24,14 +24,19 @@ NOTE: Only a few checks can be skipped via this option, as there are some
 parameters that must be available in order to return any answer.}
 
 \item{debug}{Integer.  The level of debug reporting desired.
-1 or higher = import progress is reported.
-2 or higher = details about the variable lists, compression formats and
-parameters that were found.
-3 = detailed info about processing of the x values (huge!).
-4 = detailed view of the first five lines containing y values; may be helpful if
-the compression is not figured out correctly (via \code{getJDXcompression}).
-5 = detailed info about processing the y values when DUP is in use (huge!).
-6 = detailed info about processing the y values when DIF is in use (huge!).
+\itemize{
+  \item 1 or higher = import progress is reported.
+  \item 2 = details about the variable lists, compression formats and
+            parameters that were found.
+  \item 3 = detailed info about processing of the x values (huge!).
+  \item 4 = detailed view of the first five lines containing y values; may be helpful if
+            the compression is not figured out correctly (via \code{getJDXcompression}).
+  \item 5 = detailed view of the y value processing if the internal format is not \code{AFFN}.
+            Reports the first five y value strings before and after each step in the process,
+            so output is considerable.
+  \item 6 = detailed info about processing the y values when DUP is in use (huge!).
+  \item 7 = detailed info about processing the y values when DIF is in use (huge!).
+}
 In cases where an error is about to
 stop execution, you get additional information regardless of
 the \code{debug} value.  With debug values that give a lot of information

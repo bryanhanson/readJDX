@@ -59,7 +59,7 @@ getJDXcompression <- function (string, debug = 0){
 	# Check to see if DUP is in use
 	if (grepl("[S-Zs]", string)) DUP <- TRUE
 
-	if (debug >= 2) {
+	if (debug %in% c(2, 4)) {
 		message("\nCompression formats in use:")
 		cat("AFFN =", AFFN, "\n")
 		cat("PAC =", PAC, "\n")

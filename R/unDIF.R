@@ -17,9 +17,9 @@
 
 unDIF <- function(string) {
 	pat <- "[%JKLMNOPQRjklmnopqr]"
-	dflag <- str_detect(string, pat) # flag to mark where the DIF codes are in the string
+	# dflag <- str_detect(string, pat) # flag to mark where the DIF codes are in the string
 	string <- str_replace_all(string,
-		c("%" = "0",  # effectively the same as a DUP character
+		c("%" = "0",  # effectively the same as a DUP character (add nothing, i.e. repeat the character)
 		  "J" = "1",
 		  "K" = "2",
 		  "L" = "3",
@@ -39,13 +39,14 @@ unDIF <- function(string) {
 		  "q" = "-8",
 		  "r" = "-9"))
 		  
-	string <- as.numeric(string)
-	values <- rep(NA_real_, length(string))
-	for (i in 1:length(values)) { # amounts to cumsum over only selected portions of the string
-		if (!dflag[i]) {values[i] <- string[i]; next}
-		if (dflag[i]) values[i] <- string[i] + values[i-1]
-	}
+	# string <- as.numeric(string)
+	# values <- rep(NA_real_, length(string))
+	# for (i in 1:length(values)) { # amounts to cumsum over only selected portions of the string
+		# if (!dflag[i]) {values[i] <- string[i]; next}
+		# if (dflag[i]) values[i] <- string[i] + values[i-1]
+	# }
 	
+	values <- cumsum(as.numeric(string))
 	return(values)	
 	}
 	

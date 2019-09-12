@@ -21,7 +21,7 @@
 ##'
 extractParams <- function (md, mode, SOFC, debug = 0){
 
-	if (mode == "IR") {
+	if (mode == "IR_etc") {
 		
 		# The following parameters must be found
 		
@@ -75,12 +75,12 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 		params <- c(as.numeric(npoints), firstX, lastX, firstY,  factorX, factorY)
 		names(params) <- c("npoints", "firstX", "lastX", "firstY", "factorX", "factorY")
 
-		if (debug >= 2) {
+		if (debug == 2) {
 			message("\nExtracted parameters:")
 			print(params)
 			}
 	
-		} # end of mode == IR
+		} # end of mode == IR_etc
 
 	if (mode == "NMR")	 {
 		
@@ -137,7 +137,7 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 		names(params) <- c("pointsX", "pointsR", "pointsI", "firstX", "firstR", "firstI",
 			"lastX", "lastR", "lastI", "factorX", "factorR", "factorI")
 			
-		if (debug >= 2) {
+		if (debug == 2) {
 			message("\nExtracted parameters:")
 			print(params)
 			}
@@ -195,9 +195,7 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 		names(params) <- c("pointsF1", "pointsF2", "firstF1", "firstF2",
 			"lastF1", "lastF2", "factorF1", "factorF2", "factorZ")
 		
-		if (debug >= 1) message("readJDX has been tested against a limited number of 2D NMR data sets.  We encourage you to file issues and help us improve readJDX.")
-		
-		if (debug >= 2) {
+		if (debug == 2) {
 			message("\nExtracted parameters:")
 			print(params)
 			}

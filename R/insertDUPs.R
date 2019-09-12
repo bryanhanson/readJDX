@@ -26,18 +26,17 @@ insertDUPs <- function(string, lineNos, debug) {
 	# original value (see sec. 5.9 of McDonald 1988).  The meaning of S, 
 	# repeat 1x including the original value, was at first opaque since
 	# it amounts to doing nothing at all.  However, it was
-	# pointed out in an e-mail from XXXX that S2 is a valid
- 	# DUP string which is translated as 12 repeats.  While this is
- 	# unlikely, we must handle these possibilities.
+	# pointed out in an e-mail from Peter Lampen that S2 is a valid
+ 	# DUP string which is translated as 12 repeats.
  	
  	# When a DUP string is found we duplicate whatever is ahead of it.
 
 	pat <- "[S-Zs]{1}[0123456789]*"
-	dup <- grep(pat, string) # identify which string elements have a DUPss
+	dup <- grep(pat, string) # identify which string elements have a DUPs
 	
 	yS <- NA_character_ # new y string ready to grow
 	
-	if (debug == 5) message("\nProcessing DUP values...")
+	if (debug == 6) message("\nProcessing DUP values...")
 	
 	# Better if string was named here as it is elsewhere for debug reporting (see below)
 	
@@ -57,10 +56,9 @@ insertDUPs <- function(string, lineNos, debug) {
 					tmp <- repDUPs(line[j-1], line[j])
 					# Remove the value you are replacing (DUP count / tmp includes it)
 					lnl <- length(newline)
-					newline <- c(newline[-c((lnl-1):lnl)], tmp)
-					}
+					newline <- c(newline[-c((lnl-1):lnl)], tmp)					}
 				}
-			if (debug == 5) {
+			if (debug == 6) {
 				cat("\nOriginal line:", lineNos[i], "\n")
 				cat("\t", line, "\n")
 				cat("\nLine", lineNos[i], "with DUPs inserted:\n")
