@@ -1,23 +1,20 @@
-##'
-##' Insert Duplicate Entries
-##'
-##' This function is NOT EXPORTED.
-##' Users would not normally call this function.  See \code{\link{readJDX}}.
-##' Documentation is provided for developers wishing to contribute to the package.
-##' 
-##' @param string Character vector.  Partially processed lines from the
-##' original variable list.
-##'
-##' @param debug Integer.  See \code{\link{readJDX}} for details.
-##'
-##' @param lineNos A vector containing the original line numbers of this
-##'        variable list in the original file.  Used for debugging responses.
-##'
-##' @return A string.
-##' 
-##' @noRd
+#'
+#' Insert Duplicate Entries
+#'
+#' This function is NOT EXPORTED.
+#' Users would not normally call this function.  See \code{\link{readJDX}}.
+#' Documentation is provided for developers wishing to contribute to the package.
+#' 
+#' @param string Character vector.  Partially processed lines from the
+#' original variable list.
+#'
+#' @param debug Integer.  See \code{\link{readJDX}} for details.
+#'
+#' @return A string.
+#' 
+#' @noRd
 
-insertDUPs <- function(string, lineNos, debug) {					
+insertDUPs <- function(string, debug) {					
 	# Inspect a character vector for DUPs and expand them if found.
 	# This function will not be efficient b/c we can't know the final
 	# string length in advance.
@@ -59,9 +56,9 @@ insertDUPs <- function(string, lineNos, debug) {
 					newline <- c(newline[-c((lnl-1):lnl)], tmp)					}
 				}
 			if (debug == 6) {
-				cat("\nOriginal line:", lineNos[i], "\n")
+				cat("\nOriginal line:", names(string)[i], "\n")
 				cat("\t", line, "\n")
-				cat("\nLine", lineNos[i], "with DUPs inserted:\n")
+				cat("\nLine", names(string)[i], "with DUPs inserted:\n")
 				cat("\t", newline[-1], "\n")
 				cat("\n--------------------\n")
 				}

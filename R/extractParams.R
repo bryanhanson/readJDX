@@ -1,24 +1,24 @@
-##'
-##' Extract Parameters from Metadata
-##'
-##' This function is NOT EXPORTED.
-##' Users would not normally call this function.  See \code{\link{readJDX}}.
-##' Documentation is provided for developers wishing to contribute to the package.
-##' 
-##' @param md Character.  A vector of character strings which contains
-##' the metadata.
-##'
-##' @param mode Character. One of c("IR", "NMR", "NMR2D").
-##'
-##' @param SOFC Logical. Stop on Failed Check.   See \code{\link{readJDX}} for details.
-##'
-##' @param debug Integer.  See \code{\link{readJDX}} for details.
-##'
-##' @return A named numeric vector containing the extracted parameters.
-##' Contents will vary by \code{mode}.
-##' 
-##' @noRd
-##'
+#'
+#' Extract Parameters from Metadata
+#'
+#' This function is NOT EXPORTED.
+#' Users would not normally call this function.  See \code{\link{readJDX}}.
+#' Documentation is provided for developers wishing to contribute to the package.
+#' 
+#' @param md Character.  A vector of character strings which contains
+#' the metadata.
+#'
+#' @param mode Character. One of c("IR", "NMR", "NMR2D").
+#'
+#' @param SOFC Logical. Stop on Failed Check.   See \code{\link{readJDX}} for details.
+#'
+#' @param debug Integer.  See \code{\link{readJDX}} for details.
+#'
+#' @return A named numeric vector containing the extracted parameters.
+#' Contents will vary by \code{mode}.
+#' 
+#' @noRd
+#'
 extractParams <- function (md, mode, SOFC, debug = 0){
 
 	if (mode == "IR_etc") {

@@ -1,20 +1,20 @@
-##'
-##' Replicate Duplicate Values
-##'
-##' This function is NOT EXPORTED.
-##' Users would not normally call this function.  See \code{\link{readJDX}}.
-##' Documentation is provided for developers wishing to contribute to the package.
-##' 
-##' @param string Character.  A string to be replicated, as type character.
-##' May contain a number or a character or a combination, but the whole is a
-##' character string.
-##'
-##' @param dupstr Character.  A character string which when decoded indicates
-##' the number of times to repeat \code{string}.
-##'
-##' @return An expanded string.
-##' 
-##' @noRd
+#'
+#' Replicate Duplicate Values
+#'
+#' This function is NOT EXPORTED.
+#' Users would not normally call this function.  See \code{\link{readJDX}}.
+#' Documentation is provided for developers wishing to contribute to the package.
+#' 
+#' @param string Character.  A string to be replicated, as type character.
+#' May contain a number or a character or a combination, but the whole is a
+#' character string.
+#'
+#' @param dupstr Character.  A character string which when decoded indicates
+#' the number of times to repeat \code{string}.
+#'
+#' @return An expanded string.
+#' 
+#' @noRd
 
 repDUPs <- function(string, dupstr) {
 	

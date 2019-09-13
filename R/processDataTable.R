@@ -1,30 +1,30 @@
-##'
-##' Decompress a Single Variable List from a JCAMP-DX file
-##'
-##' This function is NOT EXPORTED.
-##' Users would not normally call this function.  See \code{\link{readJDX}}.
-##' Documentation is provided for developers wishing to contribute to the package.
-##' 
-##' @param dt Character.  A vector of character strings which contains
-##' the variable list.  First line should be the format code (an
-##' extra line inserted by this package).  Depending upon mode, there
-##' may be some other stuff that still needs to be stripped off to get to just numbers.
-##'
-##' @param params Numeric. Vector of parameters from file header.
-##'
-##' @param params lineNos. Two integers giving the first and last lines
-##'        of the variable list in the original file.  Used for debugging responses.
-##'
-##' @param mode Character. One of c("IR_etc", "NMR", "NMR2D")
-##'
-##' @param debug Integer.  See \code{\link{readJDX}} for details.
-##'
-##' @param SOFC Logical.  See \code{\link{readJDX}} for details.
-##'
-##' @return A data frame with elements $x$ and $y$, unless the input is 2D NMR, in which case a matrix.
-##' 
-##' @noRd
-##'
+#'
+#' Decompress a Single Variable List from a JCAMP-DX file
+#'
+#' This function is NOT EXPORTED.
+#' Users would not normally call this function.  See \code{\link{readJDX}}.
+#' Documentation is provided for developers wishing to contribute to the package.
+#' 
+#' @param dt Character.  A vector of character strings which contains
+#' the variable list.  First line should be the format code (an
+#' extra line inserted by this package).  Depending upon mode, there
+#' may be some other stuff that still needs to be stripped off to get to just numbers.
+#'
+#' @param params Numeric. Vector of parameters from file header.
+#'
+#' @param params lineNos. Two integers giving the first and last lines
+#'        of the variable list in the original file.  Used for debugging responses.
+#'
+#' @param mode Character. One of c("IR_etc", "NMR", "NMR2D")
+#'
+#' @param debug Integer.  See \code{\link{readJDX}} for details.
+#'
+#' @param SOFC Logical.  See \code{\link{readJDX}} for details.
+#'
+#' @return A data frame with elements $x$ and $y$, unless the input is 2D NMR, in which case a matrix.
+#' 
+#' @noRd
+#'
 processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 
 	# Strip off non-numerical lines at beginning and end,
@@ -34,6 +34,7 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 	# These will be handled during decompression.
 	
 	lineNos <- unlist(lineNos)
+	fmt <- dt[1]
 	
 	if (mode == "IR_etc") {
 		dt <- dt[-c(2, length(dt))]
@@ -48,7 +49,7 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 	
 	if (mode == "NMR") {
 		
-		if (dt[1] == "XRR") {
+		if (fmt == "XRR") {
 			dt <- dt[-c(2, 3)]
 			st <- lineNos[1] + 2
 			end <- lineNos[2]
@@ -59,7 +60,7 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 			}
 		}
 		
-		if (dt[1] == "XII") {
+		if (fmt == "XII") {
 			dt <- dt[-c(2, 3, length(dt))]
 			st <- lineNos[1] + 2
 			end <- lineNos[2] - 1
@@ -83,14 +84,15 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 		}
 	}
 	
-	# From here on, lineNos could be used to name dt and simplify things... maybe
+	lineNos <- paste("Line", lineNos, sep = "_")
+	names(dt) <- lineNos
 	
-	fmt <- dt[1] # Get the format & dispatch based on it -- At this point only XYY is understood
+	# Dispatch based on fmt -- At this point only XYY is understood
 
 	if ((fmt == "XRR") | (fmt == "XII") | (fmt == "NMR_2D")) fmt <- "XYY"
 	
 	if (fmt == "XYY") {
-		xydata <- decompressXYY(dt, params, mode, lineNos, SOFC, debug = debug)
+		xydata <- decompressXYY(dt, params, mode, SOFC, debug = debug)
 		return(xydata)
 	}
 				

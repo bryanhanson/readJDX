@@ -1,19 +1,19 @@
-##'
-##' Determine the type(s) of Compression in Use
-##'
-##' This function is NOT EXPORTED.
-##' Users would not normally call this function.  See \code{\link{readJDX}}.
-##' Documentation is provided for developers wishing to contribute to the package.
-##' 
-##' @param string Character.  The string to be checked.  If a vector of
-##' strings it will be collapsed to a single string.
-##'
-##' @param debug Integer.  See \code{\link{readJDX}} for details.
-##'
-##' @return A string giving all compression formats found.
-##' 
-##' @noRd
-##'
+#'
+#' Determine the type(s) of Compression in Use
+#'
+#' This function is NOT EXPORTED.
+#' Users would not normally call this function.  See \code{\link{readJDX}}.
+#' Documentation is provided for developers wishing to contribute to the package.
+#' 
+#' @param string Character.  The string to be checked.  If a vector of
+#' strings it will be collapsed to a single string.
+#'
+#' @param debug Integer.  See \code{\link{readJDX}} for details.
+#'
+#' @return A string giving all compression formats found.
+#' 
+#' @noRd
+#'
 getJDXcompression <- function (string, debug = 0){
 
 # There are 4 possible compression formats:

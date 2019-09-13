@@ -1,28 +1,28 @@
-##'
-##' Locate Variable Lists and Related Information in a JCAMP-DX File
-##'
-##' This function is NOT EXPORTED.
-##' Users would not normally call this function.  See \code{\link{readJDX}}.
-##' Documentation is provided for developers wishing to contribute to the package.
-##' 
-##' @param jdx Character.  A vector of character strings which hopefully contains
-##' one or more variable lists.  Each string is a line of the complete original file.
-##'
-##' @param debug Integer.  See \code{\link{readJDX}} for details.
-##'
-##' @return A list.
-##' \itemize{
-##'   \item A data frame giving information about the structure of the file. Columns will be
-##'         Format, FirstLine, LastLine.  Serves as a Data Guide.
-##'   \item The metadata
-##'   \item The line numbers of comments (excluding comments in the metadata).
-##'   \item Each variable list that was found, with the format pre-pended.
-##'  }
-##'
-##' @importFrom stats na.omit
-##'
-##' @noRd
-##'
+#'
+#' Locate Variable Lists and Related Information in a JCAMP-DX File
+#'
+#' This function is NOT EXPORTED.
+#' Users would not normally call this function.  See \code{\link{readJDX}}.
+#' Documentation is provided for developers wishing to contribute to the package.
+#' 
+#' @param jdx Character.  A vector of character strings which hopefully contains
+#' one or more variable lists.  Each string is a line of the complete original file.
+#'
+#' @param debug Integer.  See \code{\link{readJDX}} for details.
+#'
+#' @return A list.
+#' \itemize{
+#'   \item A data frame giving information about the structure of the file. Columns will be
+#'         Format, FirstLine, LastLine.  Serves as a Data Guide.
+#'   \item The metadata
+#'   \item The line numbers of comments (excluding comments in the metadata).
+#'   \item Each variable list that was found, with the format pre-pended.
+#'  }
+#'
+#' @importFrom stats na.omit
+#'
+#' @noRd
+#'
 findDataTables <- function (jdx, debug = 0) {
 
 	# A data set is defined by a variable list.

@@ -1,19 +1,19 @@
-##'
-##' Convert from DIF Format to a Numeric Vector
-##'
-##' This function is NOT EXPORTED.
-##' Users would not normally call this function.  See \code{\link{readJDX}}.
-##' Documentation is provided for developers wishing to contribute to the package.
-##' 
-##' @param string Character.  The string to be converted.
-##'
-##' @return A numeric vector.
-##'
-##' @aliases unDIF unSQZ
-##'
-##' @importFrom stringr str_detect str_replace_all
-##'
-##' @noRd
+#'
+#' Convert from DIF Format to a Numeric Vector
+#'
+#' This function is NOT EXPORTED.
+#' Users would not normally call this function.  See \code{\link{readJDX}}.
+#' Documentation is provided for developers wishing to contribute to the package.
+#' 
+#' @param string Character.  The string to be converted.
+#'
+#' @return A numeric vector.
+#'
+#' @aliases unDIF unSQZ
+#'
+#' @importFrom stringr str_detect str_replace_all
+#'
+#' @noRd
 
 unDIF <- function(string) {
 	pat <- "[%JKLMNOPQRjklmnopqr]"

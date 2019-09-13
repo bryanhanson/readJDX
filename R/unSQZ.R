@@ -1,7 +1,7 @@
-##'
-##' @rdname unDIF
-##'
-##' @noRd
+#'
+#' @rdname unDIF
+#'
+#' @noRd
 
 unSQZ <- function(string) {
 	string <- gsub("@", "0", string)

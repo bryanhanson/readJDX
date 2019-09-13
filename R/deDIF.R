@@ -1,19 +1,19 @@
-##'
-##' Process DIF Encoded Strings
-##'
-##' This function is NOT EXPORTED.
-##' Users would not normally call this function.  See \code{\link{readJDX}}.
-##' Documentation is provided for developers wishing to contribute to the package.
-##'
-##' @param string Character.  String to be processed.
-##'
-##' @param debug Integer.  See \code{\link{readJDX}} for details.
-##'
-##' @return A numeric vector.
-##' 
-##' @noRd
-##'
-deDIF <- function(string, lineNos, debug) {
+#'
+#' Process DIF Encoded Strings
+#'
+#' This function is NOT EXPORTED.
+#' Users would not normally call this function.  See \code{\link{readJDX}}.
+#' Documentation is provided for developers wishing to contribute to the package.
+#'
+#' @param string Character.  String to be processed.
+#'
+#' @param debug Integer.  See \code{\link{readJDX}} for details.
+#'
+#' @return A numeric vector.
+#' 
+#' @noRd
+#'
+deDIF <- function(string, debug) {
 	
 	# The JCAMP std states that in DIF form the first entry on a line
 	# is an X value (already removed), the 2nd value is in SQZ form
@@ -36,7 +36,7 @@ deDIF <- function(string, lineNos, debug) {
 	string <- as.list(string)
 	FUN <- function(x) {unlist(strsplit(x, "\\s+"))}
 	string <- lapply(string, FUN)
-	names(string) <- paste("Line", lineNos, sep = "_")
+	# names(string) <- paste("Line", lineNos, sep = "_")
 		
 	# Step 2: Convert the DIF characters to the corresponding numbers
 	# and fix offset
@@ -77,7 +77,7 @@ deDIF <- function(string, lineNos, debug) {
 			if (i <= 5) rpt <- 2:6
 			if (i >= 6) rpt <- (i-2):(i+2)
 			if (i >= (length(first) - 2)) rpt <- (length(first) - 5):length(first)
-			DF <- data.frame(Line = lineNos[rpt],
+			DF <- data.frame(LineNo = names(string)[rpt],
 				FirstYonLine = first[rpt], LastYonPrevLine = last[rpt-1],
 				Problem = ifelse(first[rpt] == last[rpt-1], "", "*"))
 			print(DF)
@@ -98,7 +98,7 @@ deDIF <- function(string, lineNos, debug) {
 
 	# Step 5: Wrap up and return
 
-	# Note: comments are still NA and lineNos is still correct
+	# Note: comments are still NA
 	
 	return(unlist(yValues))		
 	

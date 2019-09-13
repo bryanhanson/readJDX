@@ -1,58 +1,52 @@
-##'
-##' Extract the values in JCAMP-DX file with an XYY variable list.
-##'
-##' This function is NOT EXPORTED.
-##' Users would not normally call this function.  See \code{\link{readJDX}}.
-##' Documentation is provided for developers wishing to contribute to the package.
-##' 
-##' @param dt Character.  The variable list to be processed.  Includes one pre-pended
-##' line giving the type of data (e.g. XYY, XRR, XII).
-##'
-##' @param params Numeric. Vector of parameters extracted from file header.
-##'
-##' @param params lineNos. A vector containing the original line numbers of this
-##'        variable list in the original file.  Used for debugging responses.
-##'
-##' @param mode Character. One of c("IR_etc", "NMR", "NMR2D")
-##'
-##' @param debug Integer.  See \code{\link{readJDX}} for details.
-##'
-##' @param SOFC Logical.  See \code{\link{readJDX}} for details.
-##'
-##' @return A data frame with elements \code{x} and \code{y}.
-##' 
-##' @importFrom stringr str_locate str_trim
-##'
-##' @noRd
+#'
+#' Extract the values in JCAMP-DX file with an XYY variable list.
+#'
+#' This function is NOT EXPORTED.
+#' Users would not normally call this function.  See \code{\link{readJDX}}.
+#' Documentation is provided for developers wishing to contribute to the package.
+#' 
+#' @param dt Character.  The variable list to be processed.  Includes one pre-pended
+#' line giving the fmt of data (e.g. XYY, XRR, XII).
+#'
+#' @param params Numeric. Vector of parameters extracted from file header.
+#'
+#'
+#' @param mode Character. One of c("IR_etc", "NMR", "NMR2D")
+#'
+#' @param debug Integer.  See \code{\link{readJDX}} for details.
+#'
+#' @param SOFC Logical.  See \code{\link{readJDX}} for details.
+#'
+#' @return A data frame with elements \code{x} and \code{y}.
+#' 
+#' @importFrom stringr str_locate str_trim
+#'
+#' @noRd
+#'
 
-decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
-	
+decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 	
 	# For XYY, each line of the variable list begins with a frequency (x value)
 	# followed by the y values in various compressed formats.
 		
-	# Note that xString and yString are pieces corresponding to the individual lines
+	# Note that xString and yString are vectors corresponding to the individual lines
 	# of dt, each is of type character until fully decompressed.
 	
-	type <- dt[1]
+	fmt <- dt[1]
 	dt <- dt[-1] # Remove the pre-pended format string
-	lineNos <- lineNos[-1] # Adjust accordingly
 		
-	if (type == "XRR") {if (debug >= 1) message("\nProcessing real data...")}
-	if (type == "XII") {if (debug >= 1) message("\nProcessing imaginary data...")}
-	if (type == "XYY") {if (debug >= 1) message("\nProcessing variable list...")}
-	if (type == "NMR_2D") {
-		if (debug >= 1) {message("\nProcessing F2 spectra...", dt[1])}
-		dt <- dt[-1] # Remove e.g. ##PAGE= F1= 4.7865152724775
-		lineNos <- lineNos[-1] # Now just numbers remain to be processed
-		}
+	if (fmt == "XRR") {if (debug >= 1) message("\nProcessing real data...")}
+	if (fmt == "XII") {if (debug >= 1) message("\nProcessing imaginary data...")}
+	if (fmt == "XYY") {if (debug >= 1) message("\nProcessing variable list...")}
+	if (fmt == "NMR_2D") {
+		if (debug >= 1) {message("\nProcessing F2 spectra...", dt[1])} 
+		dt <- dt[-1] # Remove e.g. ##PAGE= F1= 4.7865152724775 now that we have used it for debugging.
+		             # Now just numbers remain to be processed
+	}
 		
-	if (length(dt) != length(lineNos)) stop("lineNos doesn't match variable list")
-
-	### CRITICAL: all operations that follow must perserve the original length
-	# of dt which matches the length of lineNos.  Comment-only lines will be
-	# converted to NA, which must be kept until they can be tossed, and when tossed,
-	# they must be tossed from both xString and yString at the same time.
+	### CRITICAL: We are about to split dt into its x and y parts.  Their lengths will be the same, and 
+	# all operations must preserve that length.  Comment-only lines will be converted to NA, which must be kept until
+	# they can be tossed, and when tossed, they must be tossed from both xString and yString at the same time.
 	
 	### Split each line of dt in an x part and y part
 	
@@ -63,19 +57,16 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		pos <- str_locate(dt[i], numpat)[1,2]
 		xString[i] <- substring(dt[i], 1, pos)
 		yString[i] <- substring(dt[i], pos + 1, nchar(dt[i]))
-		}
-	
-	names(xString) <- paste("Line", lineNos, sep = "_")
-	names(yString) <- names(xString)
-	
-	#### Process the x values to numeric
+	}
+		
+	# Step 1. Process the x values to numeric
 
 	# The x values in the variable list appear in most cases to
 	# be significantly rounded relative to FIRSTX.
 	# It appears as though the intent of the standard is to construct the sequence of 
 	# x values from FIRSTX, LASTX, and NPOINTS, not the actual values in the
 	# in the variable list. The values in the variable list however must be
-	# checked for integrity.
+	# checked for integrity, even at their lower precision.
 	
 	# Important: these xValues are only used to verify parsing is correct,
 	# e.g. there were no alpha characters caught and no NA generated when doing as.numeric.
@@ -88,14 +79,9 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	
 	if (debug == 3) { # stop and report each line if requested (huge!)
 		message("\nHere are the x values:")
-		DF <- data.frame(lineNo = lineNos, X_as_Char = tmp, X_as_Num = xValues)
+		DF <- data.frame(lineNo = names(dt), X_as_Char = tmp, X_as_Num = xValues)
 		print(DF)
-		# for (i in 1:length(xValues)) {
-			# cat("\nParsing line", lineNos[i], "for x values\n")
-			# cat("\tx value (character):", tmp[i], "\n")
-			# cat("\tx value (numeric):", xValues[i], "\n")
-			# }
-		}
+	}
 	
 	# Save the first and last xValues for checking in a bit
 	firstXcheck <- xValues[1]
@@ -111,23 +97,23 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 	if (length(yString) != length(xValues)) stop("The number of x values and y values aren't the same")
 	xValues <- NULL # safety mechanism; recomputed later at higher resolution
 
-	### Process the y values to numeric
+	# Step 2. Process the y values to numeric
 	
 	NUM <- FALSE # flag to indicate we now have a numeric vector "answer" instead of character
 
  	yString <- gsub(",", ".", yString) # Replace ',' with '.' for EU style files
 	yString <- gsub("\\s*\\$\\$.*", "", yString) # remove comments at end of lines (confuses getJDXcompression)
 	yStringTmp <- na.omit(yString) # Remove NAs from comments for the purpose of figuring out the compression scheme
-	fmt <- getJDXcompression(yStringTmp, debug = debug) # Get the compression format
+	comp <- getJDXcompression(yStringTmp, debug = debug) # Get the compression format
 	
 	# Now deal with the various compression options
 	
 	# Note AFFN is separated by any amount of white space so no special action needed,
 	# can proceed immediately to conversion to numeric, exponents handled automatically,
-	# and white space stripped off automatically.  It appears AFFN is never mixed
+	# and white space stripped off automatically, courtesy of R internals.  It appears AFFN is never mixed
 	# with other formats; the other formats are collectively called ASDF in the standard.
 		
-	if ("AFFN" %in% fmt) {
+	if ("AFFN" %in% comp) {
 
 		yString <- paste(yString, collapse = " ") # turn into one long string
 		yString <- strsplit(yString, split = "\\s+")
@@ -138,11 +124,10 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		NUM <- TRUE # done, control picks up at checking the results below
 		}
 		
-	if (!"AFFN" %in% fmt) {
-		# Break into pieces corresponding to individual numbers by inserting spaces
+	if (!"AFFN" %in% comp) {
 		
 		if (debug == 5) {
-			message("\n y value string w/o processing:")
+			message("\n yString before processing:")
 			print(yString[1:5])
 		}
 		
@@ -151,7 +136,7 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		yString <- gsub("(\\+|-)([0-9]+)", " \\1\\2", yString)
 
 		if (debug == 5) {
-			message("\n y value string after inserting spaces ahead of +|- signs:")
+			message("\n yString after inserting spaces ahead of +|- signs:")
 			print(yString[1:5])
 		}
 		
@@ -159,7 +144,7 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		yString <- gsub("([0-9]+)([@A-Ia-i]{1})", "\\1 \\2", yString)
 		
 		if (debug == 5) {
-			message("\n y value string after inserting space ahead of SQZ code preceeed by a number:")
+			message("\n yString after inserting space ahead of SQZ code preceeed by a number:")
 			print(yString[1:5])
 		}
 
@@ -167,7 +152,7 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		yString <- gsub("([@A-Ia-i]{1})([@A-Ia-i]{1})", "\\1 \\2", yString)
 		
 		if (debug == 5) {
-			message("\n y value string after inserting space between adjacent SQZ codes:")
+			message("\n yString after inserting space between adjacent SQZ codes:")
 			print(yString[1:5])
 		}
 
@@ -176,7 +161,7 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		yString <- gsub("([@A-Ia-i]{1})([%J-Rj-r]{1})", "\\1 \\2", yString)
 				                                                            
 		if (debug == 5) {
-			message("\n y value string after inserting space between a SQZ code followed by a DIF code:")
+			message("\n yString after inserting space between a SQZ code followed by a DIF code:")
 			print(yString[1:5])
 		}
 
@@ -184,7 +169,7 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		yString <- gsub("([0-9]+)([%J-Rj-r]{1})", "\\1 \\2", yString)
 		                                                            
 		if (debug == 5) {
-			message("\n y value string after inserting space ahead of DIF codes preceeded by a number:")
+			message("\n yString after inserting space ahead of DIF codes preceeded by a number:")
 			print(yString[1:5])
 		}
 		
@@ -195,7 +180,7 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		yString <- gsub("([%J-Rj-r]{1})(?=[%J-Rj-r]+)", " \\1 ", yString, perl = TRUE)
 
 		if (debug == 5) {
-			message("\n y value string after inserting a space ahead and behind a DIF code followed by a DIF code:")
+			message("\n y String after inserting a space ahead and behind a DIF code followed by a DIF code:")
 			print(yString[1:5])
 		}
 
@@ -203,24 +188,23 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		yString <- gsub("([S-Zs])", " \\1 ", yString)
 
 		if (debug == 5) {
-			message("\n y value string after separating DUP entries:")
+			message("\n yString after separating DUP entries:")
 			print(yString[1:5])
 		}
 
  		# Check for DUP pseudo-digits and process if found.  This must be done first!
- 		
- 		if ("DUP" %in% fmt) yString <- insertDUPs(yString, lineNos, debug = debug)
+ 		if ("DUP" %in% comp) yString <- insertDUPs(yString, debug = debug)
 
 		if (debug == 5) {
-			message("\n y value string after inserting DUP numbers:")
+			message("\n yString after inserting DUP numbers:")
 			print(yString[1:5])
 		}
  
  		# Now process SQZ	
- 		if ("SQZ" %in% fmt) yString <- unSQZ(yString) # if pure SQZ this is sufficient
+ 		if ("SQZ" %in% comp) yString <- unSQZ(yString) # if pure SQZ this is sufficient
 			
 		if (debug == 5) {
-			message("\n y value string after processing SQZ codes:")
+			message("\n yString after processing SQZ codes:")
 			print(yString[1:5])
 		}
 
@@ -229,14 +213,14 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		# which is the starting point for calculating the offsets.
 		# However, at this point, we are still dealing with character strings, not numbers
 		
- 		if ("DIF" %in% fmt) {
-  			yValues <- deDIF(yString, lineNos, debug) #  Returns a numeric vector
+ 		if ("DIF" %in% comp) {
+  			yValues <- deDIF(yString, debug) #  Returns a numeric vector
  			# deDIF has it's own error checking, problems there will stop there.
 			NUM <- TRUE
-			}
+		}
 
 		if (debug == 5) {
-			message("\n y values (numeric) after doing the DIF operation:")
+			message("\n yString (now numeric) after doing the DIF operation:")
 			print(yString[1:5])
 		}
 
@@ -258,23 +242,23 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 			ytmp <- as.numeric(ytmp)
 						
 			if (any(is.na(ytmp))) {
-				message("\nProblem: NA found at line no: ", lineNos[i], "!")
+				message("\nProblem: NA found at line no: ", names(yString)[i], "!")
 				print(ytmp)
 				stop("Conversion to numeric introduced NA")
-				}
-				
-			yValues <- c(yValues, ytmp)					
 			}
 				
-		yValues <- yValues[-1]
+			yValues <- c(yValues, ytmp)					
 		}
+				
+		yValues <- yValues[-1]
+	}
 					
 	
 	} # end of !"AFFN"	
  	
  	ytol <- 0.0001*diff(range(yValues, na.rm = TRUE)) # might need to revise to be similar to xtol
 
-	### Check the integrity of the results
+	# Step 3. Check the integrity of the results
 			
 	if (mode == "IR_etc") {
 		
@@ -316,7 +300,7 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		
 		# Do a lastX check if DIF format (where there is a check point)
 		
-		if ("DIF" %in% fmt) {
+		if ("DIF" %in% comp) {
 			if (!isTRUE(all.equal(lastXcheck*factorX, lastX, check.names = FALSE, tolerance = xtol))) {
 				cat("Last x value from variable list:", lastXcheck*factorX, "\n")
 				cat("Last x value from metadata:", lastX, "\n")
@@ -363,7 +347,7 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		
 		# Do a lastX check if DIF format (where there is a check point)
 		
-		if ("DIF" %in% fmt) {
+		if ("DIF" %in% comp) {
 			if (!isTRUE(all.equal(lastXcheck*factorX, lastX, check.names = FALSE, tolerance = xtol))) {
 				cat("Last x value from variable list:", lastXcheck*factorX, "\n")
 				cat("Last x value from metadata:", lastX, "\n")
@@ -372,7 +356,7 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 			}
 				
 
-		if (type == "XRR") { # Check yValues (real)
+		if (fmt == "XRR") { # Check yValues (real)
 						
 			if (!isTRUE(all.equal(yValues[1]*factorR, firstR, check.names = FALSE, tolerance = ytol))) {			
 				cat("First real value from variable list:", yValues[1]*factorR, "\n")
@@ -390,7 +374,7 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 			
 			} # end of XRR
 
-		if (type == "XII") { # Check yValues (imaginary)
+		if (fmt == "XII") { # Check yValues (imaginary)
 
 			if (!isTRUE(all.equal(yValues[1]*factorI, firstI, check.names = FALSE, tolerance = ytol))) {		
 				cat("First imaginary value from variable list:", yValues[1]*factorI, "\n")
@@ -444,7 +428,7 @@ decompressXYY <- function (dt, params, mode, lineNos, SOFC, debug = 0) {
 		
 		# Do a lastX check if DIF format (where there is a check point)
 		
-		if ("DIF" %in% fmt) {
+		if ("DIF" %in% comp) {
 			if (!isTRUE(all.equal(lastXcheck*factorF2, lastF2, check.names = FALSE, tolerance = xtol))) {
 				cat("Last F2 value from variable list:", lastXcheck*factorF2, "\n")
 				cat("Last F2 value from metadata:", lastF2, "\n")
