@@ -159,7 +159,7 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 		if (debug >= 1) message("\nreadJDX has been tested against a limited number of 2D NMR data sets.  We encourage you to file issues on Github, share problematic files and help us improve readJDX.")
 	}
 			
-	if (debug >= 1) message("\n\nProcessing file ", file, "which appears to contain", mode, "data")
+	if (debug >= 1) message("\n\nProcessing file ", file, " which appears to contain ", mode, " data")
 			
 ##### Step 2. Locate the parameters and the variable list(s)
 	

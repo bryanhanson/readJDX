@@ -34,6 +34,7 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 	# These will be handled during decompression.
 	
 	lineNos <- unlist(lineNos)
+	names(dt) <- paste("Line", lineNos, sep = "_")
 	fmt <- dt[1]
 	
 	if (mode == "IR_etc") {
@@ -83,15 +84,13 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 			print(data.frame(lineNo = lineNos[1:10], first30characters = substring(dt[1:10], 1, 30)))
 		}
 	}
-	
-	lineNos <- paste("Line", lineNos, sep = "_")
-	names(dt) <- lineNos
-	
+		
 	# Dispatch based on fmt -- At this point only XYY is understood
 
 	if ((fmt == "XRR") | (fmt == "XII") | (fmt == "NMR_2D")) fmt <- "XYY"
 	
 	if (fmt == "XYY") {
+		names(dt) <- paste("Line", lineNos, sep = "_") # name it for debugging purposes downstream
 		xydata <- decompressXYY(dt, params, mode, SOFC, debug = debug)
 		return(xydata)
 	}

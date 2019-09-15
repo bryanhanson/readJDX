@@ -7,7 +7,7 @@
 #' 
 #' @param string Character.  The string to be converted.
 #'
-#' @return A numeric vector.
+#' @return A data frame. First element are the numeric values.  Second is the logical vector flagging DIF codes.
 #'
 #' @aliases unDIF unSQZ
 #'
@@ -16,8 +16,12 @@
 #' @noRd
 
 unDIF <- function(string) {
+	
+	# DIF codes can be interspersed with SQZ etc, so we have to find the DIFs and deal with them.
+	# Also, as note by Daniel Jacob in Github issue #6, the y value check only applies if the 
+	# very last entry is a DIF code, so we need to know that as well.
 	pat <- "[%JKLMNOPQRjklmnopqr]"
-	# dflag <- str_detect(string, pat) # flag to mark where the DIF codes are in the string
+	dflag <- str_detect(string, pat) # flag to mark where the DIF codes are in the string
 	string <- str_replace_all(string,
 		c("%" = "0",  # effectively the same as a DUP character (add nothing, i.e. repeat the character)
 		  "J" = "1",
@@ -39,20 +43,14 @@ unDIF <- function(string) {
 		  "q" = "-8",
 		  "r" = "-9"))
 		  
-	# string <- as.numeric(string)
-	# values <- rep(NA_real_, length(string))
-	# for (i in 1:length(values)) { # amounts to cumsum over only selected portions of the string
-		# if (!dflag[i]) {values[i] <- string[i]; next}
-		# if (dflag[i]) values[i] <- string[i] + values[i-1]
-	# }
-	
-	values <- cumsum(as.numeric(string))
-	return(values)	
+	string <- as.numeric(string)
+	values <- rep(NA_real_, length(string))
+	for (i in 1:length(values)) { # amounts to cumsum over only selected portions of the string
+		if (!dflag[i]) {values[i] <- string[i]; next}
+		if (dflag[i]) values[i] <- string[i] + values[i-1]
 	}
 	
+	res <- data.frame(values = values, DIFmode = dflag)
+	res$values
+	}
 	
-	
-# Test line
-#line <- c("32000", "32000", "32000", "n", "o", "k", "L", "L", "m", "j1", "p", "%", "K", "J", "%", "j", "j", "M", "M", "%", "m", "n", "n", "l", "%", "L", "K", "J", "%", "K", "j", "n", "j2", "j9", "k9", "k6", "p", "J9", "K7", "J4", "o", "j2", "k", "J7", "K8", "K3", "J2", "L", "%")
-
-#line2 <- c("31992", "k", "j", "J", "L", "L", "K", "J", "%", "k", "m", "j", "K", "L", "K", "l", "l", "l", "K", "K", "%", "k", "j", "%", "J", "J", "K", "%", "j", "J", "K", "J", "%", "%", "%", "k", "k", "k", "%", "%", "%", "%", "%", "j", "%", "%", "%", "L", "M", "%", "j", "K", "k", "l", "l", "j", "L", "M", "L", "%", "%", "%", "%", "%", "8", "k", "%", "j", "J", "%")

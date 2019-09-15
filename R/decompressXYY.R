@@ -52,6 +52,9 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 	
 	numpat <- "[0-9]+[.,]?[0-9]*\\s*" # , needed for EU format (also need to pick up integers)
 	xString <- yString <- rep(NA_character_, length(dt))
+	names(xString) <- names(dt)
+	names(yString) <- names(dt)
+		
 	for (i in 1:length(dt)) {
 		if (grepl("^\\$\\$", dt[i])) next # skip over comment only line, NA remains
 		pos <- str_locate(dt[i], numpat)[1,2]
@@ -144,7 +147,7 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 		yString <- gsub("([0-9]+)([@A-Ia-i]{1})", "\\1 \\2", yString)
 		
 		if (debug == 5) {
-			message("\n yString after inserting space ahead of SQZ code preceeed by a number:")
+			message("\n yString after inserting space ahead of SQZ code preceeded by a number:")
 			print(yString[1:5])
 		}
 
@@ -180,7 +183,7 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 		yString <- gsub("([%J-Rj-r]{1})(?=[%J-Rj-r]+)", " \\1 ", yString, perl = TRUE)
 
 		if (debug == 5) {
-			message("\n y String after inserting a space ahead and behind a DIF code followed by a DIF code:")
+			message("\n y String after inserting a space before & after a DIF code followed by a DIF code:")
 			print(yString[1:5])
 		}
 

@@ -8,7 +8,8 @@ Changes in version 0.3.xx 2019-xx-xx
      + Debug options are now more consistent, documentation improved, and a new debug level was added.
      + Checking of x values was relaxed a bit, and made more sensible.
      + Fixed a bug in which DUP codes longer than a single character (e.g. "S2") returned the wrong answer.
-     + Internal handling of mode/fmt was simplified.
+     + Internal handling of mode/fmt was simplified and consistently named.
+     + Argument lineNos was eliminated from most functions by naming the vectors passed in.
      + decompressJDXxyy renamed decompressXYY.
 
 Changes in version 0.3.250 2018-10--15
