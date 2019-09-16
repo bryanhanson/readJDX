@@ -14,33 +14,34 @@ several checks of the data as it is decompressed.  These checks are essential
 to obtaining the correct results.  However, some JCAMP-DX writing programs
 do not follow the standard to the letter (for instance we have observed that
 not all writers put FIRSTY into the metadata, even though it is required by
-the standard).
+the standard).  In other cases values in the file have low precision (see section on precision).
 This option is provided for those \pkg{advanced
 users} who have carefully checked their original files and want to skip the 
 required checks.  It may also be useful for troubleshooting.  
 The default is \code{TRUE} i.e. stop when something is not right.
 This ensures that correct data is returned.  Change to \code{FALSE} at your own risk.
 NOTE: Only a few checks can be skipped via this option, as there are some
-parameters that must be available in order to return any answer.}
+parameters that must be available and correct in order to return any answer.}
 
-\item{debug}{Integer.  The level of debug reporting desired.
+\item{debug}{Integer.  The level of debug reporting desired.  For those options giving
+       a lot of output, you may wish to consider directing the output to \code{sink()}
+       and then search the results for the problematic lines.
 \itemize{
   \item 1 or higher = import progress is reported.
   \item 2 = details about the variable lists, compression formats and
             parameters that were found.
-  \item 3 = detailed info about processing of the x values (huge!).
+  \item 3 = detailed info about processing of the x values (huge output!).
   \item 4 = detailed view of the first five lines containing y values; may be helpful if
             the compression is not figured out correctly (via \code{getJDXcompression}).
   \item 5 = detailed view of the y value processing if the internal format is not \code{AFFN}.
             Reports the first five y value strings before and after each step in the process,
-            so output is considerable.
-  \item 6 = detailed info about processing the y values when DUP is in use (huge!).
-  \item 7 = detailed info about processing the y values when DIF is in use (huge!).
+            so output is considerable.  Use \code{debug = 99} to see every line (huge output!).
+  \item 6 = detailed info about processing the y values when DUP is in use (huge output!).
+  \item 7 = detailed info about processing the y values when DIF is in use (huge output!).
 }
 In cases where an error is about to
 stop execution, you get additional information regardless of
-the \code{debug} value.  With debug values that give a lot of information
-about the process, consider saving output using \code{sink()} for study.}
+the \code{debug} value.}
 }
 \value{
 A list, as follows: 
@@ -55,7 +56,7 @@ A list, as follows:
       (exclusive of the metdata, which typically contains many comments).
 }
 
- Additional elements contain the extracted data as follows:
+Additional elements contain the extracted data as follows:
 
 \itemize{
 
@@ -79,12 +80,10 @@ the F2 frequency values, the F1 frequency values, and a matrix containing the 2D
 }
 \description{
 This function supervises the entire import process.
-The JCAMP-DX standard allows quite a bit of lattitude and there are many
-possible formats. Not all possible formats are supported; error messages will
+The JCAMP-DX standard allows many variations and it is difficult to anticipate all permutations.
+Not all possible official formats are supported; error messages will
 generally let you know what's going on.  If you have a file that you feel should be
-supported but gives an error, please file an issue at Github.
-The standard allows many
-variations and it is impossible to anticipate all configurations.
+supported but gives an error, please file an issue at Github and share the file.
 }
 \section{Included Data Files}{
 
@@ -104,11 +103,19 @@ File \code{PCRF_line265.jdx} has a deliberate error in it.  See the examples.
 \section{Precision}{
 
 Internally, this package uses a tolerance factor when comparing values during certain checks.
-This is currently hardwired to \code{0.0001*diff(range(values))}.  This value works fine
-for test files.
-This is necessary because the original values in the files
-are text strings of varying lengths which get converted to numerical values.  Some precision
-may be lost but it appears trivial with the current settings.
+This is desirable because the original values in the files
+are text strings of varying lengths which get converted to numerical values.  Occasionally
+values in the file, such as FIRSTY, are stored with low precision, and the computation of the
+value to be compared occurs with much greater precision.  In these cases the check can fail
+even when the tolerance is pretty loose.  In these cases one might consider setting 
+\code{SOFC = FALSE} to allow the calculation to proceed.  If you do this, be certain to check
+the results carefully.
+}
+
+\section{Performance}{
+
+\code{readJDX} is not particularly fast.  Priority has been given to assuring correct answers,
+helpful debugging messages and understandable code.
 }
 
 \examples{

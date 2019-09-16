@@ -89,7 +89,6 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 	# Save the first and last xValues for checking in a bit
 	firstXcheck <- xValues[1]
 	lastXcheck <- xValues[length(xValues)]
-	# xtol <- 0.0001*diff(range(xValues, na.rm = TRUE)) # Comments lead to NAs ## changed Sept 2019
 	xtol <- 1.5 * abs(mean(diff(xValues), na.rm = TRUE)) # Comments lead to NAs
 	
 	# The standard requires that each line in the variable list be checked to make
@@ -134,6 +133,11 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 			print(yString[1:5])
 		}
 		
+		if (debug == 99) {
+			message("\n yString before processing:")
+			print(yString)
+		}
+
 		# Put space ahead of +|- signs (PAC)
 		# This PAC approach will not catch 123-j123 
 		yString <- gsub("(\\+|-)([0-9]+)", " \\1\\2", yString)
@@ -143,12 +147,35 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 			print(yString[1:5])
 		}
 		
-		# Put space ahead of SQZ codes preceeded by a number
+		if (debug == 99) {
+			message("\n yString after inserting spaces ahead of +|- signs:")
+			print(yString)
+		}
+
+		# Put a space ahead of SQZ codes preceeded by a number
 		yString <- gsub("([0-9]+)([@A-Ia-i]{1})", "\\1 \\2", yString)
 		
 		if (debug == 5) {
 			message("\n yString after inserting space ahead of SQZ code preceeded by a number:")
 			print(yString[1:5])
+		}
+
+		if (debug == 99) {
+			message("\n yString after inserting space ahead of SQZ code preceeded by a number:")
+			print(yString)
+		}
+
+		# Put a space ahead of SQZ codes preceeded by a DIF code e.g. MH285
+		yString <- gsub("([%J-Rj-r]+)([@A-Ia-i]{1})", "\\1 \\2", yString)
+		
+		if (debug == 5) {
+			message("\n yString after inserting space ahead of SQZ code preceeded by a DIF code:")
+			print(yString[1:5])
+		}
+
+		if (debug == 99) {
+			message("\n yString after inserting space ahead of SQZ code preceeded by a DIF code:")
+			print(yString)
 		}
 
 		# Put a space between adjacent SQZ codes e.g. a215Hb513
@@ -157,6 +184,11 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 		if (debug == 5) {
 			message("\n yString after inserting space between adjacent SQZ codes:")
 			print(yString[1:5])
+		}
+
+		if (debug == 99) {
+			message("\n yString after inserting space between adjacent SQZ codes:")
+			print(yString)
 		}
 
 		# When a single SQZ code is immediately followed by a DIF code,
@@ -168,6 +200,11 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 			print(yString[1:5])
 		}
 
+		if (debug == 99) {
+			message("\n yString after inserting space between a SQZ code followed by a DIF code:")
+			print(yString)
+		}
+
 		# Put space ahead of DIF codes preceeded by a number
 		yString <- gsub("([0-9]+)([%J-Rj-r]{1})", "\\1 \\2", yString)
 		                                                            
@@ -176,6 +213,11 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 			print(yString[1:5])
 		}
 		
+		if (debug == 99) {
+			message("\n yString after inserting space ahead of DIF codes preceeded by a number:")
+			print(yString)
+		}
+
 		# Put space ahead and behind DIF codes followed by another DIF code
 		# but, CRITICALLY, leave a DIF code followed by a number attached
 		# to that number e.g. "1jj%j32rR15MNOP5" j32 and R15 and P5 
@@ -187,7 +229,11 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 			print(yString[1:5])
 		}
 
-		# Separate DUP entries
+		if (debug == 99) {
+			message("\n y String after inserting a space before & after a DIF code followed by a DIF code:")
+			print(yString)
+		}
+
 		yString <- gsub("([S-Zs])", " \\1 ", yString)
 
 		if (debug == 5) {
@@ -195,37 +241,65 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 			print(yString[1:5])
 		}
 
+		if (debug == 99) {
+			message("\n yString after separating DUP entries:")
+			print(yString)
+		}
+
  		# Check for DUP pseudo-digits and process if found.  This must be done first!
- 		if ("DUP" %in% comp) yString <- insertDUPs(yString, debug = debug)
+ 		if ("DUP" %in% comp) {
+ 			yString <- insertDUPs(yString, debug = debug)
 
-		if (debug == 5) {
-			message("\n yString after inserting DUP numbers:")
-			print(yString[1:5])
-		}
- 
+			if (debug == 5) {
+				message("\n yString after inserting DUP numbers:")
+				print(yString[1:5])
+			}
+	 
+			if (debug == 99) {
+				message("\n yString after inserting DUP numbers:")
+				print(yString)
+			}
+
+		} # end of DUP %in% comp
+		
  		# Now process SQZ	
- 		if ("SQZ" %in% comp) yString <- unSQZ(yString) # if pure SQZ this is sufficient
+ 		if ("SQZ" %in% comp) {
+ 			yString <- unSQZ(yString) # if pure SQZ this is sufficient
 			
-		if (debug == 5) {
-			message("\n yString after processing SQZ codes:")
-			print(yString[1:5])
-		}
+			if (debug == 5) {
+				message("\n yString after processing SQZ codes:")
+				print(yString[1:5])
+			}
+	
+			if (debug == 99) {
+				message("\n yString after processing SQZ codes:")
+				print(yString)
+			}
 
+		} # end of SQZ %in% comp
+		
 		# Finally, take care of any DIFs
 		# Done last, since only now do we have a number at what was the beginning of the line,
 		# which is the starting point for calculating the offsets.
-		# However, at this point, we are still dealing with character strings, not numbers
 		
  		if ("DIF" %in% comp) {
-  			yValues <- deDIF(yString, debug) #  Returns a numeric vector
- 			# deDIF has it's own error checking, problems there will stop there.
+  			yValues <- deDIF(yString, debug) #  Returns a named list (better for debugging)
+ 			# deDIF has it's own error checking, problems there will stop there.\
+ 			
+	 		if (debug == 5) {
+				message("\n yString (now numeric) after doing the DIF operation:")
+				print(yValues[1:5])
+			}
+	
+			if (debug == 99) {
+				message("\n yString (now numeric) after doing the DIF operation:")
+				print(yValues)
+			}
+			
+ 			yValues <- unlist(yValues) # now numeric vector
 			NUM <- TRUE
-		}
+		} # end of DIF %in% comp
 
-		if (debug == 5) {
-			message("\n yString (now numeric) after doing the DIF operation:")
-			print(yString[1:5])
-		}
 
 		# At this point, PAC needs no special handling, other formats have been converted to
 		# numbers as characters except for DIF which is already numeric and NUM = TRUE.
@@ -259,7 +333,11 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 	
 	} # end of !"AFFN"	
  	
- 	ytol <- 0.0001*diff(range(yValues, na.rm = TRUE)) # might need to revise to be similar to xtol
+ 	# Set ytol; some files have low precision FIRSTY etc, and the computation here
+ 	# leads to values with much greater precision, and hence the all.equal check (later)
+ 	# fails.  In these cases one might consider setting SOFC = FALSE and still
+ 	# get a correct data import.
+	ytol <- 2.0 * abs(mean(diff(yValues), na.rm = TRUE)) # Comments lead to NAs
 
 	# Step 3. Check the integrity of the results
 			
@@ -283,13 +361,12 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 		if (!SOFC) warning("SOFC is FALSE, skipping FIRSTY check")
 		
 		if (SOFC) {
-		
 			if (!isTRUE(all.equal(yValues[1]*factorY, firstY, check.names = FALSE, tolerance = ytol))) {
 				cat("First y value from variable list:", yValues[1]*factorY, "\n")
 				cat("First y value from metadata:", firstY, "\n")
-				stop("Error parsing yValues")
+				stop("Error parsing yValues (firstY, IR_etc)")
 				}			
-			}
+		}
 		
 		# Check first and last xValues (saved earlier).  The standard is ambiguous about doing this,
 		# but out of an abundance of caution we will do it.  xtol is set pretty high due to 
@@ -298,7 +375,7 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 		if (!isTRUE(all.equal(firstXcheck*factorX, firstX, check.names = FALSE, tolerance = xtol))) {
 			cat("First x value from variable list:", firstXcheck*factorX, "\n")
 			cat("First x value from metadata:", firstX, "\n")
-			stop("Error parsing xValues (firstX)")
+			stop("Error parsing xValues (firstX, IR_etc)")
 			}			
 		
 		# Do a lastX check if DIF format (where there is a check point)
@@ -307,7 +384,7 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 			if (!isTRUE(all.equal(lastXcheck*factorX, lastX, check.names = FALSE, tolerance = xtol))) {
 				cat("Last x value from variable list:", lastXcheck*factorX, "\n")
 				cat("Last x value from metadata:", lastX, "\n")
-				stop("Error parsing xValues (lastX)")
+				stop("Error parsing xValues (lastX, IR_etc)")
 				}
 			}
 				
@@ -345,7 +422,7 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 		if (!isTRUE(all.equal(firstXcheck*factorX, firstX, check.names = FALSE, tolerance = xtol))) {
 			cat("First x value from variable list:", firstXcheck*factorX, "\n")
 			cat("First x value from metadata:", firstX, "\n")
-			stop("Error parsing xValues (firstX)")
+			stop("Error parsing xValues (firstX, NMR)")
 			}			
 		
 		# Do a lastX check if DIF format (where there is a check point)
@@ -354,7 +431,7 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 			if (!isTRUE(all.equal(lastXcheck*factorX, lastX, check.names = FALSE, tolerance = xtol))) {
 				cat("Last x value from variable list:", lastXcheck*factorX, "\n")
 				cat("Last x value from metadata:", lastX, "\n")
-				stop("Error parsing xValues (lastX)")
+				stop("Error parsing xValues (lastX, NMR)")
 				}
 			}
 				
@@ -364,13 +441,13 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 			if (!isTRUE(all.equal(yValues[1]*factorR, firstR, check.names = FALSE, tolerance = ytol))) {			
 				cat("First real value from variable list:", yValues[1]*factorR, "\n")
 				cat("First real value from metadata:", firstR, "\n")
-				stop("Error parsing real values")
+				stop("Error parsing real values (firstR, NMR)")
 				}
 			
 			if (!isTRUE(all.equal(yValues[length(yValues)]*factorR, lastR, check.names = FALSE, tolerance = ytol))) {		
 				cat("Last real value from variable list:", yValues[length(yValues)]*factorR, "\n")
 				cat("Last real value from metadata:", lastR, "\n")
-				stop("Error parsing real values")
+				stop("Error parsing real values (lastR, NMR)")
 				}
 			
 			yValues = yValues*factorR
@@ -382,13 +459,13 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 			if (!isTRUE(all.equal(yValues[1]*factorI, firstI, check.names = FALSE, tolerance = ytol))) {		
 				cat("First imaginary value from variable list:", yValues[1]*factorI, "\n")
 				cat("First imaginary value from metadata:", firstI, "\n")
-				stop("Error parsing imaginary values")
+				stop("Error parsing imaginary values (firstI, NMR)")
 				}
 			
 			if (!isTRUE(all.equal(yValues[length(yValues)]*factorI, lastI, check.names = FALSE, tolerance = ytol))) {		
 				cat("Last imaginary value from variable list:", yValues[length(yValues)]*factorI, "\n")
 				cat("Last imaginary value from metadata:", lastI, "\n")
-				stop("Error parsing imaginary values")
+				stop("Error parsing imaginary values (lastI, NMR)")
 				}
 			
 			yValues = yValues*factorI
@@ -426,7 +503,7 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 		if (!isTRUE(all.equal(firstXcheck*factorF2, firstF2, check.names = FALSE, tolerance = xtol))) {
 			cat("First F2 value from variable list:", firstXcheck*factorF2, "\n")
 			cat("First F2 value from metadata:", firstF2, "\n")
-			stop("Error parsing xValues (firstF2)")
+			stop("Error parsing xValues (firstF2, NMR2D)")
 			}			
 		
 		# Do a lastX check if DIF format (where there is a check point)
@@ -435,7 +512,7 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 			if (!isTRUE(all.equal(lastXcheck*factorF2, lastF2, check.names = FALSE, tolerance = xtol))) {
 				cat("Last F2 value from variable list:", lastXcheck*factorF2, "\n")
 				cat("Last F2 value from metadata:", lastF2, "\n")
-				stop("Error parsing xValues (lastF2)")
+				stop("Error parsing xValues (lastF2, NMR2D)")
 				}
 			}
 				

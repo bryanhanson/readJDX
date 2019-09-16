@@ -51,6 +51,6 @@ unDIF <- function(string) {
 	}
 	
 	res <- data.frame(values = values, DIFmode = dflag)
-	res$values
+	res
 	}
 	

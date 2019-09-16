@@ -93,28 +93,28 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 		npoints <- md[npoints]
 		npoints <- sub("^\\s*##VAR(\\s{1}|_)DIM\\s*=", replacement = "", npoints)
 		npoints <- as.numeric(unlist(strsplit(npoints, ",")))
-		npoints <- npoints[-length(npoints)]
+		npoints <- npoints[1:3] # JEOL at least has a 4th entry, PAGE, Bruker doesn't (?)
 
 		firsts <- grep("^\\s*##FIRST\\s*=", md)
 		if (firsts == 0) stop("Couldn't find FIRST")
 		firsts <- md[firsts]
 		firsts <- sub("^\\s*##FIRST\\s*=", replacement = "", firsts)
 		firsts <- as.numeric(unlist(strsplit(firsts, ",")))
-		firsts <- firsts[-length(firsts)]
+		firsts <- firsts[1:3]
 
 		lasts <- grep("^\\s*##LAST\\s*=", md)
 		if (lasts == 0) stop("Couldn't find LAST")
 		lasts <- md[lasts]
 		lasts <- sub("^\\s*##LAST\\s*=", replacement = "", lasts)
 		lasts <- as.numeric(unlist(strsplit(lasts, ",")))
-		lasts <- lasts[-length(lasts)]
+		lasts <- lasts[1:3]
 
 		factors <- grep("^\\s*##FACTOR\\s*=", md)
 		if (factors == 0) stop("Couldn't find FACTOR")
 		factors <- md[factors]
 		factors <- sub("^\\s*##FACTOR\\s*=", replacement = "", factors)
 		factors <- as.numeric(unlist(strsplit(factors, ",")))
-		factors <- factors[-length(factors)]
+		factors <- factors[1:3]
 		
 		pointsX <- npoints[1]
 		pointsR <- npoints[2]
@@ -157,7 +157,7 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 		npoints <- md[npoints]
 		npoints <- sub("^\\s*##VAR(\\s{1}|_)DIM\\s*=", replacement = "", npoints)
 		npoints <- as.numeric(unlist(strsplit(npoints, ",")))
-		npoints <- npoints[-length(npoints)]
+		npoints <- npoints[-length(npoints)] # see above for a change that might be needed here as well
 
 		firsts <- grep("^\\s*##FIRST\\s*=", md)
 		if (length(firsts) == 0) stop("Couldn't find FIRST")

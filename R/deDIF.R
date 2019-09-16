@@ -5,7 +5,7 @@
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #'
-#' @param string Character.  String to be processed.
+#' @param string Character.  String to be processed.  Named with line numbers.
 #'
 #' @param debug Integer.  See \code{\link{readJDX}} for details.
 #'
@@ -26,7 +26,7 @@ deDIF <- function(string, debug) {
 	# However, DIF mode can be mixed with other modes, so
 	# DUPs should be handled before arriving at this function,
 	# and SQZ values should have been converted to numbers already.
-	# This is the last step!
+	# This is the last step, only the DIF'ing needs to be done.
 	
 	# As received, the string is composed of numeric values and DIF characters
 	
@@ -37,77 +37,77 @@ deDIF <- function(string, debug) {
 	FUN <- function(x) {unlist(strsplit(x, "\\s+"))}
 	string <- lapply(string, FUN)
 		
-	# Step 2: Convert the DIF characters to the corresponding numbers
-	# and fix offset
+	# Step 2: Convert the DIF characters to the corresponding numbers and fix offset
 
 	if (debug == 7) tmp_string <- string # save copy for reporting
 	
-	yValues <- lapply(string, unDIF)
+	res <- lapply(string, unDIF) # string is a named list coming in; res is a named list of data frames, one for each line
 		
-	# res <- lapply(string, unDIF) # string is a list coming in; res is a list of data frames PENDING
-		
-	# str(res)
+	# Separate yValues and DIFmode entries into separate lists
+	yValues <- vector("list", length(res))
+	names(yValues) <- names(res)
+	dMode <- vector("list", length(res))
 	
-	# yValues <- res$values
-	# DIFmode <- res$DIFmode
-		
+	for (i in 1:length(res)) {
+		yValues[[i]] <- res[[i]]$values
+		dMode[[i]] <- res[[i]]$DIFmode		
+	}
+				
 	if (debug == 7) {
 		message("\nUndoing DIF compression:")
 		message("\nLines passed to deDIF:")
 		print(tmp_string)
 		message("\nLines as processed by deDIF:")
-		print(yValues)		
+		print(yValues)
+		message("\nCarrying out y value check...")
 	}
 		
 	# Step 3: Carry out the y value check required by the standard
 	# First value on a line should = last value on the prev. line, IFF
-	# the last value was formerly in DIF mode (per careful reading of the standard,
+	# the last value was in DIF mode (per careful reading of the standard,
 	# as pointed out by Daniel Jacob in Github issue #6)
 	# Names must be stripped for the all.equal check below.
 
-	if (debug == 7) message("\nCarrying out y value check...")
+	# Figure out first and last values on all lines, makes checking & reporting problems easier later
+	fun <- function(x) {x[1]}
+	first <- unlist(lapply(yValues, fun), use.names = FALSE)
+	fun <- function(x) {x[length(x)]}
+	last <- unlist(lapply(yValues, fun), use.names = FALSE)
 	
-	# if (DIFmode[length(DIFmode)]) {
+	# Run the y value check
+	for (i in 2:length(dMode)) { # i indexes both yValues and dMode
+		checkvec <- dMode[[i - 1]]
+		modeCheck <- checkvec[length(checkvec)]
 		
-		fun <- function(x) {x[1]}
-		first <- unlist(lapply(yValues, fun), use.names = FALSE)
-		fun <- function(x) {x[length(x)]}
-		last <- unlist(lapply(yValues, fun), use.names = FALSE)
-		
-		for (i in 2:length(first)) {
-			if (is.na(first[i])) next # These originate from comment only lines e.g. Bruker NMR
+		if (modeCheck) { # Final value was based on a DIF code, run y value check
 			ychk <- isTRUE(all.equal(first[i], last[i-1]))
-			if (!ychk) {
+			# print("Found a final DIF entry")
+			if (!ychk) { # Failed y value error reporting
 				message("\nAttempting to compute differences, but Y value check failed; nearby values:")
 				if (i <= 5) rpt <- 2:6
 				if (i >= 6) rpt <- (i-2):(i+2)
 				if (i >= (length(first) - 2)) rpt <- (length(first) - 5):length(first)
-			DF <- data.frame(LineNo = names(string)[rpt],
-				FirstYonLine = first[rpt], LastYonPrevLine = last[rpt-1],
-				Problem = ifelse(first[rpt] == last[rpt-1], "", "*"))
-			print(DF)
-			message("\nCorresponding complete lines processed from original file:")
-			print(yValues[rpt])
-			stop("Y value check failed")
-			}
-		}
-
-	 if (debug == 7) message("\ny value check successful...")
-		
-		# Remove extra y values that were needed for the check
+				DF <- data.frame(LineNo = names(string)[rpt],
+					FirstYonLine = first[rpt], LastYonPrevLine = last[rpt-1],
+					Problem = ifelse(first[rpt] == last[rpt-1], "", "*"))
+				print(DF)
+				message("\nUse debug = 7 to see every line before and after conversion.\nYou may wish to capture the output with sink()\nand search for specific line numbers.")
+				stop("Y value check failed")
+			} # End of failed y value reporting
 			
-		verylast <- yValues[[length(yValues)]] # save to replace in a moment
-		fun <- function(x) {x[-length(x)]}
-		yValues <- lapply(yValues, fun) # removes all values in last element
-		yValues[[length(yValues)]] <- verylast
-
-	# } # end of y value check
+		# Remove the extra y value that was included for the y value check
+		# Remove it from the start of string i, not the end of string i-1
+		yValues[[i]] <- yValues[[i]][-1]
+		} # end of if (modeCheck)
+		
+	} # end of y value check
 	
+	if (debug == 7) message("\ny value check successful...")
+    
 	# Step 4: Wrap up and return
 
 	# Note: comments are still NA
-	
-	return(unlist(yValues))		
+	return(yValues)		
 	
 	} # end of deDIF
 

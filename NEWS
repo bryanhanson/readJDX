@@ -3,14 +3,17 @@ NEWS file for package readJDX
 Import data in the JCAMP-DX format.
 URL: github.com/bryanhanson/readJDX
 
-Changes in version 0.3.xx 2019-xx-xx
-     + Can now read Bruker 2D NMR spectra exported from TopSpin vis "tojdx".
+Changes in version 0.3.372 2019-09-16
      + Debug options are now more consistent, documentation improved, and a new debug level was added.
-     + Checking of x values was relaxed a bit, and made more sensible.
+     + Checking of first and last x and y values was relaxed a bit, and made more sensible.  Documentation was improved.
      + Fixed a bug in which DUP codes longer than a single character (e.g. "S2") returned the wrong answer.
      + Internal handling of mode/fmt was simplified and consistently named.
-     + Argument lineNos was eliminated from most functions by naming the vectors passed in.
+     + Argument lineNos was eliminated from most functions by naming the lists passed in.
      + decompressJDXxyy renamed decompressXYY.
+     + Fixed an issue with extractParams where NMR imaginary data could be missed, based on a nuance of Bruker formatting.
+     + Fixed a bug in which the y value check, required by the standard, was carried out if *any* DIF codes were present in a given line of the input file.  In fact, the check should be carried out *only if the last value on the line* was a DIF code.  Reported with careful documentation and a test file by Daniel Jacob, in Github Issue #6.  A big thank you to Daniel!
+     + In the course of testing the file supplied by Daniel Jacob, discovered that a DIF code followed by a SQZ code was not handled at all (e.g. MH111).  Fixed this too.
+     + Reading 2D NMR formats is still a work in progress.
 
 Changes in version 0.3.250 2018-10--15
      + Checked against R devel r75432 which is R 3.5.1 patched.
