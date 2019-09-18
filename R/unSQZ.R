@@ -1,5 +1,5 @@
 #'
-#' @rdname unDIF
+#' @rdname unSQZ
 #'
 #' @noRd
 

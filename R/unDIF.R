@@ -20,7 +20,7 @@ unDIF <- function(string) {
 	# DIF codes can be interspersed with SQZ etc, so we have to find the DIFs and deal with them.
 	# Also, as note by Daniel Jacob in Github issue #6, the y value check only applies if the 
 	# very last entry is a DIF code, so we need to know that as well.
-	pat <- "[%JKLMNOPQRjklmnopqr]"
+	pat <- "[%J-Rj-r]"
 	dflag <- str_detect(string, pat) # flag to mark where the DIF codes are in the string
 	string <- str_replace_all(string,
 		c("%" = "0",  # effectively the same as a DUP character (add nothing, i.e. repeat the character)

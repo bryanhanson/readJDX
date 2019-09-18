@@ -19,7 +19,7 @@ insertDUPs <- function(string, debug) {
 	# This function will not be efficient b/c we can't know the final
 	# string length in advance.
 
-	# DUPs are [S-Zs].  T means repeat the value 2x, but this includes the
+	# DUP codes are [S-Zs].  T means repeat the value 2x, but this includes the
 	# original value (see sec. 5.9 of McDonald 1988).  The meaning of S, 
 	# repeat 1x including the original value, was at first opaque since
 	# it amounts to doing nothing at all.  However, it was
@@ -29,7 +29,7 @@ insertDUPs <- function(string, debug) {
  	# When a DUP string is found we duplicate whatever is ahead of it.
 
 	pat <- "[S-Zs]{1}[0123456789]*"
-	dup <- grep(pat, string) # identify which string elements have a DUPs
+	dup <- grep(pat, string) # identify which string elements have a DUP
 	
 	yS <- NA_character_ # new y string ready to grow
 	
