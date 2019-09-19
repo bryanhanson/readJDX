@@ -10,7 +10,6 @@
 #'
 #' @param params Numeric. Vector of parameters extracted from file header.
 #'
-#'
 #' @param mode Character. One of c("IR_etc", "NMR", "NMR2D")
 #'
 #' @param debug Integer.  See \code{\link{readJDX}} for details.
@@ -26,12 +25,9 @@
 
 decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 	
-	# For XYY, each line of the variable list begins with a frequency (x value)
+	# For XYY, each line of the variable list begins with a frequency (x value) in AFFN
 	# followed by the y values in various compressed formats.
 		
-	# Note that xString and yString are vectors corresponding to the individual lines
-	# of dt, each is of type character until fully decompressed.
-	
 	fmt <- dt[1]
 	dt <- dt[-1] # Remove the pre-pended format string
 		
@@ -41,305 +37,51 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 	if (fmt == "NMR_2D") {
 		if (debug >= 1) {message("\nProcessing F2 spectra...", dt[1])} 
 		dt <- dt[-1] # Remove e.g. ##PAGE= F1= 4.7865152724775 now that we have used it for debugging.
-		             # Now just numbers remain to be processed
 	}
-		
-	### CRITICAL: We are about to split dt into its x and y parts.  Their lengths will be the same, and 
-	# all operations must preserve that length.  Comment-only lines will be converted to NA, which must be kept until
-	# they can be tossed, and when tossed, they must be tossed from both xString and yString at the same time.
 	
-	### Split each line of dt in an x part and y part
+	### Step 1. Decompress the lines & split into x and y values
+	LineList <- decompLines(dt, debug = debug)
 	
-	numpat <- "[0-9]+[.,]?[0-9]*\\s*" # , needed for EU format (also need to pick up integers)
-	xString <- yString <- rep(NA_character_, length(dt))
-	names(xString) <- names(dt)
-	names(yString) <- names(dt)
-		
-	for (i in 1:length(dt)) {
-		if (grepl("^\\$\\$", dt[i])) next # skip over comment only line, NA remains
-		pos <- str_locate(dt[i], numpat)[1,2]
-		xString[i] <- substring(dt[i], 1, pos)
-		yString[i] <- substring(dt[i], pos + 1, nchar(dt[i]))
-	}
-		
-	# Step 1. Process the x values to numeric
-
-	# The x values in the variable list appear in most cases to
-	# be significantly rounded relative to FIRSTX.
-	# It appears as though the intent of the standard is to construct the sequence of 
-	# x values from FIRSTX, LASTX, and NPOINTS, not the actual values in the
-	# in the variable list. The values in the variable list however must be
-	# checked for integrity, even at their lower precision.
+	### Step 1a.  Get the x values & check them
+	# The x values in the variable list appear in most cases to be significantly rounded relative to FIRSTX.
+	# It appears as though the intent of the standard is to construct the sequence of x values from FIRSTX,
+	# LASTX, and NPOINTS, not the actual values in the in the variable list. However, the values in the variable list
+	# must be checked for integrity, even at their lower precision.
 	
-	# Important: these xValues are only used to verify parsing is correct,
-	# e.g. there were no alpha characters caught and no NA generated when doing as.numeric.
-	# They are not used to construct the actual x values, that is done at
-	# the very end using the parameters.
+	getX <- function(line) x <- line[1] # Helper Function
+	xValues <- lapply(LineList, getX)
 	
-	tmp <- xString # copy for debug reporting
-	xString <- gsub(",", ".", xString) # replace ',' with '.' -- needed for EU style files
-	xValues <- as.numeric(xString) # NA from comments remain
-	
-	if (debug == 3) { # stop and report each line if requested (huge!)
+	if (debug == 3) {
 		message("\nHere are the x values:")
-		DF <- data.frame(lineNo = names(dt), X_as_Char = tmp, X_as_Num = xValues)
-		print(DF)
+		print(xValues)
 	}
 	
-	# Save the first and last xValues for checking in a bit
+	xValues <- unlist(xValues) # line names lost
+	if (!is.numeric(xValues)) stop("Parsing xValues failed (not numeric)")
+
+	# Save the first and last xValues for checking a bit later
 	firstXcheck <- xValues[1]
 	lastXcheck <- xValues[length(xValues)]
-	xtol <- 1.5 * abs(mean(diff(xValues), na.rm = TRUE)) # Comments lead to NAs
+	xtol <- 1.5 * abs(mean(diff(xValues), na.rm = TRUE))
 	
 	# The standard requires that each line in the variable list be checked to make
-	# sure no lines were skipped or duplicated.	
+	# sure no lines were skipped or duplicated.
 	if (anyDuplicated(xValues[!is.na(xValues)])) stop("Variable list appears to have duplicated lines")
-	
-	# Technically, this next line compares the row count, not the actual number of x and y values
-	if (length(yString) != length(xValues)) stop("The number of x values and y values aren't the same")
+	if (!isTRUE(all.equal(diff(xValues[!is.na(xValues)])))) stop("Variable list may have a skipped line")
 	xValues <- NULL # safety mechanism; recomputed later at higher resolution
 
-	# Step 2. Process the y values to numeric
+	### Step 1b. Get the y values
 	
-	NUM <- FALSE # flag to indicate we now have a numeric vector "answer" instead of character
-
- 	yString <- gsub(",", ".", yString) # Replace ',' with '.' for EU style files
-	yString <- gsub("\\s*\\$\\$.*", "", yString) # remove comments at end of lines (confuses getJDXcompression)
-	yStringTmp <- na.omit(yString) # Remove NAs from comments for the purpose of figuring out the compression scheme
-	comp <- getJDXcompression(yStringTmp, debug = debug) # Get the compression format
+	getY <- function(line) x <- line[2:(length(line))] # Helper Function
+	yValues <- unlist(lapply(LineList, getY)) # line names lost, but there was debugging back in decompLines
 	
-	# Now deal with the various compression options
-	
-	# Note AFFN is separated by any amount of white space so no special action needed,
-	# can proceed immediately to conversion to numeric, exponents handled automatically,
-	# and white space stripped off automatically, courtesy of R internals.  It appears AFFN is never mixed
-	# with other formats; the other formats are collectively called ASDF in the standard.
-		
-	if ("AFFN" %in% comp) {
-
-		yString <- paste(yString, collapse = " ") # turn into one long string
-		yString <- strsplit(yString, split = "\\s+")
-		yString <- unlist(yString)
-		yString <- str_trim(yString, side = "both")
-		yString <- ifelse(yString == "NA", NA_character_, yString) # coercion gotcha!
-		yValues <- as.numeric(na.omit(yString)) # NAs from comments may still be present
-		NUM <- TRUE # done, control picks up at checking the results below
-		}
-		
-	if (!"AFFN" %in% comp) {
-		
-		if (debug == 5) {
-			message("\n yString before processing:")
-			print(yString[1:5])
-		}
-		
-		if (debug == 99) {
-			message("\n yString before processing:")
-			print(yString)
-		}
-
-		# Put space ahead of +|- signs (PAC)
-		# This PAC approach will not catch 123-j123 
-		yString <- gsub("(\\+|-)([0-9]+)", " \\1\\2", yString)
-
-		if (debug == 5) {
-			message("\n yString after inserting spaces ahead of +|- signs:")
-			print(yString[1:5])
-		}
-		
-		if (debug == 99) {
-			message("\n yString after inserting spaces ahead of +|- signs:")
-			print(yString)
-		}
-
-		# Put a space ahead of SQZ codes preceeded by a number
-		yString <- gsub("([0-9]+)([@A-Ia-i]{1})", "\\1 \\2", yString)
-		
-		if (debug == 5) {
-			message("\n yString after inserting space ahead of SQZ code preceeded by a number:")
-			print(yString[1:5])
-		}
-
-		if (debug == 99) {
-			message("\n yString after inserting space ahead of SQZ code preceeded by a number:")
-			print(yString)
-		}
-
-		# Put a space ahead of SQZ codes preceeded by a DIF code e.g. MH285
-		yString <- gsub("([%J-Rj-r]+)([@A-Ia-i]{1})", "\\1 \\2", yString)
-		
-		if (debug == 5) {
-			message("\n yString after inserting space ahead of SQZ code preceeded by a DIF code:")
-			print(yString[1:5])
-		}
-
-		if (debug == 99) {
-			message("\n yString after inserting space ahead of SQZ code preceeded by a DIF code:")
-			print(yString)
-		}
-
-		# Put a space between adjacent SQZ codes e.g. a215Hb513
-		yString <- gsub("([@A-Ia-i]{1})([@A-Ia-i]{1})", "\\1 \\2", yString)
-		
-		if (debug == 5) {
-			message("\n yString after inserting space between adjacent SQZ codes:")
-			print(yString[1:5])
-		}
-
-		if (debug == 99) {
-			message("\n yString after inserting space between adjacent SQZ codes:")
-			print(yString)
-		}
-
-		# When a single SQZ code is immediately followed by a DIF code,
-		# put a space between them, e.g. @j097795
-		yString <- gsub("([@A-Ia-i]{1})([%J-Rj-r]{1})", "\\1 \\2", yString)
-				                                                            
-		if (debug == 5) {
-			message("\n yString after inserting space between a SQZ code followed by a DIF code:")
-			print(yString[1:5])
-		}
-
-		if (debug == 99) {
-			message("\n yString after inserting space between a SQZ code followed by a DIF code:")
-			print(yString)
-		}
-
-		# Put space ahead of DIF codes preceeded by a number
-		yString <- gsub("([0-9]+)([%J-Rj-r]{1})", "\\1 \\2", yString)
-		                                                            
-		if (debug == 5) {
-			message("\n yString after inserting space ahead of DIF codes preceeded by a number:")
-			print(yString[1:5])
-		}
-		
-		if (debug == 99) {
-			message("\n yString after inserting space ahead of DIF codes preceeded by a number:")
-			print(yString)
-		}
-
-		# Put space ahead and behind DIF codes followed by another DIF code
-		# but, CRITICALLY, leave a DIF code followed by a number attached
-		# to that number e.g. "1jj%j32rR15MNOP5" j32 and R15 and P5 
-		# must stay together
-		yString <- gsub("([%J-Rj-r]{1})(?=[%J-Rj-r]+)", " \\1 ", yString, perl = TRUE)
-
-		if (debug == 5) {
-			message("\n y String after inserting a space before & after a DIF code followed by a DIF code:")
-			print(yString[1:5])
-		}
-
-		if (debug == 99) {
-			message("\n y String after inserting a space before & after a DIF code followed by a DIF code:")
-			print(yString)
-		}
-
-		yString <- gsub("([S-Zs])", " \\1 ", yString)
-
-		if (debug == 5) {
-			message("\n yString after separating DUP entries:")
-			print(yString[1:5])
-		}
-
-		if (debug == 99) {
-			message("\n yString after separating DUP entries:")
-			print(yString)
-		}
-
- 		# Check for DUP pseudo-digits and process if found.  This must be done first!
- 		if ("DUP" %in% comp) {
- 			yString <- insertDUPs(yString, debug = debug)
-
-			if (debug == 5) {
-				message("\n yString after inserting DUP numbers:")
-				print(yString[1:5])
-			}
-	 
-			if (debug == 99) {
-				message("\n yString after inserting DUP numbers:")
-				print(yString)
-			}
-
-		} # end of DUP %in% comp
-		
- 		# Now process SQZ	
- 		if ("SQZ" %in% comp) {
- 			yString <- unSQZ(yString) # if pure SQZ this is sufficient
-			
-			if (debug == 5) {
-				message("\n yString after processing SQZ codes:")
-				print(yString[1:5])
-			}
-	
-			if (debug == 99) {
-				message("\n yString after processing SQZ codes:")
-				print(yString)
-			}
-
-		} # end of SQZ %in% comp
-		
-		# Finally, take care of any DIFs
-		# Done last, since only now do we have a number at what was the beginning of the line,
-		# which is the starting point for calculating the offsets.
-		
- 		if ("DIF" %in% comp) {
-  			yValues <- deDIF(yString, debug) #  Returns a named list (better for debugging)
- 			# deDIF has it's own error checking, problems there will stop there.\
- 			
-	 		if (debug == 5) {
-				message("\n yString (now numeric) after doing the DIF operation:")
-				print(yValues[1:5])
-			}
-	
-			if (debug == 99) {
-				message("\n yString (now numeric) after doing the DIF operation:")
-				print(yValues)
-			}
-			
- 			yValues <- unlist(yValues) # now numeric vector
-			NUM <- TRUE
-		} # end of DIF %in% comp
-
-
-		# At this point, PAC needs no special handling, other formats have been converted to
-		# numbers as characters except for DIF which is already numeric and NUM = TRUE.
-
-	if (!NUM) {
-
-		# Do things one step at a time and combine at the end.
-		# This will be slower as it is not vectorized, but allows for
-		# line-by-line error reporting
-		
-		yValues <- NA_real_
-		
-		for (i in 1:length(yString)) {
-			ytmp <- unlist(strsplit(yString[i], "\\s+"))
-			if (ytmp[1] == "") ytmp <- ytmp[-1] # some PACs have an extra space
-			
-			ytmp <- as.numeric(ytmp)
-						
-			if (any(is.na(ytmp))) {
-				message("\nProblem: NA found at line no: ", names(yString)[i], "!")
-				print(ytmp)
-				stop("Conversion to numeric introduced NA")
-			}
-				
-			yValues <- c(yValues, ytmp)					
-		}
-				
-		yValues <- yValues[-1]
-	}
-					
-	
-	} # end of !"AFFN"	
- 	
  	# Set ytol; some files have low precision FIRSTY etc, and the computation here
- 	# leads to values with much greater precision, and hence the all.equal check (later)
+ 	# can lead to values with much greater precision, and hence the all.equal check (later)
  	# fails.  In these cases one might consider setting SOFC = FALSE and still
  	# get a correct data import.
-	ytol <- 2.0 * abs(mean(diff(yValues), na.rm = TRUE)) # Comments lead to NAs
+	ytol <- 2.0 * abs(mean(diff(yValues), na.rm = TRUE)) 
 
-	# Step 3. Check the integrity of the results
+	### Step 2. Check the integrity of the results
 			
 	if (mode == "IR_etc") {
 		
@@ -370,23 +112,27 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 		
 		# Check first and last xValues (saved earlier).  The standard is ambiguous about doing this,
 		# but out of an abundance of caution we will do it.  xtol is set pretty high due to 
-		# precision loss; x values at start of lines is heavily rounded
+		# precision loss; x values at the start of lines are heavily rounded.
 		
-		if (!isTRUE(all.equal(firstXcheck*factorX, firstX, check.names = FALSE, tolerance = xtol))) {
-			cat("First x value from variable list:", firstXcheck*factorX, "\n")
-			cat("First x value from metadata:", firstX, "\n")
-			stop("Error parsing xValues (firstX, IR_etc)")
-			}			
+		if (!SOFC) warning("SOFC is FALSE, skipping FIRSTX check")
 		
-		# Do a lastX check if DIF format (where there is a check point)
+		if (SOFC) {
+			if (!isTRUE(all.equal(firstXcheck*factorX, firstX, check.names = FALSE, tolerance = xtol))) {
+				cat("First x value from variable list:", firstXcheck*factorX, "\n")
+				cat("First x value from metadata:", firstX, "\n")
+				stop("Error parsing xValues (firstX, IR_etc)")
+				}						
+		}
 		
-		if ("DIF" %in% comp) {
+		if (!SOFC) warning("SOFC is FALSE, skipping LASTX check")
+
+		if (SOFC) {
 			if (!isTRUE(all.equal(lastXcheck*factorX, lastX, check.names = FALSE, tolerance = xtol))) {
 				cat("Last x value from variable list:", lastXcheck*factorX, "\n")
 				cat("Last x value from metadata:", lastX, "\n")
 				stop("Error parsing xValues (lastX, IR_etc)")
-				}
-			}
+				}			
+		}
 				
 		# Compute xValues based on params (see notes earlier); update yValues
 		
@@ -419,56 +165,79 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 		# Check first and last xValues (saved earlier).  The standard is ambiguous about doing this,
 		# but out of an abundance of caution we will do it.
 		
-		if (!isTRUE(all.equal(firstXcheck*factorX, firstX, check.names = FALSE, tolerance = xtol))) {
-			cat("First x value from variable list:", firstXcheck*factorX, "\n")
-			cat("First x value from metadata:", firstX, "\n")
-			stop("Error parsing xValues (firstX, NMR)")
-			}			
-		
-		# Do a lastX check if DIF format (where there is a check point)
-		
-		if ("DIF" %in% comp) {
+		if (!SOFC) warning("SOFC is FALSE, skipping FIRSTX check")
+
+		if (SOFC) {
+			if (!isTRUE(all.equal(firstXcheck*factorX, firstX, check.names = FALSE, tolerance = xtol))) {
+				cat("First x value from variable list:", firstXcheck*factorX, "\n")
+				cat("First x value from metadata:", firstX, "\n")
+				stop("Error parsing xValues (firstX, NMR)")
+				}						
+		}
+				
+		if (!SOFC) warning("SOFC is FALSE, skipping LASTX check")
+
+		if (SOFC) {
 			if (!isTRUE(all.equal(lastXcheck*factorX, lastX, check.names = FALSE, tolerance = xtol))) {
 				cat("Last x value from variable list:", lastXcheck*factorX, "\n")
 				cat("Last x value from metadata:", lastX, "\n")
 				stop("Error parsing xValues (lastX, NMR)")
 				}
-			}
+		}
 				
 
 		if (fmt == "XRR") { # Check yValues (real)
 						
-			if (!isTRUE(all.equal(yValues[1]*factorR, firstR, check.names = FALSE, tolerance = ytol))) {			
+			yValues = yValues*factorR
+
+		if (!SOFC) warning("SOFC is FALSE, skipping FIRSTR check")
+		
+		if (SOFC) {
+			if (!isTRUE(all.equal(yValues[1], firstR, check.names = FALSE, tolerance = ytol))) {			
 				cat("First real value from variable list:", yValues[1]*factorR, "\n")
 				cat("First real value from metadata:", firstR, "\n")
 				stop("Error parsing real values (firstR, NMR)")
-				}
+				}			
+		}
 			
-			if (!isTRUE(all.equal(yValues[length(yValues)]*factorR, lastR, check.names = FALSE, tolerance = ytol))) {		
-				cat("Last real value from variable list:", yValues[length(yValues)]*factorR, "\n")
-				cat("Last real value from metadata:", lastR, "\n")
-				stop("Error parsing real values (lastR, NMR)")
-				}
+		if (!SOFC) warning("SOFC is FALSE, skipping LASTR check")
+
+		if (SOFC) {
+			if (!isTRUE(all.equal(yValues[length(yValues)], lastR, check.names = FALSE, tolerance = ytol))) {		
+						cat("Last real value from variable list:", yValues[length(yValues)]*factorR, "\n")
+						cat("Last real value from metadata:", lastR, "\n")
+						stop("Error parsing real values (lastR, NMR)")
+						}			
+		}
 			
-			yValues = yValues*factorR
 			
 			} # end of XRR
 
 		if (fmt == "XII") { # Check yValues (imaginary)
 
-			if (!isTRUE(all.equal(yValues[1]*factorI, firstI, check.names = FALSE, tolerance = ytol))) {		
-				cat("First imaginary value from variable list:", yValues[1]*factorI, "\n")
-				cat("First imaginary value from metadata:", firstI, "\n")
-				stop("Error parsing imaginary values (firstI, NMR)")
-				}
+			yValues = yValues*factorI
+
 			
-			if (!isTRUE(all.equal(yValues[length(yValues)]*factorI, lastI, check.names = FALSE, tolerance = ytol))) {		
+			if (!SOFC) warning("SOFC is FALSE, skipping FIRSTI check")
+			
+			if (SOFC) {
+				if (!isTRUE(all.equal(yValues[1], firstI, check.names = FALSE, tolerance = ytol))) {		
+					cat("First imaginary value from variable list:", yValues[1]*factorI, "\n")
+					cat("First imaginary value from metadata:", firstI, "\n")
+					stop("Error parsing imaginary values (firstI, NMR)")
+					}				
+			}
+			
+		if (!SOFC) warning("SOFC is FALSE, skipping LASTI check")
+		
+		if (SOFC) {
+			if (!isTRUE(all.equal(yValues[length(yValues)], lastI, check.names = FALSE, tolerance = ytol))) {		
 				cat("Last imaginary value from variable list:", yValues[length(yValues)]*factorI, "\n")
 				cat("Last imaginary value from metadata:", lastI, "\n")
 				stop("Error parsing imaginary values (lastI, NMR)")
-				}
+				}			
+		}
 			
-			yValues = yValues*factorI
 			
 			} # end of XII
 
@@ -500,21 +269,26 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 		# Check first and last xValues (saved earlier).  The standard is ambiguous about doing this,
 		# but out of an abundance of caution we will do it.
 		
-		if (!isTRUE(all.equal(firstXcheck*factorF2, firstF2, check.names = FALSE, tolerance = xtol))) {
-			cat("First F2 value from variable list:", firstXcheck*factorF2, "\n")
-			cat("First F2 value from metadata:", firstF2, "\n")
-			stop("Error parsing xValues (firstF2, NMR2D)")
-			}			
+		if (!SOFC) warning("SOFC is FALSE, skipping FIRSTF2 check")
+
+		if (SOFC) {
+			if (!isTRUE(all.equal(firstXcheck*factorF2, firstF2, check.names = FALSE, tolerance = xtol))) {
+				cat("First F2 value from variable list:", firstXcheck*factorF2, "\n")
+				cat("First F2 value from metadata:", firstF2, "\n")
+				stop("Error parsing xValues (firstF2, NMR2D)")
+				}						
+		}
 		
-		# Do a lastX check if DIF format (where there is a check point)
 		
-		if ("DIF" %in% comp) {
+		if (!SOFC) warning("SOFC is FALSE, skipping LASTF2 check")
+
+		if (SOFC) {
 			if (!isTRUE(all.equal(lastXcheck*factorF2, lastF2, check.names = FALSE, tolerance = xtol))) {
 				cat("Last F2 value from variable list:", lastXcheck*factorF2, "\n")
 				cat("Last F2 value from metadata:", lastF2, "\n")
 				stop("Error parsing xValues (lastF2, NMR2D)")
-				}
-			}
+				}		
+		}
 				
 		# There is a poorly-documented check of the first y value in the 2D NMR format.
 		# For the time-being we will not do the check, as it only checks one value.

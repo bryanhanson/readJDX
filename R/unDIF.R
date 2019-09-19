@@ -5,23 +5,22 @@
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #' 
-#' @param string Character.  The string to be converted.
+#' @param string Character. The string to be converted. Named with compression codes.
 #'
-#' @return A data frame. First element are the numeric values.  Second is the logical vector flagging DIF codes.
-#'
-#' @aliases unDIF unSQZ
+#' @return A numeric vector with the final values, named with the compression codes.
 #'
 #' @importFrom stringr str_detect str_replace_all
 #'
 #' @noRd
+#'
 
 unDIF <- function(string) {
 	
-	# DIF codes can be interspersed with SQZ etc, so we have to find the DIFs and deal with them.
-	# Also, as note by Daniel Jacob in Github issue #6, the y value check only applies if the 
-	# very last entry is a DIF code, so we need to know that as well.
+	# DIF codes can be interspersed with SQZ etc, so locate the DIFs and deal with them.
 	pat <- "[%J-Rj-r]"
 	dflag <- str_detect(string, pat) # flag to mark where the DIF codes are in the string
+	# note: could use the names instead of a fresh grep process
+	stringNames <- names(string)
 	string <- str_replace_all(string,
 		c("%" = "0",  # effectively the same as a DUP character (add nothing, i.e. repeat the character)
 		  "J" = "1",
@@ -50,7 +49,7 @@ unDIF <- function(string) {
 		if (dflag[i]) values[i] <- string[i] + values[i-1]
 	}
 	
-	res <- data.frame(values = values, DIFmode = dflag)
-	res
+	names(values) <- stringNames
+	values
 	}
 	

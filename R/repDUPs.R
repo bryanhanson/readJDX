@@ -6,15 +6,16 @@
 #' Documentation is provided for developers wishing to contribute to the package.
 #' 
 #' @param string Character.  A string to be replicated, as type character.
-#' May contain a number or a character or a combination, but the whole is a
-#' character string.
+#'        May contain a number or a character or a combination, but the whole is a
+#'        character string.
 #'
 #' @param dupstr Character.  A character string which when decoded indicates
-#' the number of times to repeat \code{string}.
+#'        the number of times to repeat \code{string}.  Names are added by the calling function.
 #'
 #' @return An expanded string.
 #' 
 #' @noRd
+#'
 
 repDUPs <- function(string, dupstr) {
 	
@@ -35,7 +36,7 @@ repDUPs <- function(string, dupstr) {
 		if (dupstr == "s") return(rep(string, 9))	
 	}
 	
-	if (nchar(dupstr) > 1) {
+	if (nchar(dupstr) > 1) { # this is not encountered very often, but is allowed
 		firstc <- substring(dupstr, 1, 1) # first character
 		firsti <- NA_integer_ # first character as integer, momentarily
 		rest <- substring(dupstr, 2, nchar(dupstr)) # rest of the string
@@ -56,4 +57,4 @@ repDUPs <- function(string, dupstr) {
 		
 	}
 	
-	}
+}
