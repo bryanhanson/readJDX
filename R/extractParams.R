@@ -5,8 +5,7 @@
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #' 
-#' @param md Character.  A vector of character strings which contains
-#' the metadata.
+#' @param md Character.  A vector of character strings which contains the metadata.
 #'
 #' @param mode Character. One of c("IR", "NMR", "NMR2D").
 #'

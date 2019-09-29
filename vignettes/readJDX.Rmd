@@ -17,10 +17,7 @@ doi: "github.com/bryanhanson/readJDX"
 fontsize: 10pt
 
 # Optional: Force one-column layout, default is two-column
-#one_column: true
-
-# Optional: Enable one-sided layout, default is two-sided
-#one_sided: true
+one_column: false
 
 # Optional: Enable section numbering, default is unnumbered
 #numbersections: true
@@ -43,7 +40,7 @@ output: pinp::pinp
 # Required: Vignette metadata for inclusion in a package.
 vignette: >
   %\VignetteIndexEntry{readJDX}
-  %\VignetteKeywords{readJDX, vignette, DX, NMR, IR, MS, Raman}
+  %\VignetteKeyword{JCAMP, DX, NMR, IR, Raman}
   %\VignettePackage{readJDX}
   %\VignetteEngine{knitr::rmarkdown}
 
@@ -52,9 +49,15 @@ header-includes:
   - \usepackage{amsmath}
 ---
 
-```{r echo = FALSE}
+```{r results = "hide", echo = FALSE}
 library("readJDX")
+rm(list = ls())
+
 desc <- packageDescription("readJDX")
+set.seed(999)
+knitr::opts_chunk$set(tidy = TRUE,
+  fig.height = 7, fig.width = 7,
+  fig.fullwidth = TRUE, echo = FALSE)
 ```
 
 This vignette is based on `readJDX` version `r desc$Version`.
@@ -113,19 +116,3 @@ The JCAMP-DX standard allows a lot of flexibility and instrument manufacturers h
 Before release, `readJDX` is tested against a large collection of files with varying formats.  A few of these files were obtained locally.  Others were collected from publically available sources (e.g. \href{http://www.jcamp-dx.org/testdata.html}{http://www.jcamp-dx.org/testdata.html}).  These files are not included with the package to save space, and in addition, while they are publically available, for many of them the licensing status is unclear (i.e. the OWNER entry).
 
 The JCAMP standard requires a number of checks on the integrity of the data decompression process.  `readJDX` implements most of these either directly or indirectly.  Verification is important, and we have found JCAMP files that were not written correctly in the process of checking integrity.  For details about how data decompression is checked, please see the original source files.
-
-# Program Flow
-
-`readJDX` is coded in such a way that it should be easy to add features.  Contributions to improve or expand the package, including pull requests, are always welcome!  The scheme below shows how control of the program is organized. The $\rightarrow$ means "calls" and $\xrightarrow{?}$ means "may call".  
-`readJDX`  
-$\rightarrow$ `findDataTables`  
-$\rightarrow$ `extractParams`  
-$\rightarrow$ `processDataTable`  
-&nbsp;&nbsp;&nbsp;&nbsp;$\xrightarrow{?}$ `decompressJDXxyy`  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\rightarrow$ `getJDXcompression`  
-&nbsp;&nbsp;&nbsp;&nbsp;$\xrightarrow{?}$ `insertDUPs`  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\rightarrow$ `repDUPs`  
-&nbsp;&nbsp;&nbsp;&nbsp;$\xrightarrow{?}$ `unSQZ`  
-&nbsp;&nbsp;&nbsp;&nbsp;$\xrightarrow{?}$ `deDIF`  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\rightarrow$ `unDIF`  
-&nbsp;&nbsp;&nbsp;&nbsp;$\xrightarrow{?}$ functions to decompress other formats (future?)   

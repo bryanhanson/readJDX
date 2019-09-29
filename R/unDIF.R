@@ -5,7 +5,7 @@
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #' 
-#' @param string Character. The string to be converted. Named with compression codes.
+#' @param string Character. A vector of strings to be converted. Named with compression codes.
 #'
 #' @return A numeric vector with the final values, named with the compression codes.
 #'
@@ -44,6 +44,7 @@ unDIF <- function(string) {
 		  
 	string <- as.numeric(string)
 	values <- rep(NA_real_, length(string))
+	
 	for (i in 1:length(values)) { # amounts to cumsum over only selected portions of the string
 		if (!dflag[i]) {values[i] <- string[i]; next}
 		if (dflag[i]) values[i] <- string[i] + values[i-1]

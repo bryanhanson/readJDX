@@ -1,0 +1,143 @@
+%\VignetteIndexEntry{Annotated Compressed JCAMP-DX File}
+%\VignettePackage{readJDX}
+%\VignetteIndexEntry{readJDX}
+%\VignetteKeyword{JCAMP, DX, NMR, IR, Raman}
+
+\documentclass[12 pt]{article}
+
+\usepackage[margin = 1.5 cm, letterpaper]{geometry}
+
+\usepackage{inconsolata}
+\renewcommand*\familydefault{\ttdefault}
+\usepackage[T1]{fontenc}
+\usepackage[parfill]{parskip}
+\usepackage[usenames, dvipsnames, svgnames, table]{xcolor}
+
+\pagestyle{empty}
+
+%%%%%  Document Contents  %%%%%
+% https://tex.stackexchange.com/a/25906/6580 for text boxes
+
+\begin{document}
+\fboxrule = 2 pt
+
+\noindent\fcolorbox{red}{white}{ % highlight entire file
+\minipage[t]{\dimexpr1.0\linewidth-2\fboxsep-2\fboxrule\relax}
+
+
+\noindent\fcolorbox{blue}{white}{ % highlight meta data in blue
+\minipage[t]{\dimexpr0.95\linewidth-2\fboxsep-2\fboxrule\relax}
+
+\#\#TITLE=Tiny IR Spectrum for Demo\\
+\#\#JCAMP-DX=4.24\\
+\#\#DATA TYPE=INFRARED SPECTRUM\\
+\#\#OWNER= GPL-3 (orig. by B. Hanson)\\
+\#\#XUNITS=1/CM\\
+\#\#YUNITS=TRANSMITTANCE\\
+\#\#FIRSTX= 4000.655017\\
+\#\#LASTX= 400.1619262\\
+\#\#DELTAX= -9.64245605E-1\\
+\#\#MAXY= 95.83563804\\
+\#\#MINY= -2.87246704E-1\\
+\#\#XFACTOR= 4.882812500E-4\\
+\#\#YFACTOR= 1.220703125E-2\\
+\#\#NPOINTS= 612\\
+\#\#FIRSTY= 7493
+\endminipage}\hfill
+\noindent\fcolorbox{orange}{white}{ % highlight variable list in orange
+\minipage[t]{\dimexpr0.95\linewidth-2\fboxsep-2\fboxrule\relax}
+\#\#XYDATA=(X++(Y..Y))\\
+4861896G493jknkJlkJjJlKjOkNTjNKJNKMlmKqMnKkOjJKJKTNNMNKJMJjKTJTkMlKlKJ\\
+4729586G542nNjKmJMJmMjljKmklTlJkNjMLNTMKlKjmkjkTlokmqkqj0oTrj4j3j9k3k8l8\\
+4611099G336m7o0q2j07j38j73k10k40k62k53k11j55p2K0J09J76K11K28K20J97J70J45J22J01\\
+4563705G025Q6P0O0N1M4L8L2K8K4K1J7J8J1RTQNMTkMTjNLNMJULJKUJjJkTnmkTLTJ0OLRMULJM\\
+4453117G637JTLJKTJJLkKLlLjJLKjTMJjLJjKlKLljKJjJKTJljKJTlKTkLTjKJTMJTK\\
+4320808G688JKTkLjJOkjJTjTKkKUkjLNkmLjLlJKlOmjKkMJTTkNKkJjkJjLTmKJkKkLJmJL\\
+4186523G715jTKLKlJLkjKJjUKUkJKTljKnMJLmNJjUMkLkTUjMKJKjj3J1PnMKLJTKjMkK\\
+4050263G750JjKJTKJqNKJlKlKTpNMlKKlJUjTOj9J8kjKklLlKLmMjJNj1j2K0lQj5\\
+3929802G753k9L4QmOkMnJMkNJTkJKJlKTmTQkMk4LK3kJlJNLkLJLMnJKjLl8JK7lJ0MjLlj\\
+3811316G794JkMkMpKkMmTnPJ5r1J2Q0k2J7kTjqJ6rPqOmn3L1K3Lm8L3K0j4J3pOjrMTkJl
+\endminipage}\hfill
+\#\#END=
+
+\endminipage}\hfill
+
+Key to the above:
+\begin{itemize}
+  \item \textcolor{red}{Entire File}. Input for \textit{findDataTables}, as a vector of character strings.
+  \item \textcolor{blue}{Metadata}.  Input for \textit{extractParams}, as a vector of character strings.
+  \item \textcolor{orange}{Variable List}. Input for \textit{processDataTable} and \textit{decompressXYY}, as a vector of character strings.
+\end{itemize}
+
+<< setup, echo = FALSE >>=
+suppressPackageStartupMessages(library("stringr"))
+@
+
+The entire file is the input to \textit{findDataTables}. Here are two raw lines from the variable list; each is a character vector of length one:
+
+<< getData, echo = FALSE >>=
+mdd <- system.file("extdata", "MiniDIFDUP.JDX", package = "readJDX")
+lines <- readLines(mdd)
+@
+
+<< rawLines, echo = FALSE >>=
+print(lines[17:18])
+@
+
+The input to \textit{decompLines} and \textit{getJDXcompression} is \emph{named} raw lines:
+
+<< namedRawLines, echo = FALSE >>=
+names(lines) <- paste("Line", 1:length(lines), sep = "_")
+print(lines[17:18])
+@
+
+The input to \textit{unSQZ}, \textit{insertDUPs}, \textit{deDIF} and \textit{yValueCheck} is a \emph{named} list of lines.  Each raw line has been split into the individual pieces and named according to its compression code:
+
+<< lineList, echo = FALSE >>=
+# The following code is from decompLines
+
+lineNames <- names(lines) # save to replace when functions nuke
+
+# Helper Function
+nameComp <- function(cvec) { # cvec = character vector
+  	names(cvec) <- rep(NA_character_, length(cvec))
+  	names(cvec)[grepl("[@A-Ia-i]{1}", cvec)] <- "SQZ"
+  	names(cvec)[grepl("[%J-Rj-r]{1}", cvec)] <- "DIF"
+  	names(cvec)[grepl("[S-Zs]{1}", cvec)] <- "DUP"
+  	names(cvec)[!grepl("[@%A-Za-rs]", cvec)] <- "NUM" # anything else is a NUM/AFFN
+  	cvec
+}
+
+# Preliminaries
+lines <- gsub(",", ".", lines) # replace ',' with '.' -- needed for EU style files
+lines <- gsub("\\s+\\${2}.*$", "", lines) # remove any ...xxxx  $$ checkpoint type entries
+lines <- gsub("(\\+|-){1}([0-9]+)", " \\1\\2", lines) # put space ahead of +|- signs (PAC)
+lines <- str_trim(lines, side = "both") # remove extra white space
+lines <- str_replace_all(lines, "([@%A-Za-rs])", " \\1") # break into pieces by compression mode
+
+# Convert to list to process each piece separately
+lines <- as.list(lines)
+names(lines) <- lineNames # replace the names that were nuked
+
+FUN <- function(x) {unlist(strsplit(x, "\\s+"))}
+lines <- lapply(lines, FUN)
+
+# Name each entry by compression mode
+lines <- lapply(lines, nameComp) # name each entry by the compression mode
+
+print(lines[17])
+@
+
+The input to \textit{unDIF} is a character vector with entries named with ASDF code:
+
+<< unDIFinput >>=
+print(unlist(lines[17]))
+@
+
+The input to \textit{repDUPs} is a character vector with length one:
+
+<< repDUPsinput >>=
+print(unlist(lines[17])[21])
+@
+
+\end{document}

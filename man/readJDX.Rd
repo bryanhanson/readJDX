@@ -24,23 +24,18 @@ NOTE: Only a few checks can be skipped via this option, as there are some
 parameters that must be available and correct in order to return any answer.}
 
 \item{debug}{Integer.  The level of debug reporting desired.  For those options giving
-       a lot of output, you may wish to consider directing the output to \code{sink()}
+       a lot of output, you may wish to consider directing the output via \code{sink()}
        and then search the results for the problematic lines.
 \itemize{
   \item 1 or higher = import progress is reported.
   \item 2 = details about the variable lists, compression formats and
             parameters that were found.
-  \item 3 = detailed info about processing of the x values (huge output!).
-  \item 4 = detailed view of the first five lines containing y values; may be helpful if
-            the compression is not figured out correctly (via \code{getJDXcompression}).
-  \item 5 = detailed view of the y value processing if the internal format is not \code{AFFN}.
-            Reports the first five y value strings before and after each step in the process,
-            so output is considerable.  Use \code{debug = 99} to see every line (huge output!).
-  \item 6 = detailed info about processing the y values when DUP is in use (huge output!).
-  \item 7 = detailed info about processing the y values when DIF is in use (huge output!).
+  \item 3 = print the extracted x values (huge output!).
+  \item 4 = detailed info on the y value processing (huge output!).
+  \item 5 = detailed info about processing the y values when DUP is in use (huge output!).
+  \item 6 = detailed info about processing the y values when DIF is in use (huge output!).
 }
-In cases where an error is about to
-stop execution, you get additional information regardless of
+In cases where an error is about to stop execution, you get additional information regardless of
 the \code{debug} value.}
 }
 \value{
@@ -123,11 +118,6 @@ sbo <- system.file("extdata", "SBO.jdx", package = "readJDX")
 chk <- readJDX(sbo)
 plot(chk[[4]]$x, chk[[4]]$y/100, type = "l", main = "Original Smart Balance Spread",
 	xlab = "wavenumber", ylab = "Percent Transmission")
-
-pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
-chk <- readJDX(pcrf)
-plot(chk[[4]]$x, chk[[4]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
-	xlab = "ppm", ylab = "Intensity")
 
 \dontrun{
 # Line 265 has an N -> G typo.  Try with various levels of debug.

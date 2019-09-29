@@ -5,6 +5,9 @@ URL: github.com/bryanhanson/readJDX
 
 Changes in version 0.4.xxx 2019-09-16
      + New function decodeLines handles the decompression process (via decompressXYY).  The function can also be used in stand alone fashion to inspect problematic lines in a particular JCAMP-DX file.  This is a great simplification in the processing and hence we are now at version 0.4.x series.
+     + New function checkYvalues added.
+     + Existing vignette re-worked, and new vignettes added.
+     + New test and demo file, MiniDIFDUP.JDX, added.
 
 Changes in version 0.3.372 2019-09-16
      + Debug options are now more consistent, documentation improved, and a new debug level was added.

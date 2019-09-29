@@ -1,0 +1,76 @@
+%\VignetteIndexEntry{Annotated Expanded JCAMP-DX File}
+%\VignettePackage{readJDX}
+%\VignetteIndexEntry{readJDX}
+%\VignetteKeyword{JCAMP, DX, NMR, IR, Raman}
+
+\documentclass[12pt]{article}
+
+\usepackage[margin = 2.0cm, letterpaper]{geometry}
+
+\usepackage{inconsolata}
+\renewcommand*\familydefault{\ttdefault}
+\usepackage[T1]{fontenc}
+
+\usepackage[usenames, dvipsnames, svgnames, table]{xcolor}
+
+\usepackage[parfill]{parskip}
+
+\pagestyle{empty}
+
+%%%%%  Document Contents  %%%%%
+
+\begin{document}
+
+\#\#TITLE=Tiny IR Spectrum for Demo\\
+\#\#JCAMP-DX=4.24\\
+\#\#DATA TYPE=INFRARED SPECTRUM\\
+\#\#OWNER= GPL-3 (orig. by B. Hanson)\\
+\#\#XUNITS=1/CM\\
+\#\#YUNITS=TRANSMITTANCE\\
+\#\#FIRSTX= 4000.655017\\
+\#\#LASTX= 400.1619262\\
+\#\#DELTAX= -9.64245605E-1\\
+\#\#MAXY= 95.83563804\\
+\#\#MINY= -2.87246704E-1\\
+\#\#XFACTOR= 4.882812500E-4\\
+\#\#YFACTOR= 1.220703125E-2\\
+\#\#NPOINTS= 612\\
+\#\#FIRSTY= 7493\\
+\#\#XYDATA=(X++(Y..Y))\\
+
+
+\textcolor{red}{4861896} \textcolor{blue}{G493} j k n k J l k J j J l K \% j O \% k N \textcolor{Magenta}{T} j N K J N K M l m K q \% M n K k \% O j J K J K \textcolor{Magenta}{T} N \% N M \% N K \% J M \% J j K \textcolor{Magenta}{T} J \textcolor{Magenta}{T} k M l K l K J
+
+
+\textcolor{red}{4729586} \textcolor{blue}{G542} n N j K m J M \% J m M j l j K m k l \textcolor{Magenta}{T} \% l J k N \% j M L N \% \textcolor{Magenta}{T} M K l \% K j \% m k j k \textcolor{Magenta}{T} l o k m q k q j0 o \textcolor{Magenta}{T} r j4 j3 j9 k3 k8 l8
+
+
+\textcolor{red}{4611099} \textcolor{blue}{G336} m7 o0 q2 j07 j38 j73 k10 k40 k62 k53 k11 j55 p2 K0 J09 J76 K11 K28 K20 J97 J70 J45 J22 J01
+
+
+\textcolor{red}{4563705} \textcolor{blue}{G025} Q6 P0 O0 N1 M4 L8 L2 K8 K4 K1 J7 J8 J1 R \textcolor{Magenta}{T} Q N M \textcolor{Magenta}{T} k M \textcolor{Magenta}{T} j N L N M J \textcolor{Magenta}{U} L J K \textcolor{Magenta}{U} J j J k \textcolor{Magenta}{T} n m k \textcolor{Magenta}{T} L \textcolor{Magenta}{T} J0 O L R M \textcolor{Magenta}{U} L J M
+
+
+\textcolor{red}{4453117} \textcolor{blue}{G637} J \textcolor{Magenta}{T} L J K \textcolor{Magenta}{T} J \% J L k K L l \% L j J L \% K j \textcolor{Magenta}{T} M J \% j L J j K l \% K L \% l \% j K J j J K \textcolor{Magenta}{T} J l j \% K J \% \textcolor{Magenta}{T} l K \textcolor{Magenta}{T} k L \textcolor{Magenta}{T} j K J \textcolor{Magenta}{T} M J \textcolor{Magenta}{T} K
+
+
+\textcolor{red}{4320808} \textcolor{blue}{G688} J K \textcolor{Magenta}{T} k L j J O k j J \textcolor{Magenta}{T}  j \textcolor{Magenta}{T} K k K \% \textcolor{Magenta}{U} k \% j L N k m L j \% L l J K l O m j K k M \% J \textcolor{Magenta}{T} \% \textcolor{Magenta}{T} k N K k J j k J j L \textcolor{Magenta}{T} m K J k K k L J m J L
+
+
+\textcolor{red}{4186523} \textcolor{blue}{G715} \% j \textcolor{Magenta}{T} K L K l J L k j K J \% j \textcolor{Magenta}{U} K \textcolor{Magenta}{U} k J K \textcolor{Magenta}{T} l j K n M J \% L m N J j \textcolor{Magenta}{U} M k L k \textcolor{Magenta}{T} \% \textcolor{Magenta}{U} j M \% K J K j j3 J1 P n M K L J \% \textcolor{Magenta}{T} K j \% M k K
+
+
+\textcolor{red}{4050263} \textcolor{blue}{G750} J \% j K J \textcolor{Magenta}{T} K \% J q \% N K J l K l K \textcolor{Magenta}{T} p N M l K \% K l J \% \textcolor{Magenta}{U} j \% \textcolor{Magenta}{T} O j9 \% J8 k \% j K k l L \% l K L m M j \% J N j1 j2 K0 l Q j5
+
+
+\textcolor{red}{3929802} \textcolor{blue}{G753} k9 L4 Q m O k M \% n J M k N J \% \textcolor{Magenta}{T} k J K J l K \textcolor{Magenta}{T} m \textcolor{Magenta}{T} Q k \% M k4 L K3 k J l J N \% L k L J L \% M n J K j L l8 J K7 l J0 M j L l j
+
+
+\textcolor{red}{3811316} \textcolor{blue}{G794} J k \% M k \% M p K k M m \textcolor{Magenta}{T} n P J5 r1 J2 Q0 k2 J7 k \textcolor{Magenta}{T} j q J6 r P q O m n3 L1 K3 L \% m8 L3 K0 j4 J3 p O j r M \textcolor{Magenta}{T} k J l \%
+
+
+\#\#END=
+
+Key: \textcolor{red}{x values} \textcolor{blue}{1st y value in SQZ format} \textcolor{Magenta}{DUP codes} All other letters are DIF codes.  Spaces have been added between numeric entries; the original would have no spaces and no line empty lines.
+
+\end{document}

@@ -33,10 +33,10 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 	# but it is possible there are still some comments embedded within dt.
 	# These will be handled during decompression.
 	
-	lineNos <- unlist(lineNos)
-	names(dt) <- paste("Line", lineNos, sep = "_")
-	fmt <- dt[1]
 	
+	lineNos <- unlist(lineNos)
+	fmt <- dt[1]
+		
 	if (mode == "IR_etc") {
 		dt <- dt[-c(2, length(dt))]
 		st <- lineNos[1] + 1
@@ -44,7 +44,9 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 		lineNos <- c(NA_integer_, st:end)
 		if (debug == 2) {
 			message("\nHead of the variable list:")
-			print(data.frame(lineNo = lineNos[1:10], first30characters = substring(dt[1:10], 1, 30)))
+				print(data.frame(
+				  lineNo = paste("Line", lineNos[1:10], sep = "_"),
+				  first30characters = substring(dt[1:10], 1, 30)))
 		}
 	}
 	
@@ -57,7 +59,9 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 			lineNos <- c(NA_integer_, st:end)
 			if (debug == 2) {
 				message("\nHead of the variable list:")
-				print(data.frame(lineNo = lineNos[1:10], first30characters = substring(dt[1:10], 1, 30)))
+				print(data.frame(
+				  lineNo = paste("Line", lineNos[1:10], sep = "_"),
+				  first30characters = substring(dt[1:10], 1, 30)))
 			}
 		}
 		
@@ -68,7 +72,9 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 			lineNos <- c(NA_integer_, st:end)
 			if (debug == 2) {
 				message("\nHead of the variable list:")
-				print(data.frame(lineNo = lineNos[1:10], first30characters = substring(dt[1:10], 1, 30)))
+				print(data.frame(
+				  lineNo = paste("Line", lineNos[1:10], sep = "_"),
+				  first30characters = substring(dt[1:10], 1, 30)))
 			}
 		}
 	}
@@ -81,16 +87,19 @@ processDataTable <- function (dt, params, mode, lineNos, SOFC, debug = 0){
 		lineNos <- c(NA_integer_, st, (st + 3L):end)
 		if (debug == 2) {
 			message("\nHead of the variable list:")
-			print(data.frame(lineNo = lineNos[1:10], first30characters = substring(dt[1:10], 1, 30)))
+				print(data.frame(
+				  lineNo = paste("Line", lineNos[1:10], sep = "_"),
+				  first30characters = substring(dt[1:10], 1, 30)))
 		}
 	}
-		
+	
 	# Dispatch based on fmt -- At this point only XYY is understood
+
+	names(dt) <- paste("Line", lineNos, sep = "_") # name it for debugging purposes downstream
 
 	if ((fmt == "XRR") | (fmt == "XII") | (fmt == "NMR_2D")) fmt <- "XYY"
 	
 	if (fmt == "XYY") {
-		names(dt) <- paste("Line", lineNos, sep = "_") # name it for debugging purposes downstream
 		xydata <- decompressXYY(dt, params, mode, SOFC, debug = debug)
 		return(xydata)
 	}

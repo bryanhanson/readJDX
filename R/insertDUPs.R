@@ -31,7 +31,7 @@ insertDUPs <- function(string, debug) {
 	
 	newString <- NA_character_ # new string ready to grow
 	
-	if (debug == 6) message("\nProcessing DUP values...")
+	if (debug == 5) message("\nProcessing DUP values...\n")
 		
 	for (i in 1:length(string)) {
 
@@ -51,7 +51,7 @@ insertDUPs <- function(string, debug) {
 
 	newString <- newString[-1]
 	
-	if (debug == 6) {
+	if (debug == 5) {
 		cat("\nOriginal line:\n")
 		print(string)
 		cat("\nLine with DUPs inserted:\n")

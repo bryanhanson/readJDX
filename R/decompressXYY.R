@@ -5,7 +5,7 @@
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #' 
-#' @param dt Character.  The variable list to be processed.  Includes one pre-pended
+#' @param dt Character.  The variable list to be processed as a character vector. Includes one pre-pended
 #' line giving the fmt of data (e.g. XYY, XRR, XII).
 #'
 #' @param params Numeric. Vector of parameters extracted from file header.
@@ -40,6 +40,7 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 	}
 	
 	### Step 1. Decompress the lines & split into x and y values
+	# decompLines always has the x values, so X, Y1, Y2, ...
 	LineList <- decompLines(dt, debug = debug)
 	
 	### Step 1a.  Get the x values & check them
@@ -48,15 +49,17 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 	# LASTX, and NPOINTS, not the actual values in the in the variable list. However, the values in the variable list
 	# must be checked for integrity, even at their lower precision.
 	
-	getX <- function(line) x <- line[1] # Helper Function
+	getX <- function(line) line[1] # Helper Function
 	xValues <- lapply(LineList, getX)
+	xValues <- unlist(xValues) # line names lost
 	
 	if (debug == 3) {
 		message("\nHere are the x values:")
-		print(xValues)
+		xV <- xValues
+		attributes(xV) <- NULL # drop compression code labels
+		print(xV)
 	}
 	
-	xValues <- unlist(xValues) # line names lost
 	if (!is.numeric(xValues)) stop("Parsing xValues failed (not numeric)")
 
 	# Save the first and last xValues for checking a bit later
@@ -65,16 +68,17 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 	xtol <- 1.5 * abs(mean(diff(xValues), na.rm = TRUE))
 	
 	# The standard requires that each line in the variable list be checked to make
-	# sure no lines were skipped or duplicated.
+	# sure no lines were skipped or duplicated.  Checking for skipping is complicated by the
+	# fact that xValues are not evenly spaced, since they depend upon how many yValues were
+	# packed into the previous line. So we are not checking for skipped values.
 	if (anyDuplicated(xValues[!is.na(xValues)])) stop("Variable list appears to have duplicated lines")
-	if (!isTRUE(all.equal(diff(xValues[!is.na(xValues)])))) stop("Variable list may have a skipped line")
 	xValues <- NULL # safety mechanism; recomputed later at higher resolution
 
 	### Step 1b. Get the y values
 	
-	getY <- function(line) x <- line[2:(length(line))] # Helper Function
+	getY <- function(line) line[2:(length(line))] # Helper Function
 	yValues <- unlist(lapply(LineList, getY)) # line names lost, but there was debugging back in decompLines
-	
+		
  	# Set ytol; some files have low precision FIRSTY etc, and the computation here
  	# can lead to values with much greater precision, and hence the all.equal check (later)
  	# fails.  In these cases one might consider setting SOFC = FALSE and still
@@ -304,6 +308,6 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 		
 	### And we're done...
 	
-	xydata <-data.frame(x = xValues, y = yValues)
+	xydata <- data.frame(x = xValues, y = yValues)
 	return(xydata)	
 	}

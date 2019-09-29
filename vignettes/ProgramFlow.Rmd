@@ -1,0 +1,107 @@
+---
+title: Program Flow in readJDX
+
+# Use letters for affiliations
+author:
+  - name: Bryan A. Hanson
+    affiliation: a
+
+address:
+  - code: a
+    address: Dept. of Chemistry \& Biochemistry, DePauw University; \url{hanson@depauw.edu}
+
+# Place DOI URL or CRAN Package URL here
+doi: "github.com/bryanhanson/readJDX"
+
+# Font size of the document, values of 9pt (default), 10pt, 11pt and 12pt
+fontsize: 10pt
+
+# Optional: Force one-column layout, default is two-column
+one_column: true
+
+# Optional: Enable section numbering, default is unnumbered
+#numbersections: true
+
+# Optional: Specify the depth of section number, default is 5
+#secnumdepth: 5
+
+# Optional: Bibliography
+#bibliography: JCAMP-DX
+
+# Optional: Enable a 'Draft' watermark on the document
+watermark: false
+
+# Customize footer, eg by referencing the vignette
+footer_contents: "Program Flow"
+
+# Produce a pinp document
+output: pinp::pinp
+
+# Required: Vignette metadata for inclusion in a package.
+vignette: >
+  %\VignetteIndexEntry{Program Flow}
+  %\VignetteKeyword{JCAMP, DX, NMR, IR, Raman}
+  %\VignettePackage{readJDX}
+  %\VignetteEngine{knitr::rmarkdown}
+
+header-includes:
+  - \usepackage{booktabs}
+  - \usepackage{colortbl}
+---
+
+```{r results = "hide", echo = FALSE}
+library("readJDX")
+suppressPackageStartupMessages(library("kableExtra"))
+rm(list = ls())
+
+desc <- packageDescription("readJDX")
+set.seed(999)
+knitr::opts_chunk$set(tidy = TRUE,
+  fig.height = 7, fig.width = 7,
+  fig.fullwidth = TRUE, echo = FALSE)
+```
+
+This vignette is based on `readJDX` version `r desc$Version`.
+
+# Program Flow
+
+`readJDX` is coded in such a way that it should be easy to add features.  Contributions to improve or expand the package, including pull requests, are always welcome!  Table \ref{tab:PF} shows the overall flow of the function calls.  Only a couple of these functions are exported, so take a look at the source code for documentation.  Be sure to check out the *MiniDIFDUP_1* and *MiniDIFDUP_2* vignettes for additional information about the JCAMP-DX file structure and how `readJDX` functions extract the data.
+
+```{r progFlow, results = "asis"}
+fName <- c(
+  "readJDX",
+  "- findDataTables",
+  "- extractParams",
+  "- processDataTable",
+  "- - decompressXYY", # 5
+  "- - - decompLines",
+  "- - - - getJDXcompression",
+  "- - - - unSQZ",
+  "- - - - insertDUPS",
+  "- - - - - repDUPS", # 10
+  "- - - - deDIF",
+  "- - - - - unDIF",
+  "- - - - yValueCheck"
+  )
+
+fInput <- c(
+  "file name",
+  "character vector: all lines from original file",
+  "character vector: just the metadata",
+  "character vector: a single VL",
+  "character vector: a single VL", # 5
+  "character vector named with line numbers: a single VL",
+  "character vector named with line numbers: a single VL",
+  "*list* of character vectors from a single VL; the character vectors are named with the ASDF mode, the list is named with line numbers",
+  "*list* of character vectors from a single VL; the character vectors are named with the ASDF mode, the list is named with line numbers",
+  "a string of length one (named?)", # 10
+  "*list* of character vectors from a single VL; the character vectors are named with the ASDF mode, the list is named with line numbers",
+  "character vector from one line of VL, named by ASDF code",
+  "*list* of character vectors from a single VL; the character vectors are named with the ASDF mode, the list is named with line numbers"
+  )
+
+DF <- data.frame(fName, fInput)
+names(DF) <- c("function", "input")
+
+kable(DF, "latex", booktabs = TRUE, caption = "Program Flow.\\label{tab:PF}") %>% kable_styling(latex_options = c("striped", "hold_position")) %>% footnote(general = c("VL stands for variable list, as defined in the JCAMP-DX standard. For examples see the *MiniDIFDUP_1* vignette."))
+```
