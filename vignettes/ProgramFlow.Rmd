@@ -70,9 +70,9 @@ This vignette is based on `readJDX` version `r desc$Version`.
 ```{r progFlow, results = "asis"}
 fName <- c(
   "readJDX",
-  "- findDataTables",
+  "- findVariableLists",
   "- extractParams",
-  "- processDataTable",
+  "- processVariableList",
   "- - decompressXYY", # 5
   "- - - decompLines",
   "- - - - getJDXcompression",

@@ -5,7 +5,7 @@
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #' 
-#' @param dt Character.  The variable list to be processed as a character vector. Includes one pre-pended
+#' @param VL Character.  The variable list to be processed as a character vector. Includes one pre-pended
 #' line giving the fmt of data (e.g. XYY, XRR, XII).
 #'
 #' @param params Numeric. Vector of parameters extracted from file header.
@@ -20,32 +20,32 @@
 #' 
 #' @importFrom stringr str_locate str_trim
 #'
-#' @noRd
+# @noRd
 #'
 
-decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
+decompressXYY <- function (VL, params, mode, SOFC, debug = 0) {
 	
 	# For XYY, each line of the variable list begins with a frequency (x value) in AFFN
 	# followed by the y values in various compressed formats.
 		
-	fmt <- dt[1]
-	dt <- dt[-1] # Remove the pre-pended format string
+	fmt <- VL[1]
+	VL <- VL[-1] # Remove the pre-pended format string
 		
-	if (fmt == "XRR") {if (debug >= 1) message("\nProcessing real data...")}
-	if (fmt == "XII") {if (debug >= 1) message("\nProcessing imaginary data...")}
-	if (fmt == "XYY") {if (debug >= 1) message("\nProcessing variable list...")}
+	if (fmt == "XRR") {if (debug >= 1) cat("\nProcessing real data...\n")}
+	if (fmt == "XII") {if (debug >= 1) cat("\nProcessing imaginary data...\n")}
+	if (fmt == "XYY") {if (debug >= 1) cat("\nProcessing variable list...\n")}
 	if (fmt == "NMR_2D") {
-		if (debug >= 1) {message("\nProcessing F2 spectra...", dt[1])} 
-		dt <- dt[-1] # Remove e.g. ##PAGE= F1= 4.7865152724775 now that we have used it for debugging.
+		if (debug >= 1) {cat("\nProcessing F2 spectra...", VL[1],"\n")} 
+		VL <- VL[-1] # Remove e.g. ##PAGE= F1= 4.7865152724775 now that we have used it for debugging.
 	}
 	
 	### Step 1. Decompress the lines & split into x and y values
 	# decompLines always has the x values, so X, Y1, Y2, ...
-	LineList <- decompLines(dt, debug = debug)
+	LineList <- decompLines(VL, debug = debug)
 	
-	### Step 1a.  Get the x values & check them
-	# The x values in the variable list appear in most cases to be significantly rounded relative to FIRSTX.
-	# It appears as though the intent of the standard is to construct the sequence of x values from FIRSTX,
+	### Step 1a.  Get the X values & check them
+	# The X values in the variable list appear in most cases to be significantly rounded relative to FIRSTX.
+	# It appears as though the intent of the standard is to construct the sequence of X values from FIRSTX,
 	# LASTX, and NPOINTS, not the actual values in the in the variable list. However, the values in the variable list
 	# must be checked for integrity, even at their lower precision.
 	
@@ -54,7 +54,7 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 	xValues <- unlist(xValues) # line names lost
 	
 	if (debug == 3) {
-		message("\nHere are the x values:")
+		cat("\nHere are the X values:\n")
 		xV <- xValues
 		attributes(xV) <- NULL # drop compression code labels
 		print(xV)
@@ -108,22 +108,22 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 		
 		if (SOFC) {
 			if (!isTRUE(all.equal(yValues[1]*factorY, firstY, check.names = FALSE, tolerance = ytol))) {
-				cat("First y value from variable list:", yValues[1]*factorY, "\n")
-				cat("First y value from metadata:", firstY, "\n")
+				cat("First Y value from variable list:", yValues[1]*factorY, "\n")
+				cat("First Y value from metadata:", firstY, "\n")
 				stop("Error parsing yValues (firstY, IR_etc)")
 				}			
 		}
 		
 		# Check first and last xValues (saved earlier).  The standard is ambiguous about doing this,
 		# but out of an abundance of caution we will do it.  xtol is set pretty high due to 
-		# precision loss; x values at the start of lines are heavily rounded.
+		# precision loss; X values at the start of lines are heavily rounded.
 		
 		if (!SOFC) warning("SOFC is FALSE, skipping FIRSTX check")
 		
 		if (SOFC) {
 			if (!isTRUE(all.equal(firstXcheck*factorX, firstX, check.names = FALSE, tolerance = xtol))) {
-				cat("First x value from variable list:", firstXcheck*factorX, "\n")
-				cat("First x value from metadata:", firstX, "\n")
+				cat("First X value from variable list:", firstXcheck*factorX, "\n")
+				cat("First X value from metadata:", firstX, "\n")
 				stop("Error parsing xValues (firstX, IR_etc)")
 				}						
 		}
@@ -173,8 +173,8 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 
 		if (SOFC) {
 			if (!isTRUE(all.equal(firstXcheck*factorX, firstX, check.names = FALSE, tolerance = xtol))) {
-				cat("First x value from variable list:", firstXcheck*factorX, "\n")
-				cat("First x value from metadata:", firstX, "\n")
+				cat("First X value from variable list:", firstXcheck*factorX, "\n")
+				cat("First X value from metadata:", firstX, "\n")
 				stop("Error parsing xValues (firstX, NMR)")
 				}						
 		}
@@ -183,8 +183,8 @@ decompressXYY <- function (dt, params, mode, SOFC, debug = 0) {
 
 		if (SOFC) {
 			if (!isTRUE(all.equal(lastXcheck*factorX, lastX, check.names = FALSE, tolerance = xtol))) {
-				cat("Last x value from variable list:", lastXcheck*factorX, "\n")
-				cat("Last x value from metadata:", lastX, "\n")
+				cat("Last X value from variable list:", lastXcheck*factorX, "\n")
+				cat("Last X value from metadata:", lastX, "\n")
 				stop("Error parsing xValues (lastX, NMR)")
 				}
 		}

@@ -5,15 +5,17 @@
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #'
-#' @param string A string.
+#' @param i Integer. Essentially the index into \code{lineList}.
+#'
+#' @param lineList A list of numeric vectors to be checked.  Named with line numbers.
+#'        Individual numbers are named with the ASDF code.  X values still present!
 #'
 #' @param debug Integer.  See \code{\link{readJDX}} for details.
 #'
 #' @return A numeric vector.
 #' 
-#' @noRd
+# @noRd
 #'
-# deDIF <- function(string, debug = 0) {
 deDIF <- function(i, lineList, debug = 0) {
 	
 	# The JCAMP std states that in DIF form the first entry on a line

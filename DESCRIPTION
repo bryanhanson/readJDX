@@ -1,8 +1,8 @@
 Package: readJDX
 Type: Package
 Title: Import Data in the JCAMP-DX Format
-Version: 0.3.496
-Date: 2019-09-28
+Version: 0.3.528
+Date: 2019-10-03
 Authors@R: person(
     "Bryan A.", "Hanson",
     role = c("aut", "cre"),

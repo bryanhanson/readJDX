@@ -12,7 +12,7 @@
 #'
 #' @return A string.
 #' 
-#' @noRd
+# @noRd
 #'
 
 insertDUPs <- function(string, debug) {					
@@ -31,7 +31,7 @@ insertDUPs <- function(string, debug) {
 	
 	newString <- NA_character_ # new string ready to grow
 	
-	if (debug == 5) message("\nProcessing DUP values...\n")
+	if (debug == 5) cat("\nProcessing DUP values...\n")
 		
 	for (i in 1:length(string)) {
 

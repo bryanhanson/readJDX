@@ -12,9 +12,9 @@
 #'
 #' @return A string giving all compression formats found.
 #' 
-#' @noRd
+# @noRd
 #'
-getJDXcompression <- function (string, debug = 0){
+getComp <- function (string, debug = 0){
 
 	# Dropping the first line because in 2D NMR the first line is still stuff saved for debugging
 	string <- paste(string[2:length(string)], collapse = " ")
@@ -29,7 +29,7 @@ getJDXcompression <- function (string, debug = 0){
 	AFFN <- TRUE # x values are always AFFN
 		
 	if (debug %in% c(2, 4))  {
-		message("\nCompression formats in use:")
+		cat("\nCompression formats in use:\n")
 		cat("AFFN =", AFFN, "\n")
 		cat("PAC =", PAC, "\n")
 		cat("SQZ =", SQZ, "\n")
@@ -47,4 +47,4 @@ getJDXcompression <- function (string, debug = 0){
 	keep <- keep[-1]
 	ans[keep]
 	
-} # end of getJDXcompression
+} # end of getComp

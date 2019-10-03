@@ -16,7 +16,7 @@
 #' @return A named numeric vector containing the extracted parameters.
 #' Contents will vary by \code{mode}.
 #' 
-#' @noRd
+# @noRd
 #'
 extractParams <- function (md, mode, SOFC, debug = 0){
 
@@ -75,7 +75,7 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 		names(params) <- c("npoints", "firstX", "lastX", "firstY", "factorX", "factorY")
 
 		if (debug == 2) {
-			message("\nExtracted parameters:")
+			cat("\nExtracted parameters:\n")
 			print(params)
 			}
 	
@@ -137,7 +137,7 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 			"lastX", "lastR", "lastI", "factorX", "factorR", "factorI")
 			
 		if (debug == 2) {
-			message("\nExtracted parameters:")
+			cat("\nExtracted parameters:\n")
 			print(params)
 			}
 
@@ -195,7 +195,7 @@ extractParams <- function (md, mode, SOFC, debug = 0){
 			"lastF1", "lastF2", "factorF1", "factorF2", "factorZ")
 		
 		if (debug == 2) {
-			message("\nExtracted parameters:")
+			cat("\nExtracted parameters:\n")
 			print(params)
 			}
 

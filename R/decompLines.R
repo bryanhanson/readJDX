@@ -58,8 +58,7 @@
 
 decompLines <- function(lines, debug = 0) {
   
-  comp <- getJDXcompression(lines, debug = debug)
-
+  comp <- getComp(lines, debug = debug)
 
   lineNames <- names(lines) # save to replace when functions nuke
   
@@ -118,17 +117,17 @@ decompLines <- function(lines, debug = 0) {
   # is compared to the first value on the next.  Therefore lapply cannot be used.
   # The yValueCheck will fail if there is a problem.
   
+  names(lineList) <- lineNames
+  
   if ("DIF" %in% comp) lineList <- yValueCheck(lineList, debug = debug)
 
   if (!is.numeric(lineList)) lineList <- lapply(lineList, as.numeric)
-
-  #names(lineList) <- lineNames # replace the names that were nuked # Come back and fix
 
   if (debug >= 4L) {
   	cat("\n\n\n====================  Lines after full processing to numeric:\n\n")
   	print(lineList)
   }
-  
+
   lineList
   
 }

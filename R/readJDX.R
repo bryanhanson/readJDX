@@ -84,7 +84,7 @@
 #' percent transmission, in the JDX file it is stored on [0\ldots1].
 #' File \code{PCRF.jdx} is a 1H NMR
 #' spectrum of a hexane extract of a reduced fat potato chip.  The spectrum was
-#' recorded on a JEOL instrument.  The file uses SQZ DIF compression, and was written
+#' recorded on a JEOL instrument.  The file uses SQZ DIF DUP compression, and was written
 #' with the JCAMP-DX 6.00 standard.
 #' File \code{PCRF_line265.jdx} has a deliberate error in it.  See the examples.
 #' 
@@ -113,10 +113,10 @@
 #' plot(chk[[4]]$x, chk[[4]]$y/100, type = "l", main = "Original Smart Balance Spread",
 #' 	xlab = "wavenumber", ylab = "Percent Transmission")
 #' 
-# pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
-# chk <- readJDX(pcrf)
-# plot(chk[[4]]$x, chk[[4]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
-# 	xlab = "ppm", ylab = "Intensity")
+#' pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
+#' chk <- readJDX(pcrf)
+#' plot(chk[[4]]$x, chk[[4]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
+#' 	xlab = "ppm", ylab = "Intensity")
 # 
 #' \dontrun{
 #' # Line 265 has an N -> G typo.  Try with various levels of debug.
@@ -125,7 +125,7 @@
 #' chk <- readJDX(problem)
 #' }
 #'
-readJDX <- function (file = "", SOFC = TRUE, debug = 0){
+readJDX <- function (file = "", SOFC = TRUE, debug = 0) {
 
 	if (!requireNamespace("stringr", quietly = TRUE)) {
 		stop("You need to install package stringr to use this function")
@@ -159,15 +159,15 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 		if (debug >= 1) message("\nreadJDX has been tested against a limited number of 2D NMR data sets.  We encourage you to file issues on Github, share problematic files and help us improve readJDX.")
 	}
 			
-	if (debug >= 1) message("\n\nProcessing file ", file, " which appears to contain ", mode, " data")
+	if (debug >= 1) cat("\n\nProcessing file ", file, " which appears to contain ", mode, " data\n")
 			
 ##### Step 2. Locate the parameters and the variable list(s)
 	
-	dblist <- findDataTables(jdx, debug)
+	VL <- findVariableLists(jdx, debug)
 		
 ##### Step 3. Extract the needed parameters
 
-	params <- extractParams(dblist[[2]], mode, SOFC, debug)
+	params <- extractParams(VL[[2]], mode, SOFC, debug)
 		
 ##### Step 4.  Process the variable list(s) into the final lists
 
@@ -175,8 +175,8 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 		# Return value is a list: dataGuide, metadata, comment lines + data frames of x, y
 		# dataGuide, metadata & comments already in place; process each variable list
 
-		for (i in 4:length(dblist)) {
-			dblist[[i]] <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-2, c(2,3)], SOFC, debug)
+		for (i in 4:length(VL)) {
+			VL[[i]] <- processVariableList(VL[[i]], params, mode, VL[[1]][i-2, c(2,3)], SOFC, debug)
 		}
 
 		# Fix up names
@@ -187,7 +187,7 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 
 		if (mode == "NMR") specnames <- c("real", "imaginary")
 	
-		names(dblist) <- c("dataGuide", "metadata", "commentLines", specnames)
+		names(VL) <- c("dataGuide", "metadata", "commentLines", specnames)
 	}
 
 		
@@ -196,22 +196,22 @@ readJDX <- function (file = "", SOFC = TRUE, debug = 0){
 		# dataGuide, metadata & comments already in place; add F2, F1, M and drop extra stuff
 		M <- matrix(NA_real_, ncol = params[2], nrow = params[1]) # matrix to store result
 		
-		for (i in 4:length(dblist)) {
-			tmp <- processDataTable(dblist[[i]], params, mode, dblist[[1]][i-2, c(2,3)], SOFC, debug)
+		for (i in 4:length(VL)) {
+			tmp <- processVariableList(VL[[i]], params, mode, VL[[1]][i-2, c(2,3)], SOFC, debug)
 			M[i-3,] <- tmp$y
 		}
-		# Update dblist
-		dblist[[4]] <- seq(params[4], params[6], length.out = params[2]) # add F2
-		dblist[[5]] <- seq(params[3], params[5], length.out = params[1]) # add F1
-		dblist[[6]] <- M
-		dblist <- dblist[1:6] # toss the other stuff
-		names(dblist) <- c("dataGuide", "metadata", "commentLines", "F2", "F1", "Matrix")
+		# Update VL
+		VL[[4]] <- seq(params[4], params[6], length.out = params[2]) # add F2
+		VL[[5]] <- seq(params[3], params[5], length.out = params[1]) # add F1
+		VL[[6]] <- M
+		VL <- VL[1:6] # toss the other stuff
+		names(VL) <- c("dataGuide", "metadata", "commentLines", "F2", "F1", "Matrix")
 	}
 		
 ##### And we're done!
 
-	if (debug >= 1) message("\nDone processing ", file)
+	if (debug >= 1) cat("\nDone processing ", file, "\n")
 
-	return(dblist)
+	return(VL)
 	
 } # end of readJDX

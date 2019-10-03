@@ -90,7 +90,7 @@ with the JCAMP-DX 5.01 standard. Note that even though the y-axis was recorded i
 percent transmission, in the JDX file it is stored on [0\ldots1].
 File \code{PCRF.jdx} is a 1H NMR
 spectrum of a hexane extract of a reduced fat potato chip.  The spectrum was
-recorded on a JEOL instrument.  The file uses SQZ DIF compression, and was written
+recorded on a JEOL instrument.  The file uses SQZ DIF DUP compression, and was written
 with the JCAMP-DX 6.00 standard.
 File \code{PCRF_line265.jdx} has a deliberate error in it.  See the examples.
 }
@@ -119,6 +119,10 @@ chk <- readJDX(sbo)
 plot(chk[[4]]$x, chk[[4]]$y/100, type = "l", main = "Original Smart Balance Spread",
 	xlab = "wavenumber", ylab = "Percent Transmission")
 
+pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
+chk <- readJDX(pcrf)
+plot(chk[[4]]$x, chk[[4]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
+	xlab = "ppm", ylab = "Intensity")
 \dontrun{
 # Line 265 has an N -> G typo.  Try with various levels of debug.
 # Even with debug = 0 you get useful diagnostic info.

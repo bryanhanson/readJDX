@@ -21,9 +21,9 @@
 #'
 #' @importFrom stats na.omit
 #'
-#' @noRd
+# @noRd
 #'
-findDataTables <- function (jdx, debug = 0) {
+findVariableLists <- function (jdx, debug = 0) {
 
 	# A data set is defined by a variable list.
 	# The following is structured to make it easy to add other options.
@@ -109,7 +109,7 @@ findDataTables <- function (jdx, debug = 0) {
 	if (TwoD) {
 		if (any(grepl("JEOL NMR", jdx))) vendor <- "JEOL"
 		if (any(grepl("Bruker BioSpin GmbH", jdx))) vendor <- "Bruker"
-		if (is.null(vendor)) stop("Looks like 2D NMR but could not identify vendor")
+		if (is.null(vendor)) warning("Looks like 2D NMR but could not identify vendor")
 	}
 	
 	# Up to this point, processing has been generic & spec_st, spec_end reflect grep'ing of patterns.
@@ -127,10 +127,10 @@ findDataTables <- function (jdx, debug = 0) {
 			  if (i != nrow(DF)) DF$LastLine[i] <- DF$FirstLine[i + 1] - 1
 			  if (i == nrow(DF)) DF$LastLine[i] <- length(jdx) - 2 # MAY NOT BE ROBUST!
 			}
-			if (vendor == "JEOL") {
-			  # Need to remove the JEOL only "number $$ checkpoint line
-			  if (i != nrow(DF)) DF$LastLine[i] <- DF$FirstLine[i + 1] - 2
-			}
+			# if (vendor == "JEOL") {  REMOVE THIS IT'S WRONG
+			  # # Need to remove the JEOL only "number $$ checkpoint line
+			  # if (i != nrow(DF)) DF$LastLine[i] <- DF$FirstLine[i + 1] - 2
+			# }
 		}
 		
 		# Check to see if the apparent last row(s) of a variable list is actually a comment,
@@ -141,19 +141,19 @@ findDataTables <- function (jdx, debug = 0) {
 	}
 
 	if (debug == 2) {
-		message("\nApparent data chunks:")
+		cat("\nApparent data chunks:\n")
 		print(DF)
 		}
 		
-	dtlist <- vector("list", nrow(DF) + 2)
-	dtlist[[1]] <- DF
-	dtlist[[2]] <- metadata
-	dtlist[[3]] <- comOnly
+	VL <- vector("list", nrow(DF) + 2)
+	VL[[1]] <- DF
+	VL[[2]] <- metadata
+	VL[[3]] <- comOnly
 	
-	for (i in 4:length(dtlist)) {
-		dtlist[[i]] <- c(DF$Format[i-2], jdx[DF$FirstLine[i-2]:DF$LastLine[i-2]])
+	for (i in 4:length(VL)) {
+		VL[[i]] <- c(DF$Format[i-2], jdx[DF$FirstLine[i-2]:DF$LastLine[i-2]])
 	}
 
-	names(dtlist) <- c("DataGuide", "Metadata", "Comments", paste("VL", 1:(length(dtlist) - 3), sep = "_"))
-	return(dtlist)
+	names(VL) <- c("DataGuide", "Metadata", "Comments", paste("VL", 1:(length(VL) - 3), sep = "_"))
+	return(VL)
 	}

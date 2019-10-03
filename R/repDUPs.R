@@ -14,7 +14,7 @@
 #'
 #' @return An expanded string.
 #' 
-#' @noRd
+# @noRd
 #'
 
 repDUPs <- function(string, dupstr) {
