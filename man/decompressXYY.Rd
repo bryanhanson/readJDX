@@ -4,10 +4,10 @@
 \alias{decompressXYY}
 \title{Extract the values in JCAMP-DX file with an XYY variable list.}
 \usage{
-decompressXYY(dt, params, mode, SOFC, debug = 0)
+decompressXYY(VL, params, mode, SOFC, debug = 0)
 }
 \arguments{
-\item{dt}{Character.  The variable list to be processed as a character vector. Includes one pre-pended
+\item{VL}{Character.  The variable list to be processed as a character vector. Includes one pre-pended
 line giving the fmt of data (e.g. XYY, XRR, XII).}
 
 \item{params}{Numeric. Vector of parameters extracted from file header.}

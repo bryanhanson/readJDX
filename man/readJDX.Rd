@@ -9,19 +9,25 @@ readJDX(file = "", SOFC = TRUE, debug = 0)
 \arguments{
 \item{file}{Character.  The file name to import.}
 
-\item{SOFC}{Logical.  "Stop on Failed Check" The JCAMP-DX standard requires
-several checks of the data as it is decompressed.  These checks are essential
-to obtaining the correct results.  However, some JCAMP-DX writing programs
-do not follow the standard to the letter (for instance we have observed that
-not all writers put FIRSTY into the metadata, even though it is required by
-the standard).  In other cases values in the file have low precision (see section on precision).
-This option is provided for those \pkg{advanced
-users} who have carefully checked their original files and want to skip the 
-required checks.  It may also be useful for troubleshooting.  
+\item{SOFC}{Logical.  "Stop on Failed Check" 
 The default is \code{TRUE} i.e. stop when something is not right.
 This ensures that correct data is returned.  Change to \code{FALSE} at your own risk.
-NOTE: Only a few checks can be skipped via this option, as there are some
-parameters that must be available and correct in order to return any answer.}
+NOTE: Only certain checks can be skipped via this option, as there are some
+parameters that must be available and correct in order to return any answer.
+This option is provided for those \pkg{advanced
+users} who have carefully checked their original files and want to skip the
+required checks.  It may also be useful for troubleshooting.
+The JCAMP-DX standard requires
+several checks of the data as it is decompressed.  These checks are essential
+to obtaining the correct results.  However, some JCAMP-DX writing programs
+do not follow the standard to the letter.  For instance we have observed that
+not all JCAMP-DX writers put FIRSTY into the metadata, even though it is required by
+the standard.  In other cases values in the file have low precision (see section on precision).
+Another example is we have observed files where the X values are the count of data points,
+and FIRSTY is given in Hz.  Since the field strength and center of the sweep frequency is needed
+to convert to ppm, and these are  not required in the standard, one cannot return an answer in 
+ppm or Hz automatically.
+In cases like this, once can set \code{SOFC = FALSE} and then manually convert the X axis.}
 
 \item{debug}{Integer.  The level of debug reporting desired.  For those options giving
        a lot of output, you may wish to consider directing the output via \code{sink()}
@@ -30,16 +36,16 @@ parameters that must be available and correct in order to return any answer.}
   \item 1 or higher = import progress is reported.
   \item 2 = details about the variable lists, compression formats and
             parameters that were found.
-  \item 3 = print the extracted x values (huge output!).
-  \item 4 = detailed info on the y value processing (huge output!).
-  \item 5 = detailed info about processing the y values when DUP is in use (huge output!).
-  \item 6 = detailed info about processing the y values when DIF is in use (huge output!).
+  \item 3 = print the extracted X values (huge output!).
+  \item 4 = detailed info on the Y value processing (huge output!).
+  \item 5 = detailed info about processing the Y values when DUP is in use (huge output!).
+  \item 6 = detailed info about processing the Y values when DIF is in use (huge output!).
 }
 In cases where an error is about to stop execution, you get additional information regardless of
 the \code{debug} value.}
 }
 \value{
-A list, as follows: 
+A list, as follows:
 
 \itemize{
 
@@ -79,6 +85,8 @@ The JCAMP-DX standard allows many variations and it is difficult to anticipate a
 Not all possible official formats are supported; error messages will
 generally let you know what's going on.  If you have a file that you feel should be
 supported but gives an error, please file an issue at Github and share the file.
+Prior to release, this package is checked against a very large number of files in the
+author's collection.
 }
 \section{Included Data Files}{
 
@@ -86,7 +94,7 @@ The examples make use of data files included with the package. File \code{SBO.jd
 is an IR spectrum of Smart Balance Original spread (a butter substitute). The
 spectrum is presented in transmission format, and was recorded on a ThermoFisher
 instrument.  The file uses AFFN compression, and was written
-with the JCAMP-DX 5.01 standard. Note that even though the y-axis was recorded in 
+with the JCAMP-DX 5.01 standard. Note that even though the Y-axis was recorded in
 percent transmission, in the JDX file it is stored on [0\ldots1].
 File \code{PCRF.jdx} is a 1H NMR
 spectrum of a hexane extract of a reduced fat potato chip.  The spectrum was
@@ -99,10 +107,10 @@ File \code{PCRF_line265.jdx} has a deliberate error in it.  See the examples.
 
 Internally, this package uses a tolerance factor when comparing values during certain checks.
 This is desirable because the original values in the files
-are text strings of varying lengths which get converted to numerical values.  Occasionally
+are text strings of varying lengths which get converted to numerical values by \code{R}.  Occasionally
 values in the file, such as FIRSTY, are stored with low precision, and the computation of the
 value to be compared occurs with much greater precision.  In these cases the check can fail
-even when the tolerance is pretty loose.  In these cases one might consider setting 
+even when the tolerance is pretty loose.  In these cases one might consider setting
 \code{SOFC = FALSE} to allow the calculation to proceed.  If you do this, be certain to check
 the results carefully.
 }
@@ -116,13 +124,18 @@ helpful debugging messages and understandable code.
 \examples{
 sbo <- system.file("extdata", "SBO.jdx", package = "readJDX")
 chk <- readJDX(sbo)
-plot(chk[[4]]$x, chk[[4]]$y/100, type = "l", main = "Original Smart Balance Spread",
-	xlab = "wavenumber", ylab = "Percent Transmission")
+plot(chk[[4]]$x, chk[[4]]$y / 100,
+  type = "l", main = "Original Smart Balance Spread",
+  xlab = "wavenumber", ylab = "Percent Transmission"
+)
 
 pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
-chk <- readJDX(pcrf)
-plot(chk[[4]]$x, chk[[4]]$y, type = "l", main = "Reduced Fat Potato Chip Extract",
-	xlab = "ppm", ylab = "Intensity")
+chk <- readJDX(pcrf, debug = 2)
+plot(chk[[4]]$x, chk[[4]]$y,
+  type = "l", main = "Reduced Fat Potato Chip Extract",
+  xlab = "ppm", ylab = "Intensity"
+)
+#
 \dontrun{
 # Line 265 has an N -> G typo.  Try with various levels of debug.
 # Even with debug = 0 you get useful diagnostic info.
@@ -133,5 +146,5 @@ chk <- readJDX(problem)
 }
 \seealso{
 Do \code{browseVignettes("readJCAMPDX")} for background information,
-references and supported formats.
+references, supported formats, and details about the roles of each function.
 }

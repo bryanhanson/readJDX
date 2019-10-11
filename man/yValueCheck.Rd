@@ -2,18 +2,18 @@
 % Please edit documentation in R/yValueCheck.R
 \name{yValueCheck}
 \alias{yValueCheck}
-\title{Carry Out the y Value Check}
+\title{Conditionally Carry Out the y Value Check}
 \usage{
 yValueCheck(lineList, debug = 0)
 }
 \arguments{
 \item{lineList}{A list of numeric vectors to be checked.  Named with line numbers.
-Individual numbers are named with the ASDF code.  X values still present!}
+Individual numbers are named with the ASDF code.  X values are still present!}
 
 \item{debug}{Integer.  See \code{\link{readJDX}} for details.}
 }
 \value{
-A list of numeric vectors, after the y check has been done and the extra
+A list of numeric vectors, after the y check has been done and any extra
         values removed. It will stop if there is a problem.
 }
 \description{

@@ -7,7 +7,7 @@
 unDIF(string)
 }
 \arguments{
-\item{string}{Character. A vector of strings to be converted. Named with compression codes.}
+\item{string}{Character. A character vector to be converted. Named with compression codes.}
 }
 \value{
 A numeric vector with the final values, named with the compression codes.
