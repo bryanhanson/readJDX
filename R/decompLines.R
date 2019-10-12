@@ -54,11 +54,9 @@
 # "           16379      10650432       4373926      -3660824       2136488"
 # )
 
-### what about lines that are comments?  if (grepl("^\\$\\$", dt[i])) next # skip over comment only line, NA remains
-
 decompLines <- function(lines, debug = 0) {
   comp <- getComp(lines, debug = debug)
-
+  
   lineNames <- names(lines) # save to replace when functions nuke
 
   if (debug >= 4L) {

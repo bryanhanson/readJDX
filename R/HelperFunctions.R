@@ -12,8 +12,8 @@
   lmv <- length(modeVec)
   if (lmv == 2L) return("CHKPT") # a checkpoint line
   lastMode <- modeVec[lmv]
-  if (lastMode == "SQZ") return("SQZ")
-  if (lastMode == "NUM") return("NUM")
+  if (lastMode == "SQZ") return("NOTDIF")
+  if (lastMode == "NUM") return("NOTDIF")
   if (lastMode == "DUP") { # work backwards until a non-DUP is encountered
     cnt <- 0L
     pos <- lmv
@@ -24,8 +24,8 @@
       # print(curMode)
       if (curMode == "DUP") next
       if (curMode == "DIF") return("DIF")
-      if (curMode == "SQZ") return("SQZ")
-      if (curMode == "NUM") return("NUM")
+      if (curMode == "SQZ") return("NODIF")
+      if (curMode == "NUM") return("NODIF")
     }
   }
   stop("We shouldn't be here...")
@@ -74,7 +74,7 @@
     # line.  Check for this, DO NOT remove the entire line, but DO remove the extra Y value
     lll <- length(lineList[[i]])
     if (lll > 2L) {
-      if (debug == 6) cat("\nyValueCheck does not see a checkpoint value at", names(lineList[i]), "\n")
+      if (debug == 6) cat("\nyValueCheck:", names(lineList[i]), "does not appear to be a checkpoint line\n")
       lineList[[i]] <- lineList[[i]][-2] # first value is X, second value is the checkpoint value,
       # more Y values follow
     }

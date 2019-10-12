@@ -114,16 +114,16 @@ findVariableLists <- function(jdx, debug = 0) {
   }
 
   # Up to this point, processing has been generic & spec_st, spec_end reflect grep'ing of patterns.
-  # Now we need to tweak things depending upon the format & vendor, to narrow into the actual variable list
+  # Now we need to tweak things depending upon the format & vendor, to narrow the actual variable list
   # as close as possible.
 
   for (i in 1:nrow(DF)) {
     if (DF$Format[i] == "XRR") {
-      DF$LastLine[i] <- DF$LastLine[i] - 1 # removes the ##PAGE= N=2 line (?)
+      DF$LastLine[i] <- DF$LastLine[i] - 1 # removes the ##PAGE= N=2 line
     }
 
     if (DF$Format[i] == "NMR_2D") {
-      if (i != nrow(DF)) DF$LastLine[i] <- DF$FirstLine[i + 1] - 1
+      if (i != nrow(DF)) DF$LastLine[i] <- DF$FirstLine[i + 1] - 1 # removes the ##PAGE= N=2 line
       # Next line removes
       # ##END NTUPLES=
       # ##END=

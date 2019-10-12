@@ -15,18 +15,19 @@
 # @noRd
 #'
 getComp <- function(string, debug = 0) {
+    
+  # Drop the first line if this is 2D NMR the first line is still stuff saved for debugging
+  if (grepl("##PAGE=", string[1])) string <- paste(string[2:length(string)], collapse = " ") 
+  if (!grepl("##PAGE=", string[1])) string <- paste(string, collapse = " ") 
   
-  # Dropping the first line because in 2D NMR the first line is still stuff saved for debugging
-  string <- paste(string[2:length(string)], collapse = " ")  
-
   AFFN <- PAC <- SQZ <- DIF <- DUP <- FALSE
-  if (grepl("[@A-Ia-i]{1}", string)) SQZ <- TRUE
-  if (grepl("[%J-Rj-r]{1}", string)) DIF <- TRUE
+  if (grepl("[@A-Ia-i]", string)) SQZ <- TRUE
+  if (grepl("[%J-Rj-r]", string)) DIF <- TRUE
   # Check for + or - with a digit on each side, no space
   # This would be PAC, even if the very first character is a space
   if (grepl("\\d+[\\+\\-]{1}\\d+", string)) PAC <- TRUE
-  if (grepl("[S-Zs]{1}", string)) DUP <- TRUE
-  AFFN <- TRUE # x values are always AFFN
+  if (grepl("[S-Zs]", string)) DUP <- TRUE
+  AFFN <- TRUE # X values are always AFFN
 
   if (debug %in% c(2, 4)) {
     cat("\nCompression formats in use:\n")

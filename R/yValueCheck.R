@@ -40,7 +40,8 @@ yValueCheck <- function(lineList, debug = 0) {
    	    if (lastMode[i] != "DIF") {
    	    	relayMode <- .getRelayMode(names(lineList[[i]]))
    	    	if (relayMode == "CHKPT") cat("yValueCheck sees a checkpoint on", lineNames[i], "\n")
-   	    	if (relayMode != "CHKPT") cat("yValueCheck sees a", relayMode, "followed by DUPs on", lineNames[i], "\n")
+   	    	if (relayMode == "NODIF") cat("yValueCheck:", lineNames[i], "is not in any DIF mode\n")
+   	    	if (relayMode == "DIF") cat("yValueCheck sees a", relayMode, "followed by DUPs on", lineNames[i], "\n")
  		}
   	}
     yValChkOK <- .yvc(i, firstY, lastY, lineList, debug)
@@ -48,7 +49,7 @@ yValueCheck <- function(lineList, debug = 0) {
     if (!yValChkOK) next
   }
   
-  if (debug == 6) cat("\nY value check completed...\n")
+  if (debug == 6) cat("\n...Y value check completed\n")
   
   lineList
   } # end of yValueCheck
