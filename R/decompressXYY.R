@@ -12,9 +12,9 @@
 #'
 #' @param mode Character. One of c("IR_etc", "NMR", "NMR2D")
 #'
-#' @param debug Integer.  See \code{\link{readJDX}} for details.
-#'
 #' @param SOFC Logical.  See \code{\link{readJDX}} for details.
+#'
+#' @param debug Integer.  See \code{\link{readJDX}} for details.
 #'
 #' @return A data frame with elements \code{x} and \code{y}.
 #'

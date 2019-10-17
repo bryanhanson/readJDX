@@ -14,10 +14,15 @@ Individual numbers are named with the ASDF code.  X values are still present!}
 }
 \value{
 A list of numeric vectors, after the y check has been done and any extra
-        values removed. It will stop if there is a problem.
+        values removed.
 }
 \description{
 This function is NOT EXPORTED.
 Users would not normally call this function.  See \code{\link{readJDX}}.
 Documentation is provided for developers wishing to contribute to the package.
 }
+\section{Details}{
+
+Be sure to see the commentary about how and when to run the Y value check in \code{\link{readJDX}}.
+}
+

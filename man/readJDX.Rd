@@ -14,6 +14,7 @@ The default is \code{TRUE} i.e. stop when something is not right.
 This ensures that correct data is returned.  Change to \code{FALSE} at your own risk.
 NOTE: Only certain checks can be skipped via this option, as there are some
 parameters that must be available and correct in order to return any answer.
+For instance, one must end up with the same number of X and Y values.
 This option is provided for those \pkg{advanced
 users} who have carefully checked their original files and want to skip the
 required checks.  It may also be useful for troubleshooting.
@@ -130,7 +131,7 @@ plot(chk[[4]]$x, chk[[4]]$y / 100,
 )
 
 pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
-chk <- readJDX(pcrf, debug = 2)
+chk <- readJDX(pcrf)
 plot(chk[[4]]$x, chk[[4]]$y,
   type = "l", main = "Reduced Fat Potato Chip Extract",
   xlab = "ppm", ylab = "Intensity"

@@ -33,7 +33,6 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
   # but it is possible there are still some comments embedded within VL.
   # These will be handled during decompression.
 
-
   lineNos <- unlist(lineNos)
   fmt <- VL[1]
 
@@ -42,13 +41,6 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
     st <- lineNos[1] + 1
     end <- lineNos[2] - 1
     lineNos <- c(NA_integer_, st:end)
-    if (debug == 2) {
-      cat("\nHead of the variable list:\n")
-      print(data.frame(
-        lineNo = paste("Line", lineNos[1:10], sep = "_"),
-        first30characters = substring(VL[1:10], 1, 30)
-      ))
-    }
   }
 
   if (mode == "NMR") {
@@ -57,13 +49,6 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
       st <- lineNos[1] + 2
       end <- lineNos[2]
       lineNos <- c(NA_integer_, st:end)
-      if (debug == 2) {
-        cat("\nHead of the variable list:\n")
-        print(data.frame(
-          lineNo = paste("Line", lineNos[1:10], sep = "_"),
-          first30characters = substring(VL[1:10], 1, 30)
-        ))
-      }
     }
 
     if (fmt == "XII") {
@@ -71,13 +56,6 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
       st <- lineNos[1] + 2
       end <- lineNos[2] - 1
       lineNos <- c(NA_integer_, st:end)
-      if (debug == 2) {
-        cat("\nHead of the variable list:\n")
-        print(data.frame(
-          lineNo = paste("Line", lineNos[1:10], sep = "_"),
-          first30characters = substring(VL[1:10], 1, 30)
-        ))
-      }
     }
   }
 
@@ -87,13 +65,6 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
     st <- lineNos[1]
     end <- lineNos[2]
     lineNos <- c(NA_integer_, st, (st + 3L):end)
-    if (debug == 2) {
-      cat("\nHead of the variable list:\n")
-      print(data.frame(
-        lineNo = paste("Line", lineNos[1:10], sep = "_"),
-        first30characters = substring(VL[1:10], 1, 30)
-      ))
-    }
   }
 
   # Dispatch based on fmt -- At this point only XYY is understood

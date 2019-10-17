@@ -21,34 +21,20 @@
       cnt <- cnt + 1L
       pos <- lmv - cnt
       curMode <- modeVec[pos]
-      # print(curMode)
       if (curMode == "DUP") next
       if (curMode == "DIF") return("DIF")
-      if (curMode == "SQZ") return("NODIF")
-      if (curMode == "NUM") return("NODIF")
+      if (curMode == "SQZ") return("NOTDIF")
+      if (curMode == "NUM") return("NOTDIF")
     }
   }
   stop("We shouldn't be here...")
 } # end of getMode
 
-##### Helper function that actually runs the Y value check & optionally makes a report if it fails
-.yvc <- function(i, firstY, lastY, lineList, debug = 0) {
+##### Helper function that actually runs the Y value check
+.yvc <- function(i, firstY, lastY) {
   attributes(firstY) <- NULL # drop line names
   attributes(lastY) <- NULL
   ychk <- isTRUE(all.equal(firstY[i], lastY[i - 1]))
-  # if (!ychk) { # Failed Y value error reporting
-    # cat("\nAttempting to sum DIFs, but Y value check failed; nearby values:\n")
-    # if (i <= 5) rpt <- 2:6
-    # if (i >= 6) rpt <- (i - 2):(i + 2)
-    # if (i >= (length(firstY) - 2)) rpt <- (length(firstY) - 5):length(firstY)
-    # DF <- data.frame(
-      # LineNo = names(lineList)[rpt],
-      # FirstYonLine = firstY[rpt], LastYonPrevLine = lastY[rpt - 1],
-      # Problem = ifelse(firstY[rpt] == lastY[rpt - 1], "", "*")
-    # )
-    # print(DF)
-    # stop("Y value check failed")
-  # }
   ychk
 } # end of yvc
 
@@ -59,9 +45,9 @@
   # DO remove it from the end of the i - 1 string,
   # See section 5.8.3 of the 1988 publication
 
-  if (debug == 6) {
+  if (debug >= 6) {
     cat(
-      "\nyValueCheck is removing the last value,", lineList[[i - 1]][length(lineList[[i - 1]])],
+      "yValueCheck is removing the last value,", lineList[[i - 1]][length(lineList[[i - 1]])],
       "from", names(lineList[i - 1]), "\n"
     )
   }
@@ -74,17 +60,16 @@
     # line.  Check for this, DO NOT remove the entire line, but DO remove the extra Y value
     lll <- length(lineList[[i]])
     if (lll > 2L) {
-      if (debug == 6) cat("\nyValueCheck:", names(lineList[i]), "does not appear to be a checkpoint line\n")
+      if (debug >= 6) cat("\nyValueCheck:", names(lineList[i]), "does not appear to be a checkpoint line\n")
       lineList[[i]] <- lineList[[i]][-2] # first value is X, second value is the checkpoint value,
       # more Y values follow
     }
 
     if (lll == 2L) {
-      if (debug == 6) cat("\nyValueCheck is removing the checkpoint line,", names(lineList[i]), "\n")
+      if (debug >= 6) cat("yValueCheck is removing the checkpoint line,", names(lineList[i]), "\n")
       lineList[[i]] <- NULL
-      lineNames <- lineNames[-length(lineNames)]
+      lineNames <- lineNames[-length(lineNames)] # don't need?
     }
   }
-  # names(lineList) <- lineNames
   lineList
 } # end of cleanYvalues

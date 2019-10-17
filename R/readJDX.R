@@ -16,6 +16,7 @@
 #' This ensures that correct data is returned.  Change to \code{FALSE} at your own risk.
 #' NOTE: Only certain checks can be skipped via this option, as there are some
 #' parameters that must be available and correct in order to return any answer.
+#' For instance, one must end up with the same number of X and Y values.
 #' This option is provided for those \pkg{advanced
 #' users} who have carefully checked their original files and want to skip the
 #' required checks.  It may also be useful for troubleshooting.
@@ -124,7 +125,7 @@
 #' )
 #'
 #' pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
-#' chk <- readJDX(pcrf, debug = 2)
+#' chk <- readJDX(pcrf)
 #' plot(chk[[4]]$x, chk[[4]]$y,
 #'   type = "l", main = "Reduced Fat Potato Chip Extract",
 #'   xlab = "ppm", ylab = "Intensity"
@@ -167,7 +168,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
   if (any(ntup) & !any(nD)) mode <- "NMR"
   if (any(ntup) & any(nD)) {
     mode <- "NMR2D"
-    if (debug >= 1) message("\nreadJDX has been tested against a limited number of 2D NMR data sets.  We encourage you to file issues on Github, share problematic files and help us improve readJDX.")
+    if (debug >= 1) message("\nreadJDX has been tested against a limited number of 2D NMR data sets.  We encourage you to file issues on Github, share problematic files and help us improve readJDX.\n")
   }
 
   if (debug >= 1) cat("\n\nProcessing file", file, "which appears to contain", mode, "data\n")
