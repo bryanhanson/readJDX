@@ -11,7 +11,7 @@
 #'
 #' @param file Character.  The file name to import.
 #'
-#' @param SOFC Logical.  "Stop on Failed Check" 
+#' @param SOFC Logical.  "Stop on Failed Check"
 #' The default is \code{TRUE} i.e. stop when something is not right.
 #' This ensures that correct data is returned.  Change to \code{FALSE} at your own risk.
 #' NOTE: Only certain checks can be skipped via this option, as there are some
@@ -28,7 +28,7 @@
 #' the standard.  In other cases values in the file have low precision (see section on precision).
 #' Another example is we have observed files where the X values are the count of data points,
 #' and FIRSTY is given in Hz.  Since the field strength and center of the sweep frequency is needed
-#' to convert to ppm, and these are  not required in the standard, one cannot return an answer in 
+#' to convert to ppm, and these are  not required in the standard, one cannot return an answer in
 #' ppm or Hz automatically.
 #' In cases like this, once can set \code{SOFC = FALSE} and then manually convert the X axis.
 #'
@@ -136,7 +136,7 @@
 #'   \item In the 0.4.xx series, \code{readJDX} detects both the literal and relayed definitions and
 #'         tries to keep moving forward as much as possible.
 #' }
-#' 
+#'
 #' @section Performance:
 #' \code{readJDX} is not particularly fast.  Priority has been given to assuring correct answers,
 #' helpful debugging messages and understandable code.
@@ -153,7 +153,7 @@
 #'   type = "l", main = "Original Smart Balance Spread",
 #'   xlab = "wavenumber", ylab = "Percent Transmission"
 #' )
-#' 
+#'
 #' # 1H NMR spectrum
 #' pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
 #' chk <- readJDX(pcrf)
@@ -260,7 +260,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
     # Update VL
     VL[[4]] <- sort(seq(params[4], params[6], length.out = params[2])) # add F2
     VL[[5]] <- sort(seq(params[3], params[5], length.out = params[1])) # add F1
-    M <- M[nrow(M):1,] # reverse order of rows, works for Bruker files
+    M <- M[nrow(M):1, ] # reverse order of rows, works for Bruker files
     VL[[6]] <- M
     VL <- VL[1:6] # toss the other stuff
     names(VL) <- c("dataGuide", "metadata", "commentLines", "F2", "F1", "Matrix")

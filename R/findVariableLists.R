@@ -39,14 +39,16 @@ findVariableLists <- function(jdx, debug = 0) {
     "^\\s*##XYDATA\\s*=\\s*\\(X\\+\\+\\(Y\\.\\.Y\\)\\)$", # IR, typically
     "^\\s*##PAGE\\s*=\\s*N=1", # real NMR data
     "^\\s*##PAGE\\s*=\\s*N=2", # imaginary NMR data
-    "^\\s*##PAGE\\s*=\\s*F1=") # 2D NMR data (real part only)
+    "^\\s*##PAGE\\s*=\\s*F1="
+  ) # 2D NMR data (real part only)
 
   # Add other END patterns here (each associated with a specific VL_fmts entry)
   END_pats <- c(
     "^\\s*##END\\s*=", # IR, typically
     "^\\s*##PAGE\\s*=\\s*N=2", # real NMR data
     "^\\s*##END\\s{1}NTUPLES\\s*=", # imaginary NMR data
-    "^\\s*##PAGE\\s*=\\s*F1=") # 2D NMR data (not the very last entry however; fixed later in this function)
+    "^\\s*##PAGE\\s*=\\s*F1="
+  ) # 2D NMR data (not the very last entry however; fixed later in this function)
 
   # Find the beginning & end of each variable list.
   # We are checking for any and all formats in the file

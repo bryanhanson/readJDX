@@ -14,7 +14,7 @@
 #' @return \code{NULL}, invisibly.
 #'
 #' @export
-#' 
+#'
 #' @examples
 #' \dontrun{
 #' tf <- tempfile(pattern = "SinkDemo", fileext = "txt")
@@ -24,14 +24,12 @@
 #' print(normr(2)) # typo, so it errors
 #' message("A message from message()")
 #' warning("A warning from warning()")
-#' cat("Information via cat\n")
+#' cat("Information via cat\\n")
 #' sinkall() # one must close the file connection
 #' file.show(tf)
 #' }
 #'
-
 sinkall <- function(filename = NULL) {
-
   if (!is.null(filename)) {
     con <- file(filename) # opens the connection
     sink(con, type = "output") # overwriting
@@ -43,6 +41,6 @@ sinkall <- function(filename = NULL) {
     sink(type = "output")
     sink(type = "message")
   }
-  
+
   invisible()
 }

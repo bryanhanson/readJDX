@@ -9,7 +9,7 @@ readJDX(file = "", SOFC = TRUE, debug = 0)
 \arguments{
 \item{file}{Character.  The file name to import.}
 
-\item{SOFC}{Logical.  "Stop on Failed Check" 
+\item{SOFC}{Logical.  "Stop on Failed Check"
 The default is \code{TRUE} i.e. stop when something is not right.
 This ensures that correct data is returned.  Change to \code{FALSE} at your own risk.
 NOTE: Only certain checks can be skipped via this option, as there are some
@@ -26,7 +26,7 @@ not all JCAMP-DX writers put FIRSTY into the metadata, even though it is require
 the standard.  In other cases values in the file have low precision (see section on precision).
 Another example is we have observed files where the X values are the count of data points,
 and FIRSTY is given in Hz.  Since the field strength and center of the sweep frequency is needed
-to convert to ppm, and these are  not required in the standard, one cannot return an answer in 
+to convert to ppm, and these are  not required in the standard, one cannot return an answer in
 ppm or Hz automatically.
 In cases like this, once can set \code{SOFC = FALSE} and then manually convert the X axis.}
 

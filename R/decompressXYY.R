@@ -49,14 +49,14 @@ decompressXYY <- function(VL, params, mode, SOFC, debug = 0) {
 
   ### Step 1. Decompress the lines.  This is most of the work.
   # X values present, so lines are X, Y1, Y2, ...
-  
+
   # Remove comment only lines entirely
   comOnly <- grepl("^\\$\\$", VL)
   VL <- VL[!comOnly]
-  
+
   # Remove any comments that follow numbers etc
   VL <- gsub("\\$\\$.*", "", VL)
-  
+
   # Decompress
   LineList <- decompLines(VL, debug = debug)
 

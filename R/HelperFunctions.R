@@ -10,10 +10,16 @@
 #     DO NOT call if last mode is DIF
 .getRelayMode <- function(modeVec) {
   lmv <- length(modeVec)
-  if (lmv == 2L) return("CHKPT") # a checkpoint line
+  if (lmv == 2L) {
+    return("CHKPT")
+  } # a checkpoint line
   lastMode <- modeVec[lmv]
-  if (lastMode == "SQZ") return("NOTDIF")
-  if (lastMode == "NUM") return("NOTDIF")
+  if (lastMode == "SQZ") {
+    return("NOTDIF")
+  }
+  if (lastMode == "NUM") {
+    return("NOTDIF")
+  }
   if (lastMode == "DUP") { # work backwards until a non-DUP is encountered
     cnt <- 0L
     pos <- lmv
@@ -22,9 +28,15 @@
       pos <- lmv - cnt
       curMode <- modeVec[pos]
       if (curMode == "DUP") next
-      if (curMode == "DIF") return("DIF")
-      if (curMode == "SQZ") return("NOTDIF")
-      if (curMode == "NUM") return("NOTDIF")
+      if (curMode == "DIF") {
+        return("DIF")
+      }
+      if (curMode == "SQZ") {
+        return("NOTDIF")
+      }
+      if (curMode == "NUM") {
+        return("NOTDIF")
+      }
     }
   }
   stop("We shouldn't be here...")

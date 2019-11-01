@@ -29,26 +29,27 @@
 #' @export
 #'
 #' @examples
-#' testLines1 <- c("482A885145L989378k853295J46714q39581j382088R41076k774051J365135l135709P53917",
-#' "472a903359j71857q18832K573831k615133L481852l395846L894844l478693M916433",
-#' "463B483240m513444O146172m826168N233079m522551M000252m097028L466111l460183",
-#' "454i0520L061628k524598K788931k509430L219286k511160K709095k122775J594246")
+#' testLines1 <- c(
+#'   "482A885145L989378k853295J46714q39581j382088R41076k774051J365135l135709P53917",
+#'   "472a903359j71857q18832K573831k615133L481852l395846L894844l478693M916433",
+#'   "463B483240m513444O146172m826168N233079m522551M000252m097028L466111l460183",
+#'   "454i0520L061628k524598K788931k509430L219286k511160K709095k122775J594246"
+#' )
 #' demo1 <- decompLines(testLines1, debug = 6)
 #'
 #' testLines2 <- c(
-#' # EU AFFN:
-#' "1898,58486802541 -0,0170190036296844 -0,0170874372124672 -0,0171865783631802",
-#' "1917,23501403401 -0,0176097713410854 -0,0177919361740351 -0,0179808251559734",
-#' # AFFN with fixed field width/extra space:
-#' "           16383       2259260      -5242968      -7176216      -1616072",
-#' "           16379      10650432       4373926      -3660824       2136488"
+#'   # EU AFFN:
+#'   "1898,58486802541 -0,0170190036296844 -0,0170874372124672 -0,0171865783631802",
+#'   "1917,23501403401 -0,0176097713410854 -0,0177919361740351 -0,0179808251559734",
+#'   # AFFN with fixed field width/extra space:
+#'   "           16383       2259260      -5242968      -7176216      -1616072",
+#'   "           16379      10650432       4373926      -3660824       2136488"
 #' )
-#' 
+#'
 #' demo2 <- decompLines(testLines2, debug = 6)
-#' 
 decompLines <- function(VL, debug = 0) {
   comp <- getComp(VL, debug = debug)
-  
+
   lineNames <- names(VL) # save to replace when functions nuke
   # Next line ensures correct names exist when passing a vector of lines to decompLines in standalone mode
   if (is.null(lineNames)) lineNames <- paste("Line", 1:length(VL), sep = "_")
@@ -98,16 +99,16 @@ decompLines <- function(VL, debug = 0) {
   if ("SQZ" %in% comp) lineList <- lapply(lineList, unSQZ)
 
   if (debug >= 4L) {
-  	DF3 <- lengths(lineList)
-  	DF4 <- cumsum(lengths(lineList))
+    DF3 <- lengths(lineList)
+    DF4 <- cumsum(lengths(lineList))
   }
-  
+
   # Replicate any DUP entries
   if ("DUP" %in% comp) lineList <- lapply(lineList, insertDUPs, debug = debug)
 
   if (debug >= 4L) {
-  	DF5 <- lengths(lineList)
-  	DF6 <- cumsum(lengths(lineList))
+    DF5 <- lengths(lineList)
+    DF6 <- cumsum(lengths(lineList))
   }
 
   # Finally, take care of any DIFs
@@ -116,10 +117,10 @@ decompLines <- function(VL, debug = 0) {
   if ("DIF" %in% comp) lineList <- lapply(names(lineList), deDIF, lineList = lineList, debug = debug)
 
   if (debug >= 4L) {
-  	DF7 <- lengths(lineList)
-  	DF8 <- cumsum(lengths(lineList))
+    DF7 <- lengths(lineList)
+    DF8 <- cumsum(lengths(lineList))
   }
-  
+
   # A y value check is required if the last entry on a line is in DIF mode.
   # We will run the check if any line of the VL is in DIF mode.  Possibley a tiny bit wasteful.
   # The y value check requires two lines at a time, since the last value on one line
@@ -129,52 +130,50 @@ decompLines <- function(VL, debug = 0) {
   names(lineList) <- lineNames
 
   if (("DIF" %in% comp) & (length(lineList) > 1)) lineList <- yValueCheck(lineList, debug = debug)
-  
+
   if (debug >= 4L) {
-  	DF9 <- lengths(lineList)
-  	DF10 <- cumsum(lengths(lineList))
+    DF9 <- lengths(lineList)
+    DF10 <- cumsum(lengths(lineList))
   }
 
   if (!is.numeric(lineList)) lineList <- lapply(lineList, as.numeric) # first part is always true, its a list!
 
   if (debug >= 4L) {
-  	DF11 <- lengths(lineList)
-  	DF12 <- cumsum(lengths(lineList))
-  	DF13 <- cumsum(lengths(lineList) - 1) # count w/o X values
+    DF11 <- lengths(lineList)
+    DF12 <- cumsum(lengths(lineList))
+    DF13 <- cumsum(lengths(lineList) - 1) # count w/o X values
   }
 
   if (debug >= 4L) {
     cat("\n\n\n====================  Lines after full processing to numeric:\n\n")
     print(lineList)
-    
+
     # if (length(DF1) != length(DF9)) { # checkpoint line was removed; pad it
-    	# DF9 <- c(DF9, NA)
-     	# DF10 <- c(DF10, NA)
-    	# DF11 <- c(DF11, NA)
-    	# DF12 <- c(DF12, NA)
-    	# DF13 <- c(DF13, NA)
-   # }
+    # DF9 <- c(DF9, NA)
+    # DF10 <- c(DF10, NA)
+    # DF11 <- c(DF11, NA)
+    # DF12 <- c(DF12, NA)
+    # DF13 <- c(DF13, NA)
+    # }
 
     # cat("\n\n\n====================  Summary of line counts during processing:\n\n")
     # DF <- data.frame(DF1, DF2, DF3, DF4, DF5, DF6, DF7, DF8, DF9, DF10, DF11, DF12, DF13)
     # names(DF) <- c("PRE", "P_CS", "SQZ", "S_CS", "DUP", "DU_CS", "DIF", "DI_CS", "YV", "Y_CS", "NUM", "N_CS", "YCNT")
     # print(DF, width = 100)
-    
+
     # # Further checks that only report problems
     # keep <- "PRE"
     # if ("SQZ" %in% comp) keep <- c(keep, "SQZ")
     # if ("DUP" %in% comp) keep <- c(keep, "DUP")
     # if ("DIF" %in% comp) keep <- c(keep, "DIF")
     # DFcore <- DF[, keep]
-   
+
     # for (i in 1:nrow(DFcore)) {
-    	# if (length(unique(DFcore[i,,drop = TRUE])) != 1L) {
-    		# cat("Possible problem in parsing ASDF codes to numeric values:\n")
-    		# print(DFcore[i,])
-    	# }
+    # if (length(unique(DFcore[i,,drop = TRUE])) != 1L) {
+    # cat("Possible problem in parsing ASDF codes to numeric values:\n")
+    # print(DFcore[i,])
     # }
-    
-    
+    # }
   } # end of debug = 4
 
   lineList

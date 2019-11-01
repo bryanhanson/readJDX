@@ -15,17 +15,16 @@
 #'
 
 unDIF <- function(line) {
-
   lineNames <- names(line) # save for updating later
-  
+
   # DIF codes can be interspersed with SQZ etc, so locate the DIFs and deal with them.
-    
+
   # Mark the DIF codes
   pat <- "[%J-Rj-r]"
   dflag <- str_detect(line, pat) # flag to mark where the DIF codes are in the string
   # note that entries labeled DUP will still be flagged correctly since the character string has
   # the DIF code in it (that means one cannot use the names as the flag)
-  
+
   # Replace the characters with numbers
   line <- str_replace_all(
     line,

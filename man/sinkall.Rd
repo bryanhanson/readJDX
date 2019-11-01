@@ -30,7 +30,7 @@ print(rnorm(2))
 print(normr(2)) # typo, so it errors
 message("A message from message()")
 warning("A warning from warning()")
-cat("Information via cat\\n")
+cat("Information via cat\\\\n")
 sinkall() # one must close the file connection
 file.show(tf)
 }

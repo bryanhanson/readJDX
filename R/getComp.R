@@ -15,11 +15,11 @@
 #' @noRd
 #'
 getComp <- function(VL, debug = 0) {
-    
+
   # Drop the first line if this is 2D NMR the first line is still stuff saved for debugging
-  if (grepl("##PAGE=", VL[1])) VL <- paste(VL[2:length(VL)], collapse = " ") 
-  if (!grepl("##PAGE=", VL[1])) VL <- paste(VL, collapse = " ") 
-  
+  if (grepl("##PAGE=", VL[1])) VL <- paste(VL[2:length(VL)], collapse = " ")
+  if (!grepl("##PAGE=", VL[1])) VL <- paste(VL, collapse = " ")
+
   AFFN <- PAC <- SQZ <- DIF <- DUP <- FALSE
   if (grepl("[@A-Ia-i]", VL)) SQZ <- TRUE
   if (grepl("[%J-Rj-r]", VL)) DIF <- TRUE
