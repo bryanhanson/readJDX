@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{Annotated Compressed JCAMP-DX File}
+%\VignetteIndexEntry{MiniDIFDUP_1}
 %\VignettePackage{readJDX}
 %\VignetteIndexEntry{readJDX}
 %\VignetteKeyword{JCAMP, DX, NMR, IR, Raman}
@@ -31,7 +31,7 @@
 \#\#TITLE=Tiny IR Spectrum for Demo\\
 \#\#JCAMP-DX=4.24\\
 \#\#DATA TYPE=INFRARED SPECTRUM\\
-\#\#OWNER= GPL-3 (orig. by B. Hanson)\\
+\#\#OWNER= GPL-3 (modified from BRUKER1.JCM (IUPAC) by B. Hanson)\\
 \#\#XUNITS=1/CM\\
 \#\#YUNITS=TRANSMITTANCE\\
 \#\#FIRSTX= 4000.655017\\
@@ -57,23 +57,23 @@
 4050263G750JjKJTKJqNKJlKlKTpNMlKKlJUjTOj9J8kjKklLlKLmMjJNj1j2K0lQj5\\
 3929802G753k9L4QmOkMnJMkNJTkJKJlKTmTQkMk4LK3kJlJNLkLJLMnJKjLl8JK7lJ0MjLlj\\
 3811316G794JkMkMpKkMmTnPJ5r1J2Q0k2J7kTjqJ6rPqOmn3L1K3Lm8L3K0j4J3pOjrMTkJl
-\endminipage}\hfill
 \#\#END=
+\endminipage}\hfill
 
 \endminipage}\hfill
 
 Key to the above:
 \begin{itemize}
-  \item \textcolor{red}{Entire File}. Input for \textit{findDataTables}, as a vector of character strings.
+  \item \textcolor{red}{Entire File}. Input for \textit{findVariableLists}, as a vector of character strings.
   \item \textcolor{blue}{Metadata}.  Input for \textit{extractParams}, as a vector of character strings.
-  \item \textcolor{orange}{Variable List}. Input for \textit{processDataTable} and \textit{decompressXYY}, as a vector of character strings.
+  \item \textcolor{orange}{Variable List}. Input for \textit{processVariableList} and \textit{decompressXYY}, as a vector of character strings.
 \end{itemize}
 
 << setup, echo = FALSE >>=
 suppressPackageStartupMessages(library("stringr"))
 @
 
-The entire file is the input to \textit{findDataTables}. Here are two raw lines from the variable list; each is a character vector of length one:
+The entire file is the input to \textit{findVariableLists}. Here are two raw lines from the variable list; each is a character vector of length one:
 
 << getData, echo = FALSE >>=
 mdd <- system.file("extdata", "MiniDIFDUP.JDX", package = "readJDX")
@@ -84,14 +84,14 @@ lines <- readLines(mdd)
 print(lines[17:18])
 @
 
-The input to \textit{decompLines} and \textit{getJDXcompression} is \emph{named} raw lines:
+The input to \textit{decompLines} and \textit{getComp} is a vector of \emph{named} raw lines:
 
 << namedRawLines, echo = FALSE >>=
 names(lines) <- paste("Line", 1:length(lines), sep = "_")
 print(lines[17:18])
 @
 
-The input to \textit{unSQZ}, \textit{insertDUPs}, \textit{deDIF} and \textit{yValueCheck} is a \emph{named} list of lines.  Each raw line has been split into the individual pieces and named according to its compression code:
+The input to \textit{unSQZ}, \textit{insertDUPs}, \textit{deDIF} and \textit{yValueCheck} is a \emph{named} list of lines.  Each raw line has been split into the individual pieces and named according to its compression mode:
 
 << lineList, echo = FALSE >>=
 # The following code is from decompLines
@@ -128,16 +128,18 @@ lines <- lapply(lines, nameComp) # name each entry by the compression mode
 print(lines[17])
 @
 
-The input to \textit{unDIF} is a character vector with entries named with ASDF code:
+The input to \textit{unDIF} is a character vector with entries named with ASDF mode:
 
-<< unDIFinput >>=
-print(unlist(lines[17]))
+<< unDIFinput, echo = FALSE >>=
+line17 <- unlist(lines[17])
+names(line17) <- gsub("Line_[0-9]*\\.", "", names(line17)) # names were whacked during unlisting
+print(line17)
 @
 
 The input to \textit{repDUPs} is a character vector with length one:
 
-<< repDUPsinput >>=
-print(unlist(lines[17])[21])
+<< repDUPsinput, echo = FALSE >>=
+print(line17[21])
 @
 
 \end{document}

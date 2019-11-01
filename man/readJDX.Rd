@@ -31,7 +31,7 @@ ppm or Hz automatically.
 In cases like this, once can set \code{SOFC = FALSE} and then manually convert the X axis.}
 
 \item{debug}{Integer.  The level of debug reporting desired.  For those options giving
-       a lot of output, you may wish to consider directing the output via \code{sink()}
+       a lot of output, you may wish to consider directing the output via \code{\link{sinkall}}
        and then search the results for the problematic lines.
 \itemize{
   \item 1 or higher = import progress is reported.
@@ -82,12 +82,12 @@ the F2 frequency values, the F1 frequency values, and a matrix containing the 2D
 }
 \description{
 This function supervises the entire import process.
-The JCAMP-DX standard allows many variations and it is difficult to anticipate all permutations.
-Not all possible official formats are supported; error messages will
+Not all official formats are supported, see the vignettes.
+Prior to release, this package is checked against a very large number of files in the
+author's collection.  However, the JCAMP-DX standard allows many variations and it is
+difficult to anticipate all permutations.  Error messages will
 generally let you know what's going on.  If you have a file that you feel should be
 supported but gives an error, please file an issue at Github and share the file.
-Prior to release, this package is checked against a very large number of files in the
-author's collection.
 }
 \section{Included Data Files}{
 
@@ -101,7 +101,11 @@ File \code{PCRF.jdx} is a 1H NMR
 spectrum of a hexane extract of a reduced fat potato chip.  The spectrum was
 recorded on a JEOL instrument.  The file uses SQZ DIF DUP compression, and was written
 with the JCAMP-DX 6.00 standard.
-File \code{PCRF_line265.jdx} has a deliberate error in it.  See the examples.
+File \code{PCRF_line265.jdx} has a deliberate error in it.
+File \code{isasspc1.jdx} is a 2D NMR file recorded on a JEOL GX 400 instrument.
+The file is freely available at \url{www.jcamp-dx.org}.
+File \code{MiniDIFDUP.JDX} is a small demonstration file, used in the vignettes to
+illustrate the decompression process.  It is derived from a freely available file.
 }
 
 \section{Precision}{
@@ -113,7 +117,35 @@ values in the file, such as FIRSTY, are stored with low precision, and the compu
 value to be compared occurs with much greater precision.  In these cases the check can fail
 even when the tolerance is pretty loose.  In these cases one might consider setting
 \code{SOFC = FALSE} to allow the calculation to proceed.  If you do this, be certain to check
-the results carefully.
+the results carefully as described under \code{SOFC}.
+}
+
+\section{Y Value Check}{
+
+The standard requires a "Y Value Check" when in DIF mode.  Extra Y values have been appended to each
+line to use in the check, and the last Y value on a line must equal the first Y value on the next line
+IFF one is in DIF mode.  After a successful check, the extra Y value must be removed.  In actual practice,
+some vendors, at least some of the time, seem to differ as to the definition of
+"being in DIF mode".  In turn, this determines how the Y value check should proceed.
+\itemize{
+  \item The standard says "When, and only when, the last ordinate of a line is in DIF form ...
+        The first ordinate of the next line ... is always an actual value, equal to the last
+        calculated ordinate of the previous line". See section 5.8.3 of the 1988 publication.
+  \item Taking this definition literally, the Y value check (and removal of the extra value),
+        should occur when one sees e.g. ... DIF DIF DIF (end of line). Let's call
+        this "literal DIF".  A literal DIF is easy to detect and act on.
+  \item In other cases, something like ... DIF DUP DUP (end of line) is considered to be in DIF mode
+        for Y value check purposes. In these cases we have look backwards to see if we are in DIF mode.
+        Let's call this "relayed DIF".
+  \item However, some vendors may treat ... DIF DUP DUP (end of line) as not in DIF mode, and hence
+        one should not do the Y value check and not remove any values, since this vendor would not have
+        added an extra Y value.
+  \item In addition to these three possibilities, \code{readJDX} through versions 0.3.xx used a different
+        definition, namely if there were any DIF entries anywhere on the line, then DIF mode was
+        assumed and the Y value check carried out.  This worked for many files, but not all.
+  \item In the 0.4.xx series, \code{readJDX} detects both the literal and relayed definitions and
+        tries to keep moving forward as much as possible.
+}
 }
 
 \section{Performance}{
@@ -123,6 +155,7 @@ helpful debugging messages and understandable code.
 }
 
 \examples{
+# IR spectrum
 sbo <- system.file("extdata", "SBO.jdx", package = "readJDX")
 chk <- readJDX(sbo)
 plot(chk[[4]]$x, chk[[4]]$y / 100,
@@ -130,13 +163,28 @@ plot(chk[[4]]$x, chk[[4]]$y / 100,
   xlab = "wavenumber", ylab = "Percent Transmission"
 )
 
+# 1H NMR spectrum
 pcrf <- system.file("extdata", "PCRF.jdx", package = "readJDX")
 chk <- readJDX(pcrf)
 plot(chk[[4]]$x, chk[[4]]$y,
   type = "l", main = "Reduced Fat Potato Chip Extract",
   xlab = "ppm", ylab = "Intensity"
 )
-#
+
+# Capturing processing for troubleshooting
+mdd <- system.file("extdata", "MiniDIFDUP.JDX", package = "readJDX")
+tf <- tempfile(pattern = "Troubleshooting", fileext = "txt")
+chk <- readJDX(mdd, debug = 6)
+sinkall() # close the file connection
+file.show(tf)
+
+# 2D HETCORR spectrum
+\dontrun{
+nmr2d <- system.file("extdata", "isasspc1.dx", package = "readJDX")
+chk <- readJDX(nmr2d)
+contour(chk$Matrix, drawlabels = FALSE) # default contours not optimal
+}
+
 \dontrun{
 # Line 265 has an N -> G typo.  Try with various levels of debug.
 # Even with debug = 0 you get useful diagnostic info.
@@ -146,6 +194,6 @@ chk <- readJDX(problem)
 
 }
 \seealso{
-Do \code{browseVignettes("readJCAMPDX")} for background information,
+Do \code{browseVignettes("readJDX")} for background information,
 references, supported formats, and details about the roles of each function.
 }

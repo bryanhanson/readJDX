@@ -1,7 +1,7 @@
 ##TITLE=Demo IR Spectrum
 ##JCAMP-DX=4.24
 ##DATA TYPE=INFRARED SPECTRUM
-##OWNER= GPL-3 (orig. by B. Hanson)
+##OWNER= GPL-3 (modified from BRUKER1.JCM (IUPAC) by B. Hanson)
 ##XUNITS=1/CM
 ##YUNITS=TRANSMITTANCE
 ##FIRSTX= 2373.973

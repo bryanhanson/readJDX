@@ -7,14 +7,14 @@
 #'
 #' @param i Integer. Essentially the index into \code{lineList}.
 #'
-#' @param lineList A list of numeric vectors to be checked.  Named with line numbers.
-#'        Individual numbers are named with the ASDF code.  X values still present!
+#' @param lineList A list, named with the line numbers.  Elements are character vectors, whose entries
+#' are named with the ASDF compression mode.  X values still present.
 #'
 #' @param debug Integer.  See \code{\link{readJDX}} for details.
 #'
 #' @return A numeric vector.
 #'
-# @noRd
+#' @noRd
 #'
 deDIF <- function(i, lineList, debug = 0) {
 

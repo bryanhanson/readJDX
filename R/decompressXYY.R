@@ -6,7 +6,7 @@
 #' Documentation is provided for developers wishing to contribute to the package.
 #'
 #' @param VL Character.  The variable list to be processed as a character vector. Includes one pre-pended
-#' line giving the fmt of data (e.g. XYY, XRR, XII).
+#' line giving the format of data (e.g. XYY, XRR, XII).
 #'
 #' @param params Numeric. Vector of parameters extracted from file header.
 #'
@@ -20,7 +20,7 @@
 #'
 #' @importFrom stringr str_locate str_trim
 #'
-# @noRd
+#' @noRd
 #'
 
 decompressXYY <- function(VL, params, mode, SOFC, debug = 0) {

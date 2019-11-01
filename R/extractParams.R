@@ -7,7 +7,7 @@
 #'
 #' @param md Character.  A vector of character strings which contains the metadata.
 #'
-#' @param mode Character. One of c("IR", "NMR", "NMR2D").
+#' @param mode Character. One of c("IR_etc", "NMR", "NMR2D").
 #'
 #' @param SOFC Logical. Stop on Failed Check.   See \code{\link{readJDX}} for details.
 #'
@@ -16,7 +16,7 @@
 #' @return A named numeric vector containing the extracted parameters.
 #' Contents will vary by \code{mode}.
 #'
-# @noRd
+#' @noRd
 #'
 extractParams <- function(md, mode, SOFC, debug = 0) {
   if (mode == "IR_etc") {

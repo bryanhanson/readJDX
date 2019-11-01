@@ -21,9 +21,9 @@
 #'
 #' @param SOFC Logical.  See \code{\link{readJDX}} for details.
 #'
-#' @return A data frame with elements $x$ and $y$, unless the input is 2D NMR, in which case a matrix.
+#' @return A data frame with elements \code{x} and \code{y}, unless the file contains 2D NMR, in which case a matrix.
 #'
-# @noRd
+#' @noRd
 #'
 processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
 

@@ -5,17 +5,16 @@
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #'
-#' @param string Character vector.  Partially processed lines from the
-#'        original variable list.  Should arrive here named by compression code.
+#' @param line A character vector. Entries are named with the ASDF compression mode.  X values still present.
 #'
 #' @param debug Integer.  See \code{\link{readJDX}} for details.
 #'
-#' @return A string.
+#' @return A string representing a processed line.
 #'
-# @noRd
+#' @noRd
 #'
 
-insertDUPs <- function(string, debug) {
+insertDUPs <- function(line, debug) {
   # Inspect a character vector for DUPs and expand them if found.
   # This function will not be efficient b/c we can't know the final
   # string length in advance.
@@ -29,33 +28,33 @@ insertDUPs <- function(string, debug) {
 
   # DUPs were already and identified by name before arriving here, no need to relocate
 
-  newString <- NA_character_ # new string ready to grow
+  newLine <- NA_character_ # new string ready to grow
 
   if (debug == 5) cat("\nProcessing DUP values...\n")
 
-  for (i in 1:length(string)) {
+  for (i in 1:length(line)) {
 
     # All of this has potential to fail if there is no i - 1 value, but that seems
     # impossible given the standard
-    if (names(string[i]) != "DUP") newString <- c(newString, string[i]) # nothing to change
+    if (names(line[i]) != "DUP") newLine <- c(newLine, line[i]) # nothing to change
 
-    if (names(string[i]) == "DUP") { # found a DUP to process
-      dupEntries <- repDUPs(string[i - 1], string[i]) # returns the original value + replicates
+    if (names(line[i]) == "DUP") { # found a DUP to process
+      dupEntries <- repDUPs(line[i - 1], line[i]) # returns the original value + replicates
       lenDE <- length(dupEntries)
-      names(dupEntries) <- c(names(string[i - 1]), rep("DUP", (lenDE - 1)))
-      newString <- c(newString[-length(newString)], dupEntries)
+      names(dupEntries) <- c(names(line[i - 1]), rep("DUP", (lenDE - 1)))
+      newLine <- c(newLine[-length(newLine)], dupEntries)
     }
   }
 
-  newString <- newString[-1]
+  newLine <- newLine[-1]
 
   if (debug == 5) {
     cat("\nOriginal line:\n")
-    print(string)
+    print(line)
     cat("\nLine with DUPs inserted:\n")
-    print(newString)
+    print(newLine)
     cat("\n--------------------\n")
   }
 
-  newString
+  newLine
 }

@@ -48,7 +48,7 @@
   if (debug >= 6) {
     cat(
       "yValueCheck is removing the last value,", lineList[[i - 1]][length(lineList[[i - 1]])],
-      "from", names(lineList[i - 1]), "\n"
+      "from", names(lineList[i - 1]), "\n\n"
     )
   }
   if (i != length(dMode)) lineList[[i - 1]] <- lineList[[i - 1]][-length(lineList[[i - 1]])]
@@ -60,13 +60,13 @@
     # line.  Check for this, DO NOT remove the entire line, but DO remove the extra Y value
     lll <- length(lineList[[i]])
     if (lll > 2L) {
-      if (debug >= 6) cat("\nyValueCheck:", names(lineList[i]), "does not appear to be a checkpoint line\n")
+      if (debug >= 6) cat("\nyValueCheck:", names(lineList[i]), "does not appear to be a checkpoint line\n\n")
       lineList[[i]] <- lineList[[i]][-2] # first value is X, second value is the checkpoint value,
       # more Y values follow
     }
 
     if (lll == 2L) {
-      if (debug >= 6) cat("yValueCheck is removing the checkpoint line,", names(lineList[i]), "\n")
+      if (debug >= 6) cat("yValueCheck is removing the checkpoint line,", names(lineList[i]), "\n\n")
       lineList[[i]] <- NULL
       lineNames <- lineNames[-length(lineNames)] # don't need?
     }

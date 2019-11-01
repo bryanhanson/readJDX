@@ -75,10 +75,10 @@ fName <- c(
   "- processVariableList",
   "- - decompressXYY", # 5
   "- - - decompLines",
-  "- - - - getJDXcompression",
+  "- - - - getComp",
   "- - - - unSQZ",
-  "- - - - insertDUPS",
-  "- - - - - repDUPS", # 10
+  "- - - - insertDUPs",
+  "- - - - - repDUPs", # 10
   "- - - - deDIF",
   "- - - - - unDIF",
   "- - - - yValueCheck"
@@ -87,16 +87,16 @@ fName <- c(
 fInput <- c(
   "file name",
   "character vector: all lines from original file",
-  "character vector: just the metadata",
+  "character vector: just the metadata lines",
   "character vector: a single VL",
   "character vector: a single VL", # 5
-  "character vector named with line numbers: a single VL",
-  "character vector named with line numbers: a single VL",
+  "character vector: a single VL",
+  "character vector: a single VL",
+  "character vector: named with the ASDF mode, called via lapply",
+  "character vector: named with the ASDF mode, called via lapply",
+  "a string of length one", # 10
   "*list* of character vectors from a single VL; the character vectors are named with the ASDF mode, the list is named with line numbers",
-  "*list* of character vectors from a single VL; the character vectors are named with the ASDF mode, the list is named with line numbers",
-  "a string of length one (named?)", # 10
-  "*list* of character vectors from a single VL; the character vectors are named with the ASDF mode, the list is named with line numbers",
-  "character vector from one line of VL, named by ASDF code",
+  "character vector: one line from VL, entries named by ASDF code",
   "*list* of character vectors from a single VL; the character vectors are named with the ASDF mode, the list is named with line numbers"
   )
 

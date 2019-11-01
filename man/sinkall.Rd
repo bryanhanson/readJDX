@@ -13,12 +13,13 @@ sinkall(filename = NULL)
 \code{NULL}, invisibly.
 }
 \description{
-This is a simple utility function to direct the output of of stdout and stderr
+This is a simple utility function to direct the output of stdout and stderr
 to a file.  stdout is the information normally printed in the console, for instance
 the results of \code{print(rnorm(5))}.  stderr is the output created by functions
 \code{message}, \code{warning} and \code{stop}.  The purpose of this function is to allow
 one to direct all this output into a single file where the results can be studied, for
-instance, for troubleshooting purposes.
+instance, for troubleshooting purposes.  Works exactly like the base \code{sink()} function:
+you have to call it a second time with no arguments to close the file.
 }
 \examples{
 \dontrun{
@@ -30,7 +31,7 @@ print(normr(2)) # typo, so it errors
 message("A message from message()")
 warning("A warning from warning()")
 cat("Information via cat\\n")
-sinkall()
+sinkall() # one must close the file connection
 file.show(tf)
 }
 

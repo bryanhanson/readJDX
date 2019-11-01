@@ -4,20 +4,21 @@
 #' This function is used by the package, and can also be called by the user who wishes
 #' to study problematic lines in a file in a standalone manner.  See the examples.
 #'
-#' @param lines Character.  A vector of character strings composed of the compressed
+#' @param VL Character.  A vector of character strings composed of the compressed
 #'        data strings in the file.  If coming from the package internals, named as "Line_1" etc.
+#'        If used in standalone mode, names will be added/overwritten as "Line_1" etc.
 #'
 #' @param debug Integer.  See \code{\link{readJDX}} for details.
 #'
 #' @return A list of numeric strings, the result of unpacking the compressed data.  One list
-#'         element is returned for each line.  The numeric string is named with the compression mode.
+#'         element is returned for each line.  The numeric string is named with the ASDF compression mode.
 #'
 #' @section Details:
 #'          Each individual line passed here is converted to a list to make processing and
-#'          naming the pieces easier.  \emph{No checking of values is done here}.  The individual
-#'          numbers are named according to their \emph{original} compression code.  Unless otherwise noted
-#'          all functions called from here should act on a list of lines, via lapply. Note too that the x
-#'          values are always present here, so X, Y1, Y2 ...
+#'          naming the pieces easier.The individual
+#'          entries are named according to their \emph{original} ASDF compression code.  Unless otherwise noted
+#'          all functions called from here should act on a list of lines, via lapply. Note too that the X
+#'          values are present, e.g. X, Y1, Y2 ... Yn.
 #'
 #' @section Formats:
 #'          AFFN is separated by any amount of white space so processing is straightforward, as exponents are
@@ -27,43 +28,34 @@
 #' @importFrom stringr str_replace_all str_trim
 #' @export
 #'
-
-
-# Warning...
-# need exponent example
-
-# testLines <- c(# Mixed ASDF compression modes
-
-# "252i495E784N964B684a3486o107f436A3481q3D424O885Q937P324J1832r236A0940",
-# "236A0868J6799J9678P988j2677B0178H013j613N812J1115O878j3613G47M366e036",
-# "221e2154l0513K0911a2672C1847J7862m889k0912B02a0308j1682j7456M086c138",
-# "207A6665C205a0874a317A3568L113o886GfA4252J5568l134j3318o248N060Q522",
-# "192B0702l140p917C532J1700Q9493J20292j5780G2487a6715h327F604a9630j5634",
-# "2952.5C1103M0L9M1M4M8N1UM9M2L7L5L0K2J7J8J6J2QOTPOVMLK%jljKJjkjKMNLjoTl",
-# "3041.2C1798JMNL%j%KjmjKjljkojNQMmrnKLTKTJKMOKnTlJjT%KMKmqj1pm%OQJmkKlo",
-# "3153C1782lKJoj2j0kMLkljT%KL%lmnlj%korokKMKjnpqUnLONTKml%Tkmqj1j0n%LNTJ",
-# "3264.9C1670jkmnTkKJlkLJopmlnl%LNM%lkJKjknj1q%MjprkNJ0RMlnk%lnTmnkNPNJk",
-# "3482.8C1656jmlJOPjl%LNRJ3J1KnTjML%jJNRTMjLN%kKT%jTKNPMJlk%JNOMJknpjOTJ",
-
-# # EU AFFN
-# "1898,58486802541 -0,0170190036296844 -0,0170874372124672 -0,0171865783631802 -0,0173063594847918 -0,0174412429332733",
-# "1917,23501403401 -0,0176097713410854 -0,0177919361740351 -0,0179808251559734 -0,0181967169046402 -0,0184239316731691",
-
-# # AFFN with fixed field width/extra space
-# "           16383       2259260      -5242968      -7176216      -1616072",
-# "           16379      10650432       4373926      -3660824       2136488"
-# )
-
-decompLines <- function(lines, debug = 0) {
-  comp <- getComp(lines, debug = debug)
+#' @examples
+#' testLines1 <- c("482A885145L989378k853295J46714q39581j382088R41076k774051J365135l135709P53917",
+#' "472a903359j71857q18832K573831k615133L481852l395846L894844l478693M916433",
+#' "463B483240m513444O146172m826168N233079m522551M000252m097028L466111l460183",
+#' "454i0520L061628k524598K788931k509430L219286k511160K709095k122775J594246")
+#' demo1 <- decompLines(testLines1, debug = 6)
+#'
+#' testLines2 <- c(
+#' # EU AFFN:
+#' "1898,58486802541 -0,0170190036296844 -0,0170874372124672 -0,0171865783631802",
+#' "1917,23501403401 -0,0176097713410854 -0,0177919361740351 -0,0179808251559734",
+#' # AFFN with fixed field width/extra space:
+#' "           16383       2259260      -5242968      -7176216      -1616072",
+#' "           16379      10650432       4373926      -3660824       2136488"
+#' )
+#' 
+#' demo2 <- decompLines(testLines2, debug = 6)
+#' 
+decompLines <- function(VL, debug = 0) {
+  comp <- getComp(VL, debug = debug)
   
-  lineNames <- names(lines) # save to replace when functions nuke
-  # Next line ensures names exist when passing a vector of lines to decompLines in standalone mode
-  if (is.null(lineNames)) lineNames <- paste("Line", 1:length(lines), sep = "_")
+  lineNames <- names(VL) # save to replace when functions nuke
+  # Next line ensures correct names exist when passing a vector of lines to decompLines in standalone mode
+  if (is.null(lineNames)) lineNames <- paste("Line", 1:length(VL), sep = "_")
 
   if (debug >= 4L) {
     cat("\n\n\n====================  Raw lines:\n\n")
-    print(lines)
+    print(VL)
   }
 
   # Helper Function
@@ -77,14 +69,14 @@ decompLines <- function(lines, debug = 0) {
   }
 
   # Preliminaries
-  lines <- gsub(",", ".", lines) # replace ',' with '.' -- needed for EU style files
-  lines <- gsub("\\s+\\${2}.*$", "", lines) # remove any ...xxxx  $$ checkpoint type entries (done earlier now)
-  lines <- gsub("(\\+|-){1}([0-9]+)", " \\1\\2", lines) # put space ahead of +|- signs (PAC)
-  lines <- str_trim(lines, side = "both") # remove extra white space
-  lines <- str_replace_all(lines, "([@%A-Za-rs])", " \\1") # break into pieces by compression mode
+  VL <- gsub(",", ".", VL) # replace ',' with '.' -- needed for EU style files
+  VL <- gsub("\\s+\\${2}.*$", "", VL) # remove any ...xxxx  $$ checkpoint type entries (done earlier now)
+  VL <- gsub("(\\+|-){1}([0-9]+)", " \\1\\2", VL) # put space ahead of +|- signs (PAC)
+  VL <- str_trim(VL, side = "both") # remove extra white space
+  VL <- str_replace_all(VL, "([@%A-Za-rs])", " \\1") # break into pieces by compression mode
 
   # Convert to list to process each piece separately
-  lineList <- as.list(lines)
+  lineList <- as.list(VL)
   names(lineList) <- lineNames # replace the names that were nuked
 
   FUN <- function(x) {

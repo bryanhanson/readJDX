@@ -5,28 +5,28 @@
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #'
-#' @param string Character.  The string to be checked.  If a vector of
-#' strings it will be collapsed to a single string.
+#' @param VL Character.  The string to be checked.  If a vector of
+#' strings (as is a variable list) it will be collapsed to a single string.
 #'
 #' @param debug Integer. See \code{\link{readJDX}} for details.
 #'
 #' @return A string giving all compression formats found.
 #'
-# @noRd
+#' @noRd
 #'
-getComp <- function(string, debug = 0) {
+getComp <- function(VL, debug = 0) {
     
   # Drop the first line if this is 2D NMR the first line is still stuff saved for debugging
-  if (grepl("##PAGE=", string[1])) string <- paste(string[2:length(string)], collapse = " ") 
-  if (!grepl("##PAGE=", string[1])) string <- paste(string, collapse = " ") 
+  if (grepl("##PAGE=", VL[1])) VL <- paste(VL[2:length(VL)], collapse = " ") 
+  if (!grepl("##PAGE=", VL[1])) VL <- paste(VL, collapse = " ") 
   
   AFFN <- PAC <- SQZ <- DIF <- DUP <- FALSE
-  if (grepl("[@A-Ia-i]", string)) SQZ <- TRUE
-  if (grepl("[%J-Rj-r]", string)) DIF <- TRUE
+  if (grepl("[@A-Ia-i]", VL)) SQZ <- TRUE
+  if (grepl("[%J-Rj-r]", VL)) DIF <- TRUE
   # Check for + or - with a digit on each side, no space
   # This would be PAC, even if the very first character is a space
-  if (grepl("\\d+[\\+\\-]{1}\\d+", string)) PAC <- TRUE
-  if (grepl("[S-Zs]", string)) DUP <- TRUE
+  if (grepl("\\d+[\\+\\-]{1}\\d+", VL)) PAC <- TRUE
+  if (grepl("[S-Zs]", VL)) DUP <- TRUE
   AFFN <- TRUE # X values are always AFFN
 
   if (debug %in% c(2, 4)) {

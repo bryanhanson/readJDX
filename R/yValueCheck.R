@@ -9,19 +9,19 @@
 #' Be sure to see the commentary about how and when to run the Y value check in \code{\link{readJDX}}.
 #'
 #' @param lineList A list of numeric vectors to be checked.  Named with line numbers.
-#'        Individual numbers are named with the ASDF code.  X values are still present!
+#'        Individual entries are named with the ASDF code.  X values are still present.
 #'
 #' @param debug Integer.  See \code{\link{readJDX}} for details.
 #'
-#' @return A list of numeric vectors, after the y check has been done and any extra
+#' @return A list of numeric vectors, after the y check has been done and any extra Y
 #'         values removed.
 #'
-# @noRd
+#' @noRd
 #'
 
 yValueCheck <- function(lineList, debug = 0) {
   	  
-  if (debug >= 6) cat("\nCarrying out Y value checks...\n\n")
+  if (debug == 6) cat("\nCarrying out Y value checks...\n\n")
 
   lineNames <- names(lineList) # grab to re-use later when nuked
   
@@ -46,14 +46,14 @@ yValueCheck <- function(lineList, debug = 0) {
   	yValChkOK <- FALSE
   	
   	if (lastMode[i-1] == "DIF") {
-  	  if (debug == 7 ) cat("yValueCheck sees a literal DIF mode on", lineNames[i-1], "\n")
+  	  if (debug == 6 ) cat("yValueCheck sees a literal DIF mode on", lineNames[i-1], "\n")
   	  yValChkOK <- .yvc(i, firstY, lastY) # literal DIF mode
   	}
   	
   	if (!yValChkOK) { # Not in literal DIF mode. Check for relayed DIF mode
   	  if (lastMode[i-1] == "DUP") {
 	  	  relayMode <- .getRelayMode(names(lineList[[i-1]]))
-	  	  if (debug == 7) {
+	  	  if (debug == 6) {
 	   	    if (relayMode == "CHKPT") cat("yValueCheck sees a checkpoint on", lineNames[i-1], "\n")
 	        if (relayMode == "NOTDIF") cat("yValueCheck:", lineNames[i-1], "is not in DIF mode\n")
 	        if (relayMode == "DIF") cat("yValueCheck sees a", relayMode, "followed by DUPs on", lineNames[i-1], "\n")	
@@ -67,12 +67,15 @@ yValueCheck <- function(lineList, debug = 0) {
   	# If Y value check was good, remove the extra value
     if (yValChkOK) lineList <- .cleanYvalues(i, lineList, lineNames, lastMode, debug)
   	
-  	# If Y value check failed, make a report
+  	# If Y value check failed...
     if (!yValChkOK) {
+    	if (lastMode[i-1] == "DUP") next # In this case apparently DIF mode was expected to be literal
+    	# so we can move on; otherwise something is wrong and make a report
         cat("\nAttempting to sum DIFs, but Y value check failed; nearby values:\n")
-        if (i <= 5) rpt <- 2:6
-        if (i >= 6) rpt <- (i - 2):(i + 2)
-        if (i >= (length(firstY) - 2)) rpt <- (length(firstY) - 5):length(firstY)
+        if (i <= 5) rpt <- 2:6 # start of lineList
+        if (i >= 6) rpt <- (i - 2):(i + 2) # middle of lineList
+        if (i >= (length(firstY) - 2)) rpt <- (length(firstY) - 5):length(firstY) # end of lineList
+        if (length(lineList) <= 5) rpt <- 2:(length(lineList)) # short lineList in standalone mode
         DF <- data.frame(
           LineNo = names(lineList)[rpt],
           FirstYonLine = firstY[rpt], LastYonPrevLine = lastY[rpt - 1],
@@ -86,7 +89,7 @@ yValueCheck <- function(lineList, debug = 0) {
     } # end of main loop
   	
   	  
-  if (debug >= 6) cat("\n...Y value checks completed\n")
+  if (debug == 6) cat("\n...Y value checks completed\n")
   
   lineList
   } # end of yValueCheck

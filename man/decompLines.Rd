@@ -4,17 +4,18 @@
 \alias{decompLines}
 \title{Decompress the Data Lines in a JCAMP-DX File}
 \usage{
-decompLines(lines, debug = 0)
+decompLines(VL, debug = 0)
 }
 \arguments{
-\item{lines}{Character.  A vector of character strings composed of the compressed
-data strings in the file.  If coming from the package internals, named as "Line_1" etc.}
+\item{VL}{Character.  A vector of character strings composed of the compressed
+data strings in the file.  If coming from the package internals, named as "Line_1" etc.
+If used in standalone mode, names will be added/overwritten as "Line_1" etc.}
 
 \item{debug}{Integer.  See \code{\link{readJDX}} for details.}
 }
 \value{
 A list of numeric strings, the result of unpacking the compressed data.  One list
-        element is returned for each line.  The numeric string is named with the compression mode.
+        element is returned for each line.  The numeric string is named with the ASDF compression mode.
 }
 \description{
 This function is used by the package, and can also be called by the user who wishes
@@ -23,10 +24,10 @@ to study problematic lines in a file in a standalone manner.  See the examples.
 \section{Details}{
 
          Each individual line passed here is converted to a list to make processing and
-         naming the pieces easier.  \emph{No checking of values is done here}.  The individual
-         numbers are named according to their \emph{original} compression code.  Unless otherwise noted
-         all functions called from here should act on a list of lines, via lapply. Note too that the x
-         values are always present here, so X, Y1, Y2 ...
+         naming the pieces easier.The individual
+         entries are named according to their \emph{original} ASDF compression code.  Unless otherwise noted
+         all functions called from here should act on a list of lines, via lapply. Note too that the X
+         values are present, e.g. X, Y1, Y2 ... Yn.
 }
 
 \section{Formats}{
@@ -36,3 +37,22 @@ to study problematic lines in a file in a standalone manner.  See the examples.
          AFFN is never mixed with other formats.  The other formats are collectively called ASDF in the standard.
 }
 
+\examples{
+testLines1 <- c("482A885145L989378k853295J46714q39581j382088R41076k774051J365135l135709P53917",
+"472a903359j71857q18832K573831k615133L481852l395846L894844l478693M916433",
+"463B483240m513444O146172m826168N233079m522551M000252m097028L466111l460183",
+"454i0520L061628k524598K788931k509430L219286k511160K709095k122775J594246")
+demo1 <- decompLines(testLines1, debug = 6)
+
+testLines2 <- c(
+# EU AFFN:
+"1898,58486802541 -0,0170190036296844 -0,0170874372124672 -0,0171865783631802",
+"1917,23501403401 -0,0176097713410854 -0,0177919361740351 -0,0179808251559734",
+# AFFN with fixed field width/extra space:
+"           16383       2259260      -5242968      -7176216      -1616072",
+"           16379      10650432       4373926      -3660824       2136488"
+)
+
+demo2 <- decompLines(testLines2, debug = 6)
+
+}
