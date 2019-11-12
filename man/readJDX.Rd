@@ -103,7 +103,7 @@ recorded on a JEOL instrument.  The file uses SQZ DIF DUP compression, and was w
 with the JCAMP-DX 6.00 standard.
 File \code{PCRF_line265.jdx} has a deliberate error in it.
 File \code{isasspc1.jdx} is a 2D NMR file recorded on a JEOL GX 400 instrument.
-The file is freely available at \url{www.jcamp-dx.org}.
+The file is freely available at \url{http://www.jcamp-dx.org/}.
 File \code{MiniDIFDUP.JDX} is a small demonstration file, used in the vignettes to
 illustrate the decompression process.  It is derived from a freely available file.
 }
