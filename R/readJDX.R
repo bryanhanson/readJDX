@@ -177,13 +177,14 @@
 #' }
 #'
 #' \dontrun{
-#' # Line 265 has an N -> G typo.  Try with various levels of debug.
+#' # Line 265 has an N -> G error.  Try with various levels of debug.
 #' # Even with debug = 0 you get useful diagnostic info.
 #' problem <- system.file("extdata", "PCRF_line265.jdx", package = "readJDX")
 #' chk <- readJDX(problem)
 #' }
 #'
 readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
+
   if (!requireNamespace("stringr", quietly = TRUE)) {
     stop("You need to install package stringr to use this function")
   }
@@ -192,35 +193,37 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
 
   jdx <- readLines(file)
 
-
   ##### Step 1.  Check the overall file structure.
 
   # A data block consists of ##TITLE= up to ##END=
   # However, link blocks can be used to contain data blocks, in which
-  # case one has a compound file.  I have never seen this in the wild.
-  # Link blocks are not supported. NMR data sets, including 2D NMR data sets,
-  # use a different scheme to hold multiple data sets.
-
-  mode <- "IR_etc" # until proven otherwise; IR includes Raman, UV, pretty much anything other than NMR or 2D NMR
+  # case one has a compound file. Link blocks and compound files are not supported.
+  # NMR data sets, including 2D NMR data sets, use a different scheme to hold multiple data sets.
 
   blocks <- grep("^\\s*##TITLE\\s*=.*", jdx)
   nb <- length(blocks)
   if (nb == 0) stop("This does not appear to be a JCAMP-DX file")
   if (nb > 1) stop("Compound (multi-block / multi-spectra) data sets not supported")
 
-  ntup <- grepl("^\\s*##NTUPLES", jdx)
-  nD <- grepl("^\\s*##NTUPLES=\\s*nD", jdx)
-  if (any(ntup) & !any(nD)) mode <- "NMR"
-  if (any(ntup) & any(nD)) {
-    mode <- "NMR2D"
-    # if (debug >= 1) message("\nreadJDX has been tested against a limited number of 2D NMR data sets.  We encourage you to file issues on Github, share problematic files and help us improve readJDX.\n")
-  }
-
-  if (debug >= 1) cat("\n\nProcessing file", file, "which appears to contain", mode, "data\n")
-
   ##### Step 2. Locate the parameters and the variable list(s)
 
   VL <- findVariableLists(jdx, debug)
+
+  # fmt is a character vector extracted by findVariableLists.
+
+  fmt <- VL[["DataGuide"]][,"Format"][-1]
+
+  # "mode" is a length one string derived from fmt and is used to determine the type of
+  # processing needed; we are not using "fmt" because we need a more user-friendly string
+
+  mode <- NA_character_
+  if ("XYY" %in% fmt) mode <- "XY_data"
+  if ("XRR" %in% fmt) mode <- "NMR_1D"
+  if ("NMR_2D" %in% fmt) mode <- "NMR_2D"
+  if ("PEAK_TABLE" %in% fmt) mode <- "PEAK_TABLE"
+  if (is.na(mode)) stop("Could not determine the type of data in the file")
+
+  if (debug >= 1) cat("\n\nProcessing file", file, "which appears to contain", mode, "data\n")
 
   ##### Step 3. Extract the needed parameters
 
@@ -228,7 +231,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
 
   ##### Step 4.  Process the variable list(s) into the final lists
 
-  if ((mode == "IR_etc") | (mode == "NMR")) {
+  if ((mode == "XY_data") | (mode == "NMR_1D")) {
     # Return value is a list: dataGuide, metadata, comment lines + data frames of x, y
     # dataGuide, metadata & comments already in place; process each variable list
 
@@ -237,18 +240,18 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
     }
 
     # Fix up names
-    if (mode == "IR_etc") {
+    if (mode == "XY_data") {
       specnames <- jdx[blocks] # each line with title
       specnames <- str_trim(substring(specnames, 9, nchar(specnames)))
     }
 
-    if (mode == "NMR") specnames <- c("real", "imaginary")
+    if (mode == "NMR_1D") specnames <- c("real", "imaginary")
 
     names(VL) <- c("dataGuide", "metadata", "commentLines", specnames)
   }
 
 
-  if (mode == "NMR2D") {
+  if (mode == "NMR_2D") {
     # Return value is a list: dataGuide, metadata, comment lines, F2, F1, + a matrix w/2D data
     # dataGuide, metadata & comments already in place; add F2, F1, M and drop extra stuff
     M <- matrix(NA_real_, ncol = params[2], nrow = params[1]) # matrix to store result

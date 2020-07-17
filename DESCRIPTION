@@ -1,8 +1,8 @@
 Package: readJDX
 Type: Package
 Title: Import Data in the JCAMP-DX Format
-Version: 0.4.29
-Date: 2019-11-12
+Version: 0.4.39
+Date: 2020-07-17
 Authors@R: person(
     "Bryan A.", "Hanson",
     role = c("aut", "cre"),
@@ -22,4 +22,4 @@ Suggests:
 Imports:
     stringr
 VignetteBuilder: knitr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1

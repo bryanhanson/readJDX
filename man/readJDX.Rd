@@ -186,7 +186,7 @@ contour(chk$Matrix, drawlabels = FALSE) # default contours not optimal
 }
 
 \dontrun{
-# Line 265 has an N -> G typo.  Try with various levels of debug.
+# Line 265 has an N -> G error.  Try with various levels of debug.
 # Even with debug = 0 you get useful diagnostic info.
 problem <- system.file("extdata", "PCRF_line265.jdx", package = "readJDX")
 chk <- readJDX(problem)

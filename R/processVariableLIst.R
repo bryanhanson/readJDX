@@ -15,7 +15,7 @@
 #' @param  lineNos Two integers giving the first and last lines
 #'         of the variable list in the original file. Used for debugging responses.
 #'
-#' @param mode Character. One of c("IR_etc", "NMR", "NMR2D")
+#' @param mode Character. One of c("XY_data", "NMR_1D", "NMR_2D", "PEAK_TABLE")
 #'
 #' @param debug Integer.  See \code{\link{readJDX}} for details.
 #'
@@ -36,14 +36,14 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
   lineNos <- unlist(lineNos)
   fmt <- VL[1]
 
-  if (mode == "IR_etc") {
+  if (mode == "XY_data") {
     VL <- VL[-c(2, length(VL))]
     st <- lineNos[1] + 1
     end <- lineNos[2] - 1
     lineNos <- c(NA_integer_, st:end)
   }
 
-  if (mode == "NMR") {
+  if (mode == "NMR_1D") {
     if (fmt == "XRR") {
       VL <- VL[-c(2, 3)]
       st <- lineNos[1] + 2
@@ -59,7 +59,7 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
     }
   }
 
-  if (mode == "NMR2D") {
+  if (mode == "NMR_2D") {
     # Keep line 2 of VL for debug reporting during decompression (e.g. ##PAGE= F1= 4.7865152724775)
     VL <- VL[-c(3, 4)]
     st <- lineNos[1]
@@ -67,14 +67,12 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
     lineNos <- c(NA_integer_, st, (st + 3L):end)
   }
 
-  # Dispatch based on fmt -- At this point only XYY is understood
+  # Dispatch based on fmt
 
   names(VL) <- paste("Line", lineNos, sep = "_") # name it for debugging purposes downstream
 
-  if ((fmt == "XRR") | (fmt == "XII") | (fmt == "NMR_2D")) fmt <- "XYY"
-
-  if (fmt == "XYY") {
-    xydata <- decompressXYY(VL, params, mode, SOFC, debug = debug)
+  if ((fmt == "XRR") | (fmt == "XII") | (fmt == "NMR_2D") | (fmt == "XYY")) {
+    xydata <- processXYY(VL, params, mode, SOFC, debug = debug)
     return(xydata)
   }
 

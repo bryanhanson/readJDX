@@ -10,7 +10,7 @@
 #'
 #' @param params Numeric. Vector of parameters extracted from file header.
 #'
-#' @param mode Character. One of c("IR_etc", "NMR", "NMR2D")
+#' @param mode Character. One of c("XY_data", "NMR", "NMR2D", "PEAK_LIST")
 #'
 #' @param SOFC Logical.  See \code{\link{readJDX}} for details.
 #'
@@ -23,7 +23,7 @@
 #' @noRd
 #'
 
-decompressXYY <- function(VL, params, mode, SOFC, debug = 0) {
+processXYY <- function(VL, params, mode, SOFC, debug = 0) {
 
   # For XYY, each line of the variable list begins with a frequency (x value) in AFFN
   # followed by the y values in various compressed formats.
@@ -104,7 +104,7 @@ decompressXYY <- function(VL, params, mode, SOFC, debug = 0) {
 
   ### Step 2. Check the integrity of the results
 
-  if (mode == "IR_etc") {
+  if (mode == "XY_data") {
 
     # Check that we got the right number of y values
 
@@ -160,9 +160,9 @@ decompressXYY <- function(VL, params, mode, SOFC, debug = 0) {
     dx <- (lastX - firstX) / (npoints - 1)
     xValues <- seq(firstX, lastX, by = dx)
     yValues <- yValues * factorY
-  } # end of mode = "IR_etc"
+  } # end of mode = "XY_data"
 
-  if (mode == "NMR") {
+  if (mode == "NMR_1D") {
     pointsX <- as.integer(params[1])
     pointsR <- as.integer(params[2])
     pointsI <- as.integer(params[3])
@@ -261,9 +261,9 @@ decompressXYY <- function(VL, params, mode, SOFC, debug = 0) {
 
     dx <- (lastX - firstX) / (pointsX - 1)
     xValues <- seq(firstX, lastX, by = dx)
-  } # end of mode = "NMR"
+  } # end of mode = "NMR_1D"
 
-  if (mode == "NMR2D") {
+  if (mode == "NMR_2D") {
     pointsF1 <- as.integer(params[1])
     pointsF2 <- as.integer(params[2])
     firstF1 <- params[3]
@@ -312,7 +312,7 @@ decompressXYY <- function(VL, params, mode, SOFC, debug = 0) {
 
     dx <- (lastF2 - firstF2) / (pointsF2 - 1)
     xValues <- seq(firstF2, lastF2, by = dx)
-  } # end of mode = "NMR2D"
+  } # end of mode = "NMR_2D"
 
   ### And we're done...
 

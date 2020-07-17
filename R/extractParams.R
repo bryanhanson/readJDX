@@ -19,7 +19,7 @@
 #' @noRd
 #'
 extractParams <- function(md, mode, SOFC, debug = 0) {
-  if (mode == "IR_etc") {
+  if (mode == "XY_data") {
 
     # The following parameters must be found
 
@@ -77,9 +77,9 @@ extractParams <- function(md, mode, SOFC, debug = 0) {
       cat("\nExtracted parameters:\n")
       print(params)
     }
-  } # end of mode == IR_etc
+  } # end of mode == XY_data
 
-  if (mode == "NMR") {
+  if (mode == "NMR_1D") {
 
     # This section does NOT currently make the EU conversion; watch out for strsplit choice
     # No parameters in this section can be skipped via SOFC
@@ -144,9 +144,9 @@ extractParams <- function(md, mode, SOFC, debug = 0) {
     }
 
     if ((pointsX != pointsR) | (pointsX != pointsI)) stop("No. of frequency, real, imaginary points are not the same")
-  } # end of mode == "NMR"
+  } # end of mode == "NMR_1D"
 
-  if (mode == "NMR2D") {
+  if (mode == "NMR_2D") {
 
     # This section does NOT currently make the EU conversion; watch out for strsplit choice
     # No parameters in this section can be skipped via SOFC
@@ -203,7 +203,7 @@ extractParams <- function(md, mode, SOFC, debug = 0) {
       cat("\nExtracted parameters:\n")
       print(params)
     }
-  } # end of mode == "NMR2D"
+  } # end of mode == "NMR_2D"
 
   return(params)
 } # end of extractParams

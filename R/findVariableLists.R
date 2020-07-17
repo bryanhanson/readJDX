@@ -30,25 +30,34 @@ findVariableLists <- function(jdx, debug = 0) {
 
   # Add other variable list FORMAT short names here
   # These are used to tweak the lines selected
-  VL_fmts <- c("XYY", "XRR", "XII", "NMR_2D")
+  VL_fmts <- c(
+    "XYY", # IR, UV, Vis, Raman, maybe others
+    "XRR", # real NMR
+    "XII", # imaginary NMR
+    "NMR_2D", # real 2D NMR
+    "PEAK_TABLE" # MS at least
+  )
+
   nf <- length(VL_fmts)
 
   # Add other variable list START patterns here (each associated with a specific VL_fmts entry)
   # Must search for things that are sufficiently unique
   ST_pats <- c(
-    "^\\s*##XYDATA\\s*=\\s*\\(X\\+\\+\\(Y\\.\\.Y\\)\\)$", # IR, typically
-    "^\\s*##PAGE\\s*=\\s*N=1", # real NMR data
-    "^\\s*##PAGE\\s*=\\s*N=2", # imaginary NMR data
-    "^\\s*##PAGE\\s*=\\s*F1="
-  ) # 2D NMR data (real part only)
+    "^\\s*##XYDATA\\s*=\\s*\\(X\\+\\+\\(Y\\.\\.Y\\)\\)$",
+    "^\\s*##PAGE\\s*=\\s*N=1",
+    "^\\s*##PAGE\\s*=\\s*N=2",
+    "^\\s*##PAGE\\s*=\\s*F1=",
+    "^\\s*##PEAK TABLE\\s*=\\s*\\(XY\\.\\.XY\\)$"
+  )
 
   # Add other END patterns here (each associated with a specific VL_fmts entry)
   END_pats <- c(
-    "^\\s*##END\\s*=", # IR, typically
-    "^\\s*##PAGE\\s*=\\s*N=2", # real NMR data
-    "^\\s*##END\\s{1}NTUPLES\\s*=", # imaginary NMR data
-    "^\\s*##PAGE\\s*=\\s*F1="
-  ) # 2D NMR data (not the very last entry however; fixed later in this function)
+    "^\\s*##END\\s*=",
+    "^\\s*##PAGE\\s*=\\s*N=2",
+    "^\\s*##END\\s{1}NTUPLES\\s*=",
+    "^\\s*##PAGE\\s*=\\s*F1=", # Not the very last entry however; fixed later in this function
+    "^\\s*##END\\s*="
+  )
 
   # Find the beginning & end of each variable list.
   # We are checking for any and all formats in the file
@@ -84,6 +93,9 @@ findVariableLists <- function(jdx, debug = 0) {
 
   if (length(spec_end) == 0L) stop("Found the start of a variable list, but not the end")
 
+  # We do not check for if (length(spec_st) > 1L) or if (length(spec_end) > 1L) because
+  # several formats have repeated sections
+
   # Organize the return values
 
   metadata <- jdx[1:(spec_st[1] - 1)]
@@ -101,15 +113,11 @@ findVariableLists <- function(jdx, debug = 0) {
   comOnly <- setdiff(comOnly, 1:(spec_st[1] - 1))
 
   # Check to see if this is 2D NMR data, if so find the vendor, as adjustments will be necessary
+  # Alternative way to check for 2D NMR data: nD <- grepl("^\\s*##NTUPLES=\\s*nD", jdx)
 
-  TwoD <- FALSE
   vendor <- NULL
 
-  if (length(unique(fmt)) == 1L) {
-    if (unique(fmt) == "NMR_2D") TwoD <- TRUE
-  }
-
-  if (TwoD) {
+  if (any(Format == "NMR_2D")) {
     if (any(grepl("JEOL NMR", jdx))) vendor <- "JEOL"
     if (any(grepl("Bruker BioSpin GmbH", jdx))) vendor <- "Bruker"
     if (is.null(vendor)) warning("Looks like 2D NMR but could not identify vendor")
@@ -117,7 +125,7 @@ findVariableLists <- function(jdx, debug = 0) {
 
   # Up to this point, processing has been generic & spec_st, spec_end reflect grep'ing of patterns.
   # Now we need to tweak things depending upon the format & vendor, to narrow the actual variable list
-  # as close as possible.
+  # as much as possible.
 
   for (i in 1:nrow(DF)) {
     if (DF$Format[i] == "XRR") {
