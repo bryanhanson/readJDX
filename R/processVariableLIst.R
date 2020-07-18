@@ -43,6 +43,13 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
     lineNos <- c(NA_integer_, st:end)
   }
 
+  if (mode == "PEAK_TABLE") {
+    VL <- VL[-c(2, length(VL))]
+    st <- lineNos[1] + 1
+    end <- lineNos[2] - 1
+    lineNos <- c(NA_integer_, st:end)
+  }
+
   if (mode == "NMR_1D") {
     if (fmt == "XRR") {
       VL <- VL[-c(2, 3)]
@@ -73,6 +80,11 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
 
   if ((fmt == "XRR") | (fmt == "XII") | (fmt == "NMR_2D") | (fmt == "XYY")) {
     xydata <- processXYY(VL, params, mode, SOFC, debug = debug)
+    return(xydata)
+  }
+
+  if (fmt == "PEAK_TABLE") {
+    xydata <- processPT(VL, params, mode, SOFC, debug = debug)
     return(xydata)
   }
 

@@ -269,6 +269,15 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
     names(VL) <- c("dataGuide", "metadata", "commentLines", "F2", "F1", "Matrix")
   }
 
+  if (mode == "PEAK_TABLE") {
+    for (i in 4:length(VL)) {
+      VL[[i]] <- processVariableList(VL[[i]], params, mode, VL[[1]][i - 2, c(2, 3)], SOFC, debug)
+    }
+    specnames <- jdx[blocks] # each line with title
+    specnames <- str_trim(substring(specnames, 9, nchar(specnames)))
+    names(VL) <- c("dataGuide", "metadata", "commentLines", specnames)
+  }
+
   ##### And we're done!
 
   if (debug >= 1) cat("\nDone processing ", file, "\n")

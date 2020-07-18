@@ -19,6 +19,7 @@
 #' @noRd
 #'
 extractParams <- function(md, mode, SOFC, debug = 0) {
+
   if (mode == "XY_data") {
 
     # The following parameters must be found
@@ -204,6 +205,25 @@ extractParams <- function(md, mode, SOFC, debug = 0) {
       print(params)
     }
   } # end of mode == "NMR_2D"
+
+  if (mode == "PEAK_TABLE") {
+
+    # There are no official checks for this format
+
+    npoints <- grep("^\\s*##NPOINTS\\s*=", md)
+    if (npoints == 0) stop("Couldn't find NPOINTS")
+    npoints <- md[npoints]
+    npoints <- sub("^\\s*##NPOINTS\\s*=", replacement = "", npoints)
+    npoints <- as.integer(npoints)
+
+    params <- npoints
+    names(params) <- "npoints"
+
+    if (debug == 2) {
+      cat("\nExtracted parameters:\n")
+      print(params)
+    }
+  } # end of mode == PEAK_TABLE
 
   return(params)
 } # end of extractParams
