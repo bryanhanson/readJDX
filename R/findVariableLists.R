@@ -47,7 +47,7 @@ findVariableLists <- function(jdx, debug = 0) {
     "^\\s*##PAGE\\s*=\\s*N=1",
     "^\\s*##PAGE\\s*=\\s*N=2",
     "^\\s*##PAGE\\s*=\\s*F1=",
-    "^\\s*##PEAK TABLE\\s*=\\s*\\(XY\\.\\.XY\\)$"
+    "^\\s*##PEAK TABLE\\s*=\\s*\\(XY\\.\\.XY\\)"
   )
 
   # Add other END patterns here (each associated with a specific VL_fmts entry)

@@ -30,6 +30,11 @@ processPT <- function(VL, params, mode, SOFC, debug = 0) {
   if (debug >= 1) cat("\nProcessing variable list...\n")
 
   ### Step 1. Convert to numeric values
+  # From the standard:
+  # "Groups are separated by a semicolon or space; components
+  #  of a group are separated by commas"
+  # Get rid of any ; that may be present; spaces don't matter
+  VL <- unlist(strsplit(VL, ";"))
   xValues <- as.numeric(sub(",\\s*[0-9]+\\.{0,1}[0-9]+", "", VL))
   yValues <- as.numeric(sub("\\s*[0-9]+\\.{0,1}[0-9]+,", "", VL))
 
