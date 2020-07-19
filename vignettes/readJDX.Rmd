@@ -64,11 +64,11 @@ This vignette is based on `readJDX` version `r desc$Version`.
 
 # Background
 
-The JCAMP-DX format was developed as an manufacturer-independent means of sharing spectroscopic data (\href{http://www.jcamp-dx.org}{www.jcamp-dx.org}).  The standard is described in a series of publications (\cite{McDonald1988, Grasselli1991, Davies1993, Lampen1994, Lampen1999, Bumbach2001, Cammack2006, Woollett2012}).  JCAMP-DX was developed during a time when data storage was expensive, and hence makes extensive use of compression schemes.  The original application was to IR spectroscopy, but the standard has evolved over time to accommodate other spectroscopies.  
+The JCAMP-DX format was developed as an manufacturer-independent means of sharing spectroscopic data (\href{http://www.jcamp-dx.org}{www.jcamp-dx.org}).  The standard is described in a series of publications (\cite{McDonald1988, Grasselli1991, Davies1993, Lampen1994, Lampen1999, Bumbach2001, Cammack2006, Woollett2012}).  JCAMP-DX was developed during a time when data storage was expensive, and hence makes extensive use of compression schemes.  The original application was to IR spectroscopy, but the standard has evolved over time to accommodate other spectroscopies.
 
 # File Structure
 
-JCAMP-DX files consist of two parts:  
+JCAMP-DX files consist of two parts:
 
 * A more-or-less human readible set of metadata which is needed to understand the data and carry out the decompression.  Besides required basic information about the data itself, most files contain instrument and manufacturer-specific parameters in the metadata.
 * A variable list, compressed in various ways.
@@ -92,6 +92,7 @@ The JCAMP-DX standard allows a lot of flexibility and instrument manufacturers h
     * DATA TABLE=(X++(R..R)) As above.  The real data from a 1D NMR spectrum.
     * DATA TABLE=(X++(I..I)) As above.  The imaginary data from a 1D NMR spectrum.
     * DATA TABLE=(F2++(Y..Y)) As above.  Format used for the slices of a 2D NMR spectrum.
+    * PEAK TABLE=(XY..XY) Entries are $x$,$y$ pairs separated by spaces or semicolons.  No compression is used.
 * Within a variable list, several different compression schemes can be employed.  The following are supported:
     * AFFN: ASCII numbers separated by at least one space.
     * PAC: Numbers separated by exactly one space, + or -.
@@ -106,8 +107,7 @@ The JCAMP-DX standard allows a lot of flexibility and instrument manufacturers h
 * Compound files: JCAMP-DX files may contain more than one spectrum in the file.  These types of files are not currently supported (however, 1D and 2D NMR data are supported, even though they contain more than one spectrum).  The following JCAMP-DX standards require a compound file and are therefore not supported:
     * EMR, EPR, ESR spectroscopy (\cite{Cammack2006})
     * CD spectroscopy (\cite{Woollett2012})
-* Variable lists of simple $x$, $y$ pairs (format XY..XY) are not supported.  Your pull requests to deal with this format are welcomed.
-* `readJDX` is geared toward raw spectral data.  Therefore variable lists formats representing derived information like PEAK TABLE and PEAK ASSIGNMENTS are not supported (but again, your pull requests are welcomed!).
+* `readJDX` is geared toward raw spectral data.  Therefore variable lists formats representing derived information like PEAK ASSIGNMENTS are not supported (but your pull requests are welcomed!).
 
 # Practical Matters
 

@@ -33,10 +33,11 @@ processPT <- function(VL, params, mode, SOFC, debug = 0) {
   # From the standard:
   # "Groups are separated by a semicolon or space; components
   #  of a group are separated by commas"
-  # Get rid of any ; that may be present; spaces don't matter
+  # Split on any ; or space not preceeded by a , (negative lookbehind, need perl)
   VL <- unlist(strsplit(VL, ";"))
-  xValues <- as.numeric(sub(",\\s*[0-9]+\\.{0,1}[0-9]+", "", VL))
-  yValues <- as.numeric(sub("\\s*[0-9]+\\.{0,1}[0-9]+,", "", VL))
+  VL <- unlist(strsplit(trimws(VL), "(?<!,)\\s+", perl = TRUE))
+  xValues <- as.numeric(sub(",\\s*[0-9]+\\.{0,1}[0-9]*", "", VL))
+  yValues <- as.numeric(sub("\\s*[0-9]+\\.{0,1}[0-9]*,", "", VL))
 
   ### Step 2. Check the integrity of the results
   # Check that we got the right number of data points
