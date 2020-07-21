@@ -19,7 +19,6 @@
 #' @noRd
 #'
 extractParams <- function(md, mode, SOFC, debug = 0) {
-
   if (mode == "XY_data") {
 
     # The following parameters must be found

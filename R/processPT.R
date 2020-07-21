@@ -24,7 +24,6 @@
 #'
 
 processPT <- function(VL, params, mode, SOFC, debug = 0) {
-
   fmt <- VL[1]
   VL <- VL[-1] # Remove the pre-pended format string
   if (debug >= 1) cat("\nProcessing variable list...\n")

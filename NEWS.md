@@ -1,3 +1,13 @@
+# readJDX 0.5.29 (2020-07-19)
+## Enhancements
+* New function `processPT` parses data sets with the `##PEAK TABLE= (XY..XY)` format.
+## Misc.
+* Function `decompressXYY` renamed to `processXYY` as part of the introduction of `processPT`.
+
+## Behind the Scenes
+* Refactor the use of `mode` and `fmt` to be more consistent and leaner, as part of the introduction of the PEAK TABLE processing.
+* Additional MS files using PEAK TABLE format added to local test suite (not publically available).
+
 # readJDX 0.4.29 (2019-11-12)
 ## Enhancements
 * New function `decompLines` handles the decompression process (and is called by `decompressXYY`).  The function can also be used in stand alone fashion to inspect problematic lines in a particular JCAMP-DX file.

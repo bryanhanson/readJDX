@@ -184,7 +184,6 @@
 #' }
 #'
 readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
-
   if (!requireNamespace("stringr", quietly = TRUE)) {
     stop("You need to install package stringr to use this function")
   }
@@ -211,7 +210,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
 
   # fmt is a character vector extracted by findVariableLists.
 
-  fmt <- VL[["DataGuide"]][,"Format"][-1]
+  fmt <- VL[["DataGuide"]][, "Format"][-1]
 
   # "mode" is a length one string derived from fmt and is used to determine the type of
   # processing needed; we are not using "fmt" because we need a more user-friendly string
