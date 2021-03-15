@@ -12,12 +12,12 @@
 #' @return A list is returned invisibly that has one DX data set per list element.  \pkg{Individual files
 #'        are written into the current directory, so you probably want to create a dedicated folder
 #'        for this task}.  File names are extracted from the
-#'        \texttt{##TITLE= sample_name} field and will be \texttt{sample_name} (more precisely,
-#'        the name will be whatever follows \texttt{##TITLE=} on the line).  If
+#'        \code{##TITLE= sample_name} field and will be \code{sample_name} (more precisely,
+#'        the name will be whatever follows \code{##TITLE=} on the line).  If
 #'        sample names are duplicated the output files will be overwritten as the file
 #'        is processed (with a warning).  In this case you should open the multiblock file in a plain text
-#'        editor and search for \texttt{##TITLE=}, then edit the names to be unique before
-#'        running this function.  Also, you should ensure that \texttt{sample_name} will
+#'        editor and search for \code{##TITLE=}, then edit the names to be unique before
+#'        running this function.  Also, you should ensure that \code{sample_name} will
 #'        result in a valid file name on your operating system.
 #'
 #' @author Bryan A. Hanson, DePauw University.

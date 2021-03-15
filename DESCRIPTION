@@ -1,7 +1,7 @@
 Package: readJDX
 Type: Package
 Title: Import Data in the JCAMP-DX Format
-Version: 0.5.33
+Version: 0.5.34
 Date: 2021-03-15
 Authors@R: person(
     "Bryan A.", "Hanson",
