@@ -9,7 +9,7 @@
 #'
 #' @param file Length one character giving the name of the multiblock file.
 #'
-#' @value A list is returned invisibly that has one DX data set per list element.  \pkg{Individual files
+#' @return A list is returned invisibly that has one DX data set per list element.  \pkg{Individual files
 #'        are written into the current directory, so you probably want to create a dedicated folder
 #'        for this task}.  File names are extracted from the
 #'        \texttt{##TITLE= sample_name} field and will be \texttt{sample_name} (more precisely,
