@@ -12,6 +12,12 @@ splitMultiblockDX(file = NULL)
 \description{
 Process a multiblock JCAMP-DX file into separate files, one for each data set.
 }
+\section{Warning}{
+
+\pkg{Individual data sets are written into the current directory, so you probably want to create
+a dedicated folder for this task}.
+}
+
 \author{
 Bryan A. Hanson, DePauw University.
 }
