@@ -1,3 +1,7 @@
+# readJDX 0.5.29 (2021-03-15)
+## Enhancements
+* New function `splitMultiblockDX` will process a multiblock JCAMP-DX files into individual JCAMP-DX files.  Requested by multiple users.
+
 # readJDX 0.5.29 (2020-07-19)
 ## Enhancements
 * New function `processPT` parses data sets with the `##PEAK TABLE= (XY..XY)` format.
