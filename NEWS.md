@@ -1,4 +1,4 @@
-# readJDX 0.5.40 (2021-04-16)
+# readJDX 0.5.41 (2021-04-16)
 ## Misc.
 * Update `DESCRIPTION` per CRAN request.
 
