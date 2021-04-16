@@ -1,3 +1,7 @@
+# readJDX 0.5.40 (2021-04-16)
+## Misc.
+* Update `DESCRIPTION` per CRAN request.
+
 # readJDX 0.5.36 (2021-03-15)
 ## Enhancements
 * New function `splitMultiblockDX` will process a multiblock JCAMP-DX files into individual JCAMP-DX files.  Requested by multiple users.
