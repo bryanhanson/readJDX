@@ -63,26 +63,25 @@
 #'
 #' \itemize{
 #'
-#' \item If the file contains multiple spectra
-#' (not currently supported), there will be one data frame for each spectrum.
+#' \item If the file contains one non-NMR spectrum, or a processed NMR spectrum (i.e. only 
+#'       the final real data), a single data frame.
 #'
 #' \item If the file contains the real and imaginary
-#' parts of a 1D NMR spectrum, there will be two data frames, one containing the real portion
-#' and the other the imaginary portion.
+#'       parts of a 1D NMR spectrum, there will be two data frames, one containing the real portion
+#'       and the other the imaginary portion.
 #'
-#' \item If the file contains one non-NMR spectrum,
-#' a single data frame will be returned.
-#'
-#' \item In all cases above, the data frame has
-#' elements \code{x} and \code{y}.
+#' \item In all cases above, the data frame has elements \code{x} and \code{y}.
 #'
 #' \item In the case of 2D NMR data, additional list elements are returned including
-#' the F2 frequency values, the F1 frequency values, and a matrix containing the 2D data.
+#'       the F2 frequency values, the F1 frequency values, and a matrix containing the 2D data.
 #'
 #' }
 #'
 #' @seealso Do \code{browseVignettes("readJDX")} for background information,
 #' references, supported formats, and details about the roles of each function.
+#' If you have a multiblock file (which contains multiple spectra), please see
+#' \code{\link{splitMultiblockDX}} which is a function to break such files into
+#' individual files which can then be processed with this function.
 #'
 #' @section Included Data Files:
 #' The examples make use of data files included with the package. File \code{SBO.jdx}
