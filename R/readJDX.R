@@ -218,7 +218,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
   if ("XYY" %in% fmt) mode <- "XY_data"
   if ("XRR" %in% fmt) mode <- "NMR_1D"
   if ("NMR_2D" %in% fmt) mode <- "NMR_2D"
-  if ("LC_MS" %in% fmt) <- mode <- "LC_MS"
+  if ("LC_MS" %in% fmt) mode <- "LC_MS"
   if ("PEAK_TABLE" %in% fmt) mode <- "PEAK_TABLE"
   if (is.na(mode)) stop("Could not determine the type of data in the file")
 
@@ -272,11 +272,15 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
     # Return value is a list: dataGuide, metadata, comment lines, a data frame for each time point
     # dataGuide, metadata & comments already in place; add data frames
     for (i in 4:length(VL)) {
-      tmp <- processVariableList(VL[[i]], params, mode, VL[[1]][i - 2, c(2, 3)], SOFC, debug)
-      something
-      name it
+      VL[[i]] <- processVariableList(VL[[i]], params, mode, VL[[1]][i - 2, c(2, 3)], SOFC, debug)
+      
     }
-    names(VL) <- c("dataGuide", "metadata", "commentLines", "F2", "F1", "Matrix")
+
+    # Get the retention times
+    rti <- grep("##PAGE= T=", jdx)
+    rt <- jdx[rti]
+    rt <- sub("##PAGE= ", "", rt)
+    names(VL) <- c("dataGuide", "metadata", "commentLines", rt)
   }
 
   if (mode == "PEAK_TABLE") {

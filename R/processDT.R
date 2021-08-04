@@ -16,7 +16,7 @@
 #'
 #' @param debug Integer.  See \code{\link{readJDX}} for details.
 #'
-#' @return A data frame with elements \code{x} and \code{y}.
+#' @return A data frame with elements \code{mz} and \code{int}.
 #'
 #' @importFrom stringr str_locate str_trim
 #'
@@ -35,7 +35,8 @@ processDT <- function(VL, params, mode, SOFC, debug = 0) {
   npoints <- VL[1]
   npoints <- sub("^\\s*##NPOINTS\\s*=", replacement = "", npoints)
   npoints <- as.integer(npoints)
-  if (is.integer(npoints)) stop("Couldn't find NPOINTS")
+  if (!is.integer(npoints)) stop("Couldn't find NPOINTS")
+  VL <- VL[-1] # remove the NPOINTS line
 
   # Remove comment only lines entirely
   comOnly <- grepl("^\\$\\$", VL)
@@ -45,14 +46,10 @@ processDT <- function(VL, params, mode, SOFC, debug = 0) {
   VL <- gsub("\\$\\$.*", "", VL)
 
   ### Step 1. Convert to numeric values
-  # From the standard:
-  # "Groups are separated by a semicolon or space; components
-  #  of a group are separated by commas"
-  # Split on any ; or space not preceeded by a , (negative lookbehind, need perl)
-  VL <- unlist(strsplit(VL, ";"))
-  VL <- unlist(strsplit(trimws(VL), "(?<!,)\\s+", perl = TRUE))
-  xValues <- as.numeric(sub(",\\s*[0-9]+\\.{0,1}[0-9]*", "", VL))
-  yValues <- as.numeric(sub("\\s*[0-9]+\\.{0,1}[0-9]*,", "", VL))
+  # TODO this is special for the Waters QDA data sets, check that it complies with AFFN
+  # Typical line: 123.45 6.789 separated by space
+  xValues <- as.numeric(sub("\\s{1}[0-9]+\\.{0,1}[0-9]*$", "", VL))
+  yValues <- as.numeric(sub("^[0-9]+\\.{0,1}[0-9]*\\s{1}", "", VL))
 
   ### Step 2. Check the integrity of the results
   # Check that we got the right number of data points
@@ -63,6 +60,7 @@ processDT <- function(VL, params, mode, SOFC, debug = 0) {
 
   ### And we're done...
 
-  xydata <- data.frame(x = xValues, y = yValues)
+  xydata <- data.frame(mz = xValues, int = yValues)
+  rownames(xydata) <- names(VL)
   return(xydata)
 }

@@ -76,12 +76,14 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
 
 
   if (mode == "LC_MS") {
+    # Keep line 1 of VL; it has the format
     # Keep line 2 of VL for debug reporting during decompression (e.g. ##PAGE= T= )
     # Keep line 3 for checking results
+    # Remove line 4: ##DATA TABLE= (XI..XI), PEAKS
     VL <- VL[-4]
     st <- lineNos[1]
     end <- lineNos[2]
-    lineNos <- c(NA_integer_, st, (st + 3L):end)
+    lineNos <- c(NA_integer_, st, (st + 2L):end)
   }
 
   # Dispatch based on fmt
