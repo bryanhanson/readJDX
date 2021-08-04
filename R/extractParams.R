@@ -205,6 +205,47 @@ extractParams <- function(md, mode, SOFC, debug = 0) {
     }
   } # end of mode == "NMR_2D"
 
+  if (mode == "LC_MS") {
+
+    # This section does NOT currently make the EU conversion; watch out for strsplit choice
+    # No parameters in this section can be skipped via SOFC
+
+    npoints <- grep("^\\s*##VAR_DIM\\s*=", md) # in LC-MS this is the number of time points
+    if (npoints == 0) stop("Couldn't find VAR_DIM")
+    npoints <- md[npoints]
+    npoints <- sub("^\\s*##VAR_DIM\\s*=", replacement = "", npoints)
+    npoints <- as.numeric(unlist(strsplit(npoints, ",")))
+    #npoints <- npoints[-length(npoints)] # see above for a change that might be needed here as well
+
+    firsts <- grep("^\\s*##FIRST\\s*=", md)
+    if (length(firsts) == 0) stop("Couldn't find FIRST")
+    firsts <- md[firsts]
+    firsts <- sub("^\\s*##FIRST\\s*=", replacement = "", firsts)
+    firsts <- as.numeric(unlist(strsplit(firsts, ",")))
+
+    lasts <- grep("^\\s*##LAST\\s*=", md)
+    if (lasts == 0) stop("Couldn't find LAST")
+    lasts <- md[lasts]
+    lasts <- sub("^\\s*##LAST\\s*=", replacement = "", lasts)
+    lasts <- as.numeric(unlist(strsplit(lasts, ",")))
+
+    # The following is designed for Waters Acquity QDA which exports the first and
+           #  last values in the wrong order (they refer to time, but are in the intensity position in the vector)
+    time_points <- npoints[2]
+    first_time <- firsts[3]
+    last_time <- lasts[3]
+
+    params <- c(
+      as.numeric(time_points), as.numeric(first_time), as.numeric(last_time)
+    )
+    names(params) <- c("time_points", "first_time", "last_time")
+
+    if (debug == 2) {
+      cat("\nExtracted parameters:\n")
+      print(params)
+    }
+  } # end of mode == "LC_MS"
+
   if (mode == "PEAK_TABLE") {
 
     # There are no official checks for this format

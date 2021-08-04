@@ -67,8 +67,18 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
   }
 
   if (mode == "NMR_2D") {
-    # Keep line 2 of VL for debug reporting during decompression (e.g. ##PAGE= F1= 4.7865152724775)
+  # Keep line 2 of VL for debug reporting during decompression (e.g. ##PAGE= F1= 4.7865152724775)
     VL <- VL[-c(3, 4)]
+    st <- lineNos[1]
+    end <- lineNos[2]
+    lineNos <- c(NA_integer_, st, (st + 3L):end)
+  }
+
+
+  if (mode == "LC_MS") {
+    # Keep line 2 of VL for debug reporting during decompression (e.g. ##PAGE= T= )
+    # Keep line 3 for checking results
+    VL <- VL[-4]
     st <- lineNos[1]
     end <- lineNos[2]
     lineNos <- c(NA_integer_, st, (st + 3L):end)
@@ -85,6 +95,11 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
 
   if (fmt == "PEAK_TABLE") {
     xydata <- processPT(VL, params, mode, SOFC, debug = debug)
+    return(xydata)
+  }
+
+  if (fmt == "LC_MS") {
+    xydata <- processDT(VL, params, mode, SOFC, debug = debug)
     return(xydata)
   }
 

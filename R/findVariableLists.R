@@ -34,8 +34,9 @@ findVariableLists <- function(jdx, debug = 0) {
     "XYY", # IR, UV, Vis, Raman, maybe others
     "XRR", # real NMR
     "XII", # imaginary NMR
-    "NMR_2D", # real 2D NMR
-    "PEAK_TABLE" # MS at least
+    "NMR_2D", # real 2D NMR in NTUPLE format
+    "LC_MS", # LC or GC-MS data in NTUPLE format
+    "PEAK_TABLE" # Simple peak list; AFFN assumed
   )
 
   nf <- length(VL_fmts)
@@ -47,6 +48,7 @@ findVariableLists <- function(jdx, debug = 0) {
     "^\\s*##PAGE\\s*=\\s*N=1",
     "^\\s*##PAGE\\s*=\\s*N=2",
     "^\\s*##PAGE\\s*=\\s*F1=",
+    "^\\s*##PAGE\\s*=\\s*T=",
     "^\\s*##PEAK TABLE\\s*=\\s*\\(XY\\.\\.XY\\)"
   )
 
@@ -55,7 +57,8 @@ findVariableLists <- function(jdx, debug = 0) {
     "^\\s*##END\\s*=",
     "^\\s*##PAGE\\s*=\\s*N=2",
     "^\\s*##END\\s{1}NTUPLES\\s*=",
-    "^\\s*##PAGE\\s*=\\s*F1=", # Not the very last entry however; fixed later in this function
+    "^\\s*##PAGE\\s*=\\s*F1=", # In NTUPLES there are several/many of these
+    "^\\s*##PAGE\\s*=\\s*T=", # In NTUPLES there are several/many of these
     "^\\s*##END\\s*="
   )
 
@@ -94,7 +97,7 @@ findVariableLists <- function(jdx, debug = 0) {
   if (length(spec_end) == 0L) stop("Found the start of a variable list, but not the end")
 
   # We do not check for if (length(spec_st) > 1L) or if (length(spec_end) > 1L) because
-  # several formats have repeated sections
+  # NTUPLE formats have repeated VL for each F1 or time point
 
   # Organize the return values
 
@@ -122,7 +125,15 @@ findVariableLists <- function(jdx, debug = 0) {
     if (any(grepl("Bruker BioSpin GmbH", jdx))) vendor <- "Bruker"
     if (is.null(vendor)) warning("Looks like 2D NMR but could not identify vendor")
   }
+  
+  # Verify this is MS data in NTUPLE format
 
+  ms <- FALSE
+
+  if (any(Format == "LC_MS")) {
+    if (any(grepl("##NTUPLES=\\s*MASS\\s{1}SPECTRUM", jdx))) ms <- TRUE
+    if (!ms) warning("This looks like LC-MS or GC-MS data, but it is not declared as such")
+  }
   # Up to this point, processing has been generic & spec_st, spec_end reflect grep'ing of patterns.
   # Now we need to tweak things depending upon the format & vendor, to narrow the actual variable list
   # as much as possible.
@@ -132,8 +143,9 @@ findVariableLists <- function(jdx, debug = 0) {
       DF$LastLine[i] <- DF$LastLine[i] - 1 # removes the ##PAGE= N=2 line
     }
 
-    if (DF$Format[i] == "NMR_2D") {
-      if (i != nrow(DF)) DF$LastLine[i] <- DF$FirstLine[i + 1] - 1 # removes the ##PAGE= N=2 line
+    if ( (DF$Format[i] == "NMR_2D") | (DF$Format[i] == "LC_MS") ) {
+      # Remove the ##PAGE= N=2 line (NMR) or ##PAGE = T= line (MS)
+      if (i != nrow(DF)) DF$LastLine[i] <- DF$FirstLine[i + 1] - 1
       # Next line removes
       # ##END NTUPLES=
       # ##END=
