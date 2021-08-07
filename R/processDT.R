@@ -33,7 +33,7 @@ processDT <- function(VL, SOFC, debug = 0) {
 
   # Get the number of data points for this page
   # I'm not certain if we can get the far if it is not... we may have wrong lines in that case
-  np <- grepl("^\\s*##NPOINTS\\s*=",, VL[1]) # see if NPOINTS is present
+  np <- grepl("^\\s*##NPOINTS\\s*=", VL[1]) # see if NPOINTS is present
   if (!np) warning("Could not find NPOINTS, continuing")
   if (np) {
     npoints <- VL[1]
