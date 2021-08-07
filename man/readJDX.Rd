@@ -13,21 +13,21 @@ readJDX(file = "", SOFC = TRUE, debug = 0)
 The default is \code{TRUE} i.e. stop when something is not right.
 This ensures that correct data is returned.  Change to \code{FALSE} at your own risk.
 NOTE: Only certain checks can be skipped via this option, as there are some
-parameters that must be available and correct in order to return any answer.
+parameters that must be available and correct in order to return \emph{any} answer.
 For instance, one must end up with the same number of X and Y values.
 This option is provided for those \pkg{advanced
 users} who have carefully checked their original files and want to skip the
 required checks.  It may also be useful for troubleshooting.
-The JCAMP-DX standard requires
+The JCAMP-DX standard typically requires
 several checks of the data as it is decompressed.  These checks are essential
 to obtaining the correct results.  However, some JCAMP-DX writing programs
 do not follow the standard to the letter.  For instance we have observed that
 not all JCAMP-DX writers put FIRSTY into the metadata, even though it is required by
 the standard.  In other cases values in the file have low precision (see section on precision).
-Another example is we have observed files where the X values are the count of data points,
-and FIRSTY is given in Hz.  Since the field strength and center of the sweep frequency is needed
-to convert to ppm, and these are  not required in the standard, one cannot return an answer in
-ppm or Hz automatically.
+Another example we have observed is NMR files where the X values are the count/index of data points,
+and FIRSTY is given in Hz.  Since the field strength and center of the sweep frequency are needed
+to convert to ppm, and these are parameters not required in the standard, one cannot return an
+answer in either ppm or Hz automatically.
 In cases like this, once can set \code{SOFC = FALSE} and then manually convert the X axis.}
 
 \item{debug}{Integer.  The level of debug reporting desired.  For those options giving
@@ -42,38 +42,32 @@ In cases like this, once can set \code{SOFC = FALSE} and then manually convert t
   \item 5 = detailed info about processing the Y values when DUP is in use (huge output!).
   \item 6 = detailed info about processing the Y values when DIF is in use (huge output!).
 }
-In cases where an error is about to stop execution, you get additional information regardless of
+In cases when an error is about to stop execution, you get additional information regardless of
 the \code{debug} value.}
 }
 \value{
 A list, as follows:
 
 \itemize{
-
-\item The first element is a data frame summarizing the pieces of the imported file.
-
-\item The second element is the file metadata.
-
-\item The third element is a integer vector giving the comment lines found
+  \item The first element is a data frame summarizing the pieces of the imported file.
+  \item The second element is the file metadata.
+  \item The third element is a integer vector giving the comment lines found
       (exclusive of the metdata, which typically contains many comments).
 }
 
 Additional elements contain the extracted data as follows:
 
 \itemize{
-
-\item If the file contains one non-NMR spectrum, or a processed NMR spectrum (i.e. only 
-      the final real data), a single data frame.
-
-\item If the file contains the real and imaginary
-      parts of a 1D NMR spectrum, there will be two data frames, one containing the real portion
-      and the other the imaginary portion.
-
-\item In all cases above, the data frame has elements \code{x} and \code{y}.
-
-\item In the case of 2D NMR data, additional list elements are returned including
-      the F2 frequency values, the F1 frequency values, and a matrix containing the 2D data.
-
+  \item If the file contains one non-NMR spectrum, or a processed NMR spectrum (i.e. only 
+        the final real data), a single data frame.
+  \item If the file contains the real and imaginary
+         parts of a 1D NMR spectrum, there will be two data frames, one containing the real portion
+         and the other the imaginary portion.
+  \item In all cases above, the data frame has elements \code{x} and \code{y}.
+  \item In the case of 2D NMR data, additional list elements are returned including
+        the F2 frequency values, the F1 frequency values, and a matrix containing the 2D data.
+  \item In the case of LC-MS or GC-MS data, a data frame is returned for each time point.
+        The data frame has elements \code{mz} and \code{int} (intensity).
 }
 }
 \description{
@@ -87,21 +81,22 @@ supported but gives an error, please file an issue at Github and share the file.
 }
 \section{Included Data Files}{
 
-The examples make use of data files included with the package. File \code{SBO.jdx}
-is an IR spectrum of Smart Balance Original spread (a butter substitute). The
-spectrum is presented in transmission format, and was recorded on a ThermoFisher
-instrument.  The file uses AFFN compression, and was written
-with the JCAMP-DX 5.01 standard. Note that even though the Y-axis was recorded in
-percent transmission, in the JDX file it is stored on [0\ldots1].
-File \code{PCRF.jdx} is a 1H NMR
-spectrum of a hexane extract of a reduced fat potato chip.  The spectrum was
-recorded on a JEOL instrument.  The file uses SQZ DIF DUP compression, and was written
-with the JCAMP-DX 6.00 standard.
-File \code{PCRF_line265.jdx} has a deliberate error in it.
-File \code{isasspc1.jdx} is a 2D NMR file recorded on a JEOL GX 400 instrument.
-The file is freely available at \url{http://www.jcamp-dx.org/}.
-File \code{MiniDIFDUP.JDX} is a small demonstration file, used in the vignettes to
-illustrate the decompression process.  It is derived from a freely available file.
+The examples make use of data files included with the package:
+\itemize{
+  \item File \code{SBO.jdx} is an IR spectrum of Smart Balance Original spread (a butter
+        substitute). The spectrum is presented in transmission format, and was recorded on a
+        ThermoFisher instrument.  The file uses AFFN compression, and was written
+         with the JCAMP-DX 5.01 standard. Note that even though the Y-axis was recorded in
+         percent transmission, in the JDX file it is stored on [0\ldots1].
+  \item File \code{PCRF.jdx} is a 1H NMR spectrum of a hexane extract of a reduced fat potato chip.
+        The spectrum was recorded on a JEOL instrument.  The file uses SQZ DIF DUP compression,
+        and was written with the JCAMP-DX 6.00 standard.
+  \item File \code{PCRF_line265.jdx} has a deliberate error in it.
+  \item File \code{isasspc1.jdx} is a 2D NMR file recorded on a JEOL GX 400 instrument.
+        The file is freely available at \url{http://www.jcamp-dx.org/}.
+  \item File \code{MiniDIFDUP.JDX} is a small demonstration file, used in the vignettes to
+        illustrate the decompression process.  It is derived from a freely available file.
+}
 }
 
 \section{Precision}{
@@ -120,8 +115,8 @@ the results carefully as described under \code{SOFC}.
 
 The standard requires a "Y Value Check" when in DIF mode.  Extra Y values have been appended to each
 line to use in the check, and the last Y value on a line must equal the first Y value on the next line
-IFF one is in DIF mode.  After a successful check, the extra Y value must be removed.  In actual practice,
-some vendors, at least some of the time, seem to differ as to the definition of
+\emph{IFF} one is in DIF mode.  After a successful check, the extra Y value must be removed.  In actual practice,
+some vendors, at least some of the time, seem to differ as to the meaning of
 "being in DIF mode".  In turn, this determines how the Y value check should proceed.
 \itemize{
   \item The standard says "When, and only when, the last ordinate of a line is in DIF form ...
@@ -134,7 +129,7 @@ some vendors, at least some of the time, seem to differ as to the definition of
         for Y value check purposes. In these cases we have look backwards to see if we are in DIF mode.
         Let's call this "relayed DIF".
   \item However, some vendors may treat ... DIF DUP DUP (end of line) as not in DIF mode, and hence
-        one should not do the Y value check and not remove any values, since this vendor would not have
+        one should not do the Y value check and not remove any values, as this vendor would not have
         added an extra Y value.
   \item In addition to these three possibilities, \code{readJDX} through versions 0.3.xx used a different
         definition, namely if there were any DIF entries anywhere on the line, then DIF mode was
@@ -191,8 +186,9 @@ chk <- readJDX(problem)
 }
 \seealso{
 Do \code{browseVignettes("readJDX")} for background information,
-references, supported formats, and details about the roles of each function.
-If you have a multiblock file (which contains multiple spectra), please see
-\code{\link{splitMultiblockDX}} which is a function to break such files into
-individual files which can then be processed with this function.
+         references, supported formats, and details about the roles of each function.
+         If you have a multiblock file (which contains multiple spectra, but not 2D NMR,
+         LC-MS or GC-MS data sets), please see
+         \code{\link{splitMultiblockDX}} for a function to break such files into
+         individual files which can then be processed in the normal way.
 }

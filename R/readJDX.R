@@ -80,7 +80,7 @@
 #'
 #' @section Included Data Files:
 #' The examples make use of data files included with the package:
-#' itemize{
+#' \itemize{
 #'   \item File \code{SBO.jdx} is an IR spectrum of Smart Balance Original spread (a butter
 #'         substitute). The spectrum is presented in transmission format, and was recorded on a
 #'         ThermoFisher instrument.  The file uses AFFN compression, and was written
