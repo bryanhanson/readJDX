@@ -28,7 +28,7 @@ findVariableLists <- function(jdx, debug = 0) {
   # A data set is defined by a variable list.
   # The following is structured to make it easy to add other options.
 
-  # Add other variable list FORMAT short names here
+  # Add other variable list "fmt" short names here
   # These are used to tweak the lines selected
   VL_fmts <- c(
     "XYY", # IR, UV, Vis, Raman, maybe others
@@ -109,7 +109,7 @@ findVariableLists <- function(jdx, debug = 0) {
 
   DF <- data.frame(Format, FirstLine, LastLine, stringsAsFactors = FALSE)
 
-  # Find all comment only lines exclusive of metadata; these cause a variety of problems.
+  # Find all comment-only lines exclusive of metadata; these cause a variety of problems.
   # Keep original line numbers. CURRENTLY NOT USED OTHER THAN THIS FUNCTION
 
   comOnly <- grep("^\\$\\$", jdx)
@@ -123,22 +123,23 @@ findVariableLists <- function(jdx, debug = 0) {
   if (any(Format == "NMR_2D")) {
     if (any(grepl("JEOL NMR", jdx))) vendor <- "JEOL"
     if (any(grepl("Bruker BioSpin GmbH", jdx))) vendor <- "Bruker"
-    if (is.null(vendor)) warning("Looks like 2D NMR but could not identify vendor")
+    if (is.null(vendor)) warning("Looks like 2D NMR but could not identify vendor, continuing")
   }
   
-  # Verify this is MS data in NTUPLE format
+  # Check to see if this is LC-MS or GC-MS data in NTUPLE format
 
   ms <- FALSE
 
   if (any(Format == "LC_MS")) {
     if (any(grepl("##NTUPLES=\\s*MASS\\s{1}SPECTRUM", jdx))) ms <- TRUE
-    if (!ms) warning("This looks like LC-MS or GC-MS data, but it is not declared as such")
+    if (!ms) warning("This looks like LC-MS or GC-MS data, but it is not declared as such, continuing")
   }
   # Up to this point, processing has been generic & spec_st, spec_end reflect grep'ing of patterns.
   # Now we need to tweak things depending upon the format & vendor, to narrow the actual variable list
   # as much as possible.
 
   for (i in 1:nrow(DF)) {
+
     if (DF$Format[i] == "XRR") {
       DF$LastLine[i] <- DF$LastLine[i] - 1 # removes the ##PAGE= N=2 line
     }
@@ -173,6 +174,7 @@ findVariableLists <- function(jdx, debug = 0) {
     VL[[i]] <- c(DF$Format[i - 2], jdx[DF$FirstLine[i - 2]:DF$LastLine[i - 2]])
   }
 
+  # The generic VL_1 names are replaced when these results are passed back to readJDX
   names(VL) <- c("DataGuide", "Metadata", "Comments", paste("VL", 1:(length(VL) - 3), sep = "_"))
   return(VL)
 }
