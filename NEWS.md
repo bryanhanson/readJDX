@@ -1,4 +1,10 @@
 # readJDX 0.5.41 (2021-04-16)
+## Enhancements
+* Support for at least some forms of LC-MS/GC-MS data in NTUPLES format added.  Works on a limited number of test files.  Uses new function `processDT` to parse data sets with the `##DATA TABLE= (XI..XI)` format.
+## Behind the Scenes
+* Additional comments to the code to better document the process.
+
+# readJDX 0.5.41 (2021-04-16)
 ## Misc.
 * Update `DESCRIPTION` per CRAN request.
 
