@@ -110,7 +110,8 @@ findVariableLists <- function(jdx, debug = 0) {
   DF <- data.frame(Format, FirstLine, LastLine, stringsAsFactors = FALSE)
 
   # Find all comment-only lines exclusive of metadata; these cause a variety of problems.
-  # Keep original line numbers. CURRENTLY NOT USED OTHER THAN THIS FUNCTION
+  # Keep original line numbers. CURRENTLY NOT USED OTHER THAN THIS FUNCTION, but is returned.
+  # There is a multi-line comment label "##=" but we do not search for this (not sure I've seen it).
 
   comOnly <- grep("^\\$\\$", jdx)
   comOnly <- setdiff(comOnly, 1:(spec_st[1] - 1))

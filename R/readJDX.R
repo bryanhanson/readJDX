@@ -206,8 +206,9 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
 
   VL <- findVariableLists(jdx, debug)
 
-  # "fmt" is a character vector extracted by findVariableLists, and reflects how the data is formatted.
-  # "mode" is a length one string derived from fmt and reflects the processing needed.
+  # "fmt" is a character vector extracted by findVariableLists, and reflects how the data is formatted
+  # in the variable list.  "mode" is a length one string derived from fmt and reflects the processing
+  # needed, in particular which parameters need to be extracted in order to check the data
 
   fmt <- VL[["DataGuide"]][, "Format"][-1]
   mode <- NA_character_

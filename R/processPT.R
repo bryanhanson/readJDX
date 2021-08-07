@@ -28,6 +28,8 @@ processPT <- function(VL, params, mode, SOFC, debug = 0) {
   VL <- VL[-1] # Remove the pre-pended format string
   if (debug >= 1) cat("\nProcessing variable list...\n")
 
+  # This format is typical of a single mass spectrum but could be used other ways
+
   ### Step 1. Convert to numeric values
   # From the standard:
   # "Groups are separated by a semicolon or space; components

@@ -1,5 +1,5 @@
 #'
-#' Process (mostly: decompress) a Single Variable List from a JCAMP-DX file
+#' Process (in most cases decompress) a Single Variable List from a JCAMP-DX file
 #'
 #' This function is NOT EXPORTED.
 #' Users would not normally call this function.  See \code{\link{readJDX}}.

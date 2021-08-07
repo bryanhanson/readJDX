@@ -215,8 +215,9 @@ extractParams <- function(md, mode, SOFC, debug = 0) {
     # There do not appear to be any officially mandated checks, but we'll try to make some anyway,
     # but use the SOFC mechanism
 
+    # TODO We are not currently checking any of these values; possibly the same in NMR_2D above
+
     npoints <- grep("^\\s*##VAR_DIM\\s*=", md) # in LC-MS this is the number of time points
-    # we are not (?) using this value but probably should; same in NMR_2D above
     if (SOFC) if (npoints == 0L) stop("Couldn't find VAR_DIM")
     if (npoints != 0L) {
       npoints <- md[npoints]
