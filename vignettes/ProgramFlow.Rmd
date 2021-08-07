@@ -82,7 +82,8 @@ fName <- c(
   "- - - - deDIF",
   "- - - - - unDIF",
   "- - - - yValueCheck",
-  "- - processPT"
+  "- - processPT",
+  "- - processDT"
   )
 
 fInput <- c(
@@ -99,6 +100,7 @@ fInput <- c(
   "*list* of character vectors from a single VL; the character vectors are named with the ASDF mode, the list is named with line numbers",
   "character vector: one line from VL, entries named by ASDF code",
   "*list* of character vectors from a single VL; the character vectors are named with the ASDF mode, the list is named with line numbers",
+  "character vector: a single VL",
   "character vector: a single VL"
   )
 

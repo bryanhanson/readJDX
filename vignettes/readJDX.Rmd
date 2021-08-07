@@ -92,7 +92,8 @@ The JCAMP-DX standard allows a lot of flexibility and instrument manufacturers h
     * DATA TABLE=(X++(R..R)) As above.  The real data from a 1D NMR spectrum.
     * DATA TABLE=(X++(I..I)) As above.  The imaginary data from a 1D NMR spectrum.
     * DATA TABLE=(F2++(Y..Y)) As above.  Format used for the slices of a 2D NMR spectrum.
-    * PEAK TABLE=(XY..XY) Entries are $x$,$y$ pairs separated by spaces or semicolons.  No compression is used.
+    * PEAK TABLE=(XY..XY) Entries are $x$,$y$ pairs separated by spaces or semicolons.  No compression is used.  Used for single MS spectra.
+    * DATA TABLE=(XI..XI) Entries are $x$,$y$ pairs separated by spaces.  No compression is used.  Used for instance in LC_MS data sets.
 * Within a variable list, several different compression schemes can be employed.  The following are supported:
     * AFFN: ASCII numbers separated by at least one space.
     * PAC: Numbers separated by exactly one space, + or -.
