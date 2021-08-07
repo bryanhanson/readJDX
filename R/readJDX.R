@@ -179,6 +179,7 @@
 #' }
 #'
 readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
+
   if (!requireNamespace("stringr", quietly = TRUE)) {
     stop("You need to install package stringr to use this function")
   }
@@ -191,25 +192,24 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
 
   # A data block consists of ##TITLE= up to ##END=
   # However, link blocks can be used to contain data blocks, in which
-  # case one has a compound file. Link blocks and compound files are not supported.
-  # NMR data sets, including 2D NMR data sets, use a different scheme to hold multiple data sets.
+  # case one has a compound file. Link blocks and compound files are not supported, 
+  # but a function is available to split them into individual files.
+  # NMR data sets, including 2D NMR data sets, and LC-MS/GC-MS data sets use a different
+  # scheme (NTUPLES) to hold multiple data sets.
 
   blocks <- grep("^\\s*##TITLE\\s*=.*", jdx)
   nb <- length(blocks)
   if (nb == 0) stop("This does not appear to be a JCAMP-DX file")
-  if (nb > 1) stop("Compound (multi-block / multi-spectra) data sets not supported")
+  if (nb > 1) stop("Compound (multi-block / multi-spectra) data sets can not be parsed.\nSee splitMultiblockDX which is a function to split such files into separate files which can be parsed.")
 
   ##### Step 2. Locate the parameters and the variable list(s)
 
   VL <- findVariableLists(jdx, debug)
 
-  # fmt is a character vector extracted by findVariableLists.
+  # "fmt" is a character vector extracted by findVariableLists, and reflects how the data is formatted.
+  # "mode" is a length one string derived from fmt and determines the type of processing needed.
 
   fmt <- VL[["DataGuide"]][, "Format"][-1]
-
-  # "mode" is a length one string derived from fmt and is used to determine the type of
-  # processing needed; we are not using "fmt" because we need a more user-friendly string
-
   mode <- NA_character_
   if ("XYY" %in% fmt) mode <- "XY_data"
   if ("XRR" %in% fmt) mode <- "NMR_1D"
@@ -224,7 +224,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
 
   params <- extractParams(VL[[2]], mode, SOFC, debug)
 
-  ##### Step 4.  Process the variable list(s) into the final lists
+  ##### Step 4.  Process the variable list(s) into the final list that is returned
 
   if ((mode == "XY_data") | (mode == "NMR_1D")) {
     # Return value is a list: dataGuide, metadata, comment lines + data frames of x, y
@@ -236,7 +236,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
 
     # Fix up names
     if (mode == "XY_data") {
-      specnames <- jdx[blocks] # each line with title
+      specnames <- jdx[blocks] # each line with ##TITLE= (there is only one however)
       specnames <- str_trim(substring(specnames, 9, nchar(specnames)))
     }
 
@@ -258,7 +258,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
     # Update VL
     VL[[4]] <- sort(seq(params[4], params[6], length.out = params[2])) # add F2
     VL[[5]] <- sort(seq(params[3], params[5], length.out = params[1])) # add F1
-    M <- M[nrow(M):1, ] # reverse order of rows, works for Bruker files
+    M <- M[nrow(M):1, ] # reverse order of rows, works for Bruker files (all vendors?)
     VL[[6]] <- M
     VL <- VL[1:6] # toss the other stuff
     names(VL) <- c("dataGuide", "metadata", "commentLines", "F2", "F1", "Matrix")
@@ -266,7 +266,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
 
   if (mode == "LC_MS") {
     # Return value is a list: dataGuide, metadata, comment lines, a data frame for each time point
-    # dataGuide, metadata & comments already in place; add data frames
+    # dataGuide, metadata & comments already in place; add data frames for each time point
     for (i in 4:length(VL)) {
       VL[[i]] <- processVariableList(VL[[i]], params, mode, VL[[1]][i - 2, c(2, 3)], SOFC, debug)
       
@@ -283,7 +283,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
     for (i in 4:length(VL)) {
       VL[[i]] <- processVariableList(VL[[i]], params, mode, VL[[1]][i - 2, c(2, 3)], SOFC, debug)
     }
-    specnames <- jdx[blocks] # each line with title
+    specnames <- jdx[blocks] # each line with ##TITLE= (there is only one however)
     specnames <- str_trim(substring(specnames, 9, nchar(specnames)))
     names(VL) <- c("dataGuide", "metadata", "commentLines", specnames)
   }
