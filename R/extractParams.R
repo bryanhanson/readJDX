@@ -7,18 +7,20 @@
 #'
 #' @param md Character.  A vector of character strings which contains the metadata.
 #'
-#' @param mode Character. One of c("IR_etc", "NMR", "NMR2D").
+#' @param mode Character. One of c("IR_etc", "NMR", "NMR2D").  Note the same as "fmt" (see notes in code).
+#'        Determines the needed processing.
 #'
 #' @param SOFC Logical. Stop on Failed Check.   See \code{\link{readJDX}} for details.
 #'
 #' @param debug Integer.  See \code{\link{readJDX}} for details.
 #'
 #' @return A named numeric vector containing the extracted parameters.
-#' Contents will vary by \code{mode}.
+#'         Contents will vary by \code{mode}.
 #'
 #' @noRd
 #'
 extractParams <- function(md, mode, SOFC, debug = 0) {
+
   if (mode == "XY_data") {
 
     # The following parameters must be found
@@ -210,31 +212,42 @@ extractParams <- function(md, mode, SOFC, debug = 0) {
     # This section does NOT currently make the EU conversion; watch out for strsplit choice
     # No parameters in this section can be skipped via SOFC
 
+    # There do not appear to be any officially mandated checks, but we'll try to make some anyway,
+    # but use the SOFC mechanism
+
     npoints <- grep("^\\s*##VAR_DIM\\s*=", md) # in LC-MS this is the number of time points
-    if (npoints == 0) stop("Couldn't find VAR_DIM")
-    npoints <- md[npoints]
-    npoints <- sub("^\\s*##VAR_DIM\\s*=", replacement = "", npoints)
-    npoints <- as.numeric(unlist(strsplit(npoints, ",")))
-    #npoints <- npoints[-length(npoints)] # see above for a change that might be needed here as well
+    # we are not (?) using this value but probably should; same in NMR_2D above
+    if (SOFC) if (npoints == 0L) stop("Couldn't find VAR_DIM")
+    if (npoints != 0L) {
+      npoints <- md[npoints]
+      npoints <- sub("^\\s*##VAR_DIM\\s*=", replacement = "", npoints)
+      npoints <- as.numeric(unlist(strsplit(npoints, ",")))
+    }
 
     firsts <- grep("^\\s*##FIRST\\s*=", md)
-    if (length(firsts) == 0) stop("Couldn't find FIRST")
-    firsts <- md[firsts]
-    firsts <- sub("^\\s*##FIRST\\s*=", replacement = "", firsts)
-    firsts <- as.numeric(unlist(strsplit(firsts, ",")))
+    if (SOFC) if (length(firsts) == 0) stop("Couldn't find FIRST")
+    if (firsts != 0L) {
+      firsts <- md[firsts]
+      firsts <- sub("^\\s*##FIRST\\s*=", replacement = "", firsts)
+      firsts <- as.numeric(unlist(strsplit(firsts, ",")))
+    }
 
     lasts <- grep("^\\s*##LAST\\s*=", md)
-    if (lasts == 0) stop("Couldn't find LAST")
-    lasts <- md[lasts]
-    lasts <- sub("^\\s*##LAST\\s*=", replacement = "", lasts)
-    lasts <- as.numeric(unlist(strsplit(lasts, ",")))
+    if (SOFC) if (lasts == 0) stop("Couldn't find LAST")
+    if (lasts != 0L) {
+      lasts <- md[lasts]
+      lasts <- sub("^\\s*##LAST\\s*=", replacement = "", lasts)
+      lasts <- as.numeric(unlist(strsplit(lasts, ",")))
+    }
 
-    # The following is designed for Waters Acquity QDA which exports the first and
-           #  last values in the wrong order (they refer to time, but are in the intensity position in the vector)
+    # The following assumes Waters Acquity QDA which exports the first and
+    # last values in the wrong order (they refer to time, but are in the intensity position in the vector)
+    # In the future, may need to extract vendor and use that info here
     time_points <- npoints[2]
     first_time <- firsts[3]
     last_time <- lasts[3]
 
+    # if !SOFC these values will be zero
     params <- c(
       as.numeric(time_points), as.numeric(first_time), as.numeric(last_time)
     )
@@ -251,12 +264,14 @@ extractParams <- function(md, mode, SOFC, debug = 0) {
     # There are no official checks for this format
 
     npoints <- grep("^\\s*##NPOINTS\\s*=", md)
-    if (npoints == 0) stop("Couldn't find NPOINTS")
-    npoints <- md[npoints]
-    npoints <- sub("^\\s*##NPOINTS\\s*=", replacement = "", npoints)
-    npoints <- as.integer(npoints)
+    if (SOFC) if (npoints == 0) stop("Couldn't find NPOINTS")
+    if (npoints != 0L) {
+      npoints <- md[npoints]
+      npoints <- sub("^\\s*##NPOINTS\\s*=", replacement = "", npoints)
+      npoints <- as.integer(npoints)
+    }
 
-    params <- npoints
+    params <- npoints # if !SOFC this will be 0L
     names(params) <- "npoints"
 
     if (debug == 2) {
