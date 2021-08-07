@@ -207,12 +207,12 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
   VL <- findVariableLists(jdx, debug)
 
   # "fmt" is a character vector extracted by findVariableLists, and reflects how the data is formatted.
-  # "mode" is a length one string derived from fmt and determines the type of processing needed.
+  # "mode" is a length one string derived from fmt and reflects the processing needed.
 
   fmt <- VL[["DataGuide"]][, "Format"][-1]
   mode <- NA_character_
   if ("XYY" %in% fmt) mode <- "XY_data"
-  if ("XRR" %in% fmt) mode <- "NMR_1D"
+  if ("XRR" %in% fmt) mode <- "NMR_1D" # these files also contain XII
   if ("NMR_2D" %in% fmt) mode <- "NMR_2D"
   if ("LC_MS" %in% fmt) mode <- "LC_MS"
   if ("PEAK_TABLE" %in% fmt) mode <- "PEAK_TABLE"
