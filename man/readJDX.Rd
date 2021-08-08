@@ -28,7 +28,7 @@ Another example we have observed is NMR files where the X values are the count/i
 and FIRSTY is given in Hz.  Since the field strength and center of the sweep frequency are needed
 to convert to ppm, and these are parameters not required in the standard, one cannot return an
 answer in either ppm or Hz automatically.
-In cases like this, once can set \code{SOFC = FALSE} and then manually convert the X axis.}
+In cases like this, one can set \code{SOFC = FALSE} and then manually convert the X axis.}
 
 \item{debug}{Integer.  The level of debug reporting desired.  For those options giving
        a lot of output, you may wish to consider directing the output via \code{\link{sinkall}}
@@ -64,10 +64,11 @@ Additional elements contain the extracted data as follows:
          parts of a 1D NMR spectrum, there will be two data frames, one containing the real portion
          and the other the imaginary portion.
   \item In all cases above, the data frame has elements \code{x} and \code{y}.
-  \item In the case of 2D NMR data, additional list elements are returned including
+  \item In the case of 2D NMR data, additional named list elements are returned including
         the F2 frequency values, the F1 frequency values, and a matrix containing the 2D data.
   \item In the case of LC-MS or GC-MS data, a data frame is returned for each time point.
-        The data frame has elements \code{mz} and \code{int} (intensity).
+        The data frame has elements \code{mz} and \code{int} (intensity). Each time point
+        is named with the time from the file.
 }
 }
 \description{
