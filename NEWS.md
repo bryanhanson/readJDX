@@ -1,6 +1,14 @@
+# readJDX 0.5.? (2021-08-11)
+## Enhancements
+* `readJDX` can now read the `##XYPOINTS=(XY..XY)` format.
+
+## Behind the Scenes
+* `processPT` renamed to `processXY` as part of simplifying the reading of any format that contains one x,y pair per line in AFFN format.
+
 # readJDX 0.5.61 (2021-08-07)
 ## Enhancements
 * Support for at least some forms of LC-MS/GC-MS data in NTUPLES format added.  Works on a limited number of test files.  Uses new function `processDT` to parse data sets with the `##DATA TABLE= (XI..XI)` format.
+
 ## Behind the Scenes
 * Additional comments to the code to better document the process.
 
