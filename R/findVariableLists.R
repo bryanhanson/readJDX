@@ -36,7 +36,8 @@ findVariableLists <- function(jdx, debug = 0) {
     "XII", # imaginary NMR
     "NMR_2D", # real 2D NMR in NTUPLE format
     "LC_MS", # LC or GC-MS data in NTUPLE format
-    "PEAK_TABLE" # Simple peak list; AFFN assumed
+    "PEAK_TABLE", # Simple peak list; AFFN assumed
+    "XYXY" # one x,y pair per line in AFFN
   )
 
   nf <- length(VL_fmts)
@@ -49,7 +50,8 @@ findVariableLists <- function(jdx, debug = 0) {
     "^\\s*##PAGE\\s*=\\s*N=2",
     "^\\s*##PAGE\\s*=\\s*F1=",
     "^\\s*##PAGE\\s*=\\s*T=",
-    "^\\s*##PEAK TABLE\\s*=\\s*\\(XY\\.\\.XY\\)"
+    "^\\s*##PEAK TABLE\\s*=\\s*\\(XY\\.\\.XY\\)",
+    "^\\s*##XYPOINTS\\s*=\\s*\\(XY\\.\\.XY\\)"
   )
 
   # Add other END patterns here (each associated with a specific VL_fmts entry)
@@ -59,6 +61,7 @@ findVariableLists <- function(jdx, debug = 0) {
     "^\\s*##END\\s{1}NTUPLES\\s*=",
     "^\\s*##PAGE\\s*=\\s*F1=", # In NTUPLES there are several/many of these
     "^\\s*##PAGE\\s*=\\s*T=", # In NTUPLES there are several/many of these
+    "^\\s*##END\\s*=",
     "^\\s*##END\\s*="
   )
 

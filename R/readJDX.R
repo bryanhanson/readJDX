@@ -213,11 +213,12 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
 
   fmt <- VL[["DataGuide"]][, "Format"][-1]
   mode <- NA_character_
-  if ("XYY" %in% fmt) mode <- "XY_data"
+  if ("XYY" %in% fmt) mode <- "XYY"
   if ("XRR" %in% fmt) mode <- "NMR_1D" # these files also contain XII
   if ("NMR_2D" %in% fmt) mode <- "NMR_2D"
   if ("LC_MS" %in% fmt) mode <- "LC_MS"
-  if ("PEAK_TABLE" %in% fmt) mode <- "PEAK_TABLE"
+  if ("PEAK_TABLE" %in% fmt) mode <- "XYXY"
+  if ("XYXY" %in% fmt) mode <- "XYXY"
   if (is.na(mode)) stop("Could not determine the type of data in the file")
 
   if (debug >= 1) cat("\n\nProcessing file", file, "which appears to contain", mode, "data\n")
@@ -228,7 +229,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
 
   ##### Step 4.  Process the variable list(s) into the final list that is returned
 
-  if ((mode == "XY_data") | (mode == "NMR_1D")) {
+  if ((mode == "XYY") | (mode == "NMR_1D")) {
     # Return value is a list: dataGuide, metadata, comment lines + data frames of x, y
     # dataGuide, metadata & comments already in place; process each variable list
 
@@ -237,7 +238,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
     }
 
     # Fix up names
-    if (mode == "XY_data") {
+    if (mode == "XYY") {
       specnames <- jdx[blocks] # each line with ##TITLE= (there is only one however)
       specnames <- str_trim(substring(specnames, 9, nchar(specnames)))
     }
@@ -281,7 +282,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
     names(VL) <- c("dataGuide", "metadata", "commentLines", rt)
   }
 
-  if (mode == "PEAK_TABLE") {
+  if (mode == "XY") {
     for (i in 4:length(VL)) {
       VL[[i]] <- processVariableList(VL[[i]], params, mode, VL[[1]][i - 2, c(2, 3)], SOFC, debug)
     }

@@ -18,27 +18,20 @@
 #'
 #' @return A data frame with elements \code{x} and \code{y}.
 #'
-#' @importFrom stringr str_locate str_trim
-#'
 #' @noRd
 #'
 
-processXY <- function(VL, params, mode, SOFC, debug = 0) {
+processXYXY <- function(VL, params, mode, SOFC, debug = 0) {
   fmt <- VL[1]
   VL <- VL[-1] # Remove the pre-pended format string
   if (debug >= 1) cat("\nProcessing variable list...\n")
 
-  # This format is typical of a single mass spectrum but could be used other ways
+  # This format is typical of a single mass spectrum is also used in LC_MS for
+  # each time point
 
   ### Step 1. Convert to numeric values
-  # From the standard:
-  # "Groups are separated by a semicolon or space; components
-  #  of a group are separated by commas"
-  # Split on any ; or space not preceeded by a , (negative lookbehind, need perl)
-  VL <- unlist(strsplit(VL, ";"))
-  VL <- unlist(strsplit(trimws(VL), "(?<!,)\\s+", perl = TRUE))
-  xValues <- as.numeric(sub(",\\s*[0-9]+\\.{0,1}[0-9]*", "", VL))
-  yValues <- as.numeric(sub("\\s*[0-9]+\\.{0,1}[0-9]*,", "", VL))
+  xValues <- charXYnumXY(VL)$x
+  yValues <- charXYnumXY(VL)$y
 
   ### Step 2. Check the integrity of the results
   # Check that we got the right number of data points

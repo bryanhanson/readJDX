@@ -36,7 +36,7 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
   lineNos <- unlist(lineNos)
   fmt <- VL[1]
 
-  if (mode == "XY_data") {
+  if (mode == "XYY") {
     # Keep line 1 of VL; it has the format
     VL <- VL[-c(2, length(VL))]
     st <- lineNos[1] + 1
@@ -44,7 +44,7 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
     lineNos <- c(NA_integer_, st:end)
   }
 
-  if (mode == "PEAK_TABLE") {
+  if (mode == "XYXY") {
     # Keep line 1 of VL; it has the format
     VL <- VL[-c(2, length(VL))]
     st <- lineNos[1] + 1
@@ -104,8 +104,8 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
     return(xydata)
   }
 
-  if (fmt == "PEAK_TABLE") {
-    xydata <- processPT(VL, params, mode, SOFC, debug = debug)
+  if (fmt == "XYXY") {
+    xydata <- processXYXY(VL, params, mode, SOFC, debug = debug)
     return(xydata)
   }
 

@@ -51,10 +51,8 @@ processDT <- function(VL, SOFC, debug = 0) {
   VL <- gsub("\\$\\$.*", "", VL)
 
   ### Step 1. Convert to numeric values
-  # Typical line: 123.45 6.789 separated by space so AFFN
-  # processPT has a somewhat more standard compliant bit of code
-  xValues <- as.numeric(sub("\\s{1}[0-9]+\\.{0,1}[0-9]*$", "", VL))
-  yValues <- as.numeric(sub("^[0-9]+\\.{0,1}[0-9]*\\s{1}", "", VL))
+  xValues <- charXYnumXY(VL)$x
+  yValues <- charXYnumXY(VL)$y
 
   ### Step 2. Check the integrity of the results
   # Check that we got the right number of data points

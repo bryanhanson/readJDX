@@ -104,7 +104,7 @@ processXYY <- function(VL, params, mode, SOFC, debug = 0) {
 
   ### Step 2. Check the integrity of the results
 
-  if (mode == "XY_data") {
+  if (mode == "XYY") {
 
     # Check that we got the right number of y values
 
