@@ -8,7 +8,7 @@
 #'        data strings in the file.  If coming from the package internals, named as "Line_1" etc.
 #'        If used in standalone mode, names will be added/overwritten as "Line_1" etc.
 #'
-#' @param debug Integer.  See \code{\link{readJDX}} for details.
+#' @template debug-arg
 #'
 #' @return A list of numeric strings, the result of unpacking the compressed data.  One list
 #'         element is returned for each line.  The numeric string is named with the ASDF compression mode.

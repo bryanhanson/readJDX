@@ -7,7 +7,7 @@
 #'
 #' @param line A character vector. Entries are named with the ASDF compression mode.  X values still present.
 #'
-#' @param debug Integer.  See \code{\link{readJDX}} for details.
+#' @template debug-arg
 #'
 #' @return A string representing a processed line.
 #'

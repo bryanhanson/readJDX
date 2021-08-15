@@ -11,7 +11,7 @@
 #' @param lineList A list of numeric vectors to be checked.  Named with line numbers.
 #'        Individual entries are named with the ASDF code.  X values are still present.
 #'
-#' @param debug Integer.  See \code{\link{readJDX}} for details.
+#' @template debug-arg
 #'
 #' @return A list of numeric vectors, after the y check has been done and any extra Y
 #'         values removed.

@@ -8,9 +8,8 @@
 #' @param VL Character.  The variable list to be processed as a character vector. Includes one pre-pended
 #' line giving the format of data (e.g. XYY, XRR, XII, PEAK_TABLE, etc).
 #'
-#' @param SOFC Logical.  See \code{\link{readJDX}} for details.
-#'
-#' @param debug Integer.  See \code{\link{readJDX}} for details.
+#' @template SOFC-arg
+#' @template debug-arg
 #'
 #' @return A data frame with elements \code{mz} and \code{int}.
 #'

@@ -15,11 +15,9 @@
 #' @param  lineNos Two integers giving the first and last lines
 #'         of the variable list in the original file. Used to label debugging responses.
 #'
-#' @param mode Character. One of c("XYY", "NMR_1D", "NMR_2D", "LC_MS", "XYXY")
-#'
-#' @param debug Integer.  See \code{\link{readJDX}} for details.
-#'
-#' @param SOFC Logical.  See \code{\link{readJDX}} for details.
+#' @template SOFC-arg
+#' @template debug-arg
+#' @template mode-arg
 #'
 #' @return A data frame with elements \code{x} and \code{y}, unless the file contains 2D NMR, in which case a matrix.
 #'
