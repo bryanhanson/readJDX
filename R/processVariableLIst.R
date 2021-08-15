@@ -110,7 +110,7 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
   }
 
   if (fmt == "LC_MS") {
-    xydata <- processDT(VL, SOFC, debug = debug)
+    xydata <- processLCMS(VL, SOFC, debug = debug)
     return(xydata)
   }
 
