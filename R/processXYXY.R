@@ -28,6 +28,17 @@ processXYXY <- function(VL, params, mode, SOFC, debug = 0) {
 
   # This format is typical of a single mass spectrum
 
+  # Verify expected numerical format
+  comp <- getComp(VL)
+  if (length(comp) != 1L) {
+    cat("\Compression found:", comp, "\n")
+    stop("For (XY..XY) data is expected to be in AFFN format")
+  }
+  if (comp != "AFFN") {
+    cat("\Compression found:", comp, "\n")
+    stop("For (XY..XY) data is expected to be in AFFN format")
+  }
+
   ### Step 1. Convert to numeric values
   xValues <- charXYnumXY(VL)$x
   yValues <- charXYnumXY(VL)$y

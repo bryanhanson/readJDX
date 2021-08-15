@@ -83,8 +83,8 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
   if (mode == "LC_MS") {
     # Keep line 1 of VL; it has the format
     # Keep line 2 of VL for debug reporting during decompression (e.g. ##PAGE= T= )
-    # Keep line 3 for checking results
-    # Remove line 4: ##DATA TABLE= (XI..XI), PEAKS
+    # Keep line 3 for checking results: NPOINTS
+    # Remove line 4: ##DATA TABLE= (XI..XI), PEAKS or similar
     VL <- VL[-4]
     st <- lineNos[1]
     end <- lineNos[2]
