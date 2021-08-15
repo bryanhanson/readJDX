@@ -262,7 +262,7 @@ extractParams <- function(md, mode, SOFC, debug = 0) {
 
   if (mode == "XYXY") {
 
-    # There are no official checks for this format
+    # There are no official checks for this format (?)
 
     npoints <- grep("^\\s*##NPOINTS\\s*=", md)
     if (SOFC) if (npoints == 0) stop("Couldn't find NPOINTS")
@@ -279,7 +279,7 @@ extractParams <- function(md, mode, SOFC, debug = 0) {
       cat("\nExtracted parameters:\n")
       print(params)
     }
-  } # end of mode == XY
+  } # end of mode == XYXY
 
   return(params)
 } # end of extractParams

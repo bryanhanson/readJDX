@@ -1,5 +1,5 @@
 #'
-#' Process (in most cases decompress) a Single Variable List from a JCAMP-DX file
+#' Process a Single Variable List from a JCAMP-DX file
 #'
 #' This function is NOT EXPORTED.
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
@@ -13,9 +13,9 @@
 #' @param params Numeric. Vector of parameters from file header.
 #'
 #' @param  lineNos Two integers giving the first and last lines
-#'         of the variable list in the original file. Used for debugging responses.
+#'         of the variable list in the original file. Used to label debugging responses.
 #'
-#' @param mode Character. One of c("XY_data", "NMR_1D", "NMR_2D", "LC_MS", "PEAK_TABLE")
+#' @param mode Character. One of c("XYY", "NMR_1D", "NMR_2D", "LC_MS", "XYXY")
 #'
 #' @param debug Integer.  See \code{\link{readJDX}} for details.
 #'
@@ -27,14 +27,13 @@
 #'
 processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
 
-  # Strip off non-numerical lines at beginning and end,
-  # and adjust lineNos accordingly.
+  lineNos <- unlist(lineNos)
+  fmt <- VL[1]
+
+  # Step 1. Strip off non-numerical lines at beginning and end, and adjust lineNos accordingly.
   # After this, VL should consist only of numerical values or their surrogates,
   # but it is possible there are still some comments embedded within VL.
   # These will be handled during decompression.
-
-  lineNos <- unlist(lineNos)
-  fmt <- VL[1]
 
   if (mode == "XYY") {
     # Keep line 1 of VL; it has the format
@@ -53,6 +52,7 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
   }
 
   if (mode == "NMR_1D") {
+
     if (fmt == "XRR") {
       # Keep line 1 of VL; it has the format
       VL <- VL[-c(2, 3)]
@@ -91,10 +91,10 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
     lineNos <- c(NA_integer_, st, (st + 2L):end)
   }
 
-  # Dispatch based on fmt
+  # Step 2. Dispatch based on fmt
   # As currently implemented, this is not completely universal.  For instance, there is nothing
   # (I can find) that says a 2D NMR, XII, XRR could not be in AFFN format, but I've never seen it.
-  # In the future it may be necessary to peek at the VL and determine the internal format
+  # TODO: In the future it may be necessary to peek at the VL and determine the internal format
   # and dispatch on that.
 
   names(VL) <- paste("Line", lineNos, sep = "_") # name it for debugging purposes downstream

@@ -217,7 +217,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
   if ("XRR" %in% fmt) mode <- "NMR_1D" # these files also contain XII
   if ("NMR_2D" %in% fmt) mode <- "NMR_2D"
   if ("LC_MS" %in% fmt) mode <- "LC_MS"
-  if ("PEAK_TABLE" %in% fmt) mode <- "XYXY"
+  if ("PEAK_TABLE" %in% fmt) mode <- "XYXY" # handled the same as the next one
   if ("XYXY" %in% fmt) mode <- "XYXY"
   if (is.na(mode)) stop("Could not determine the type of data in the file")
 
@@ -258,12 +258,15 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
       tmp <- processVariableList(VL[[i]], params, mode, VL[[1]][i - 2, c(2, 3)], SOFC, debug)
       M[i - 3, ] <- tmp$y
     }
+
+    # TODO: check for na in M, if any present we did not find enough pages to fill it and something is wrong
+
     # Update VL
-    VL[[4]] <- sort(seq(params[4], params[6], length.out = params[2])) # add F2
-    VL[[5]] <- sort(seq(params[3], params[5], length.out = params[1])) # add F1
+    VL[[4]] <- sort(seq(params[4], params[6], length.out = params[2])) # replace element 4 with F2
+    VL[[5]] <- sort(seq(params[3], params[5], length.out = params[1])) # replace element 5 with  F1
     M <- M[nrow(M):1, ] # reverse order of rows, works for Bruker files (all vendors?)
-    VL[[6]] <- M
-    VL <- VL[1:6] # toss the other stuff
+    VL[[6]] <- M  # replace element 6 with M
+    VL <- VL[1:6] # toss the remaining pieces of raw VL
     names(VL) <- c("dataGuide", "metadata", "commentLines", "F2", "F1", "Matrix")
   }
 
@@ -282,7 +285,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
     names(VL) <- c("dataGuide", "metadata", "commentLines", rt)
   }
 
-  if (mode == "XY") {
+  if (mode == "XYXY") {
     for (i in 4:length(VL)) {
       VL[[i]] <- processVariableList(VL[[i]], params, mode, VL[[1]][i - 2, c(2, 3)], SOFC, debug)
     }

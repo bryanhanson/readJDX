@@ -19,12 +19,21 @@ charXYnumXY <- function(VL) {
   # 
   # Note 1: R automatically handles the exponent if present
   # Note 2: Many of the files are simply one x,y pair per line
-  #
+  # Note 3: Some files have one x y pair per line (space separator)
 
-  # Split on any ; or space not preceeded by a , (negative lookbehind, need perl)
-  VL <- unlist(strsplit(VL, ";"))
-  VL <- unlist(strsplit(trimws(VL), "(?<!,)\\s+", perl = TRUE))
-  xValues <- as.numeric(sub(",\\s*[+-]{0,1}[0-9]+\\.{0,1}[0-9]*E{0,1}[0-9]*", "", VL))
-  yValues <- as.numeric(sub("\\s*[+-]{0,1}[0-9]+\\.{0,1}[0-9]*E{0,1}[0-9]*,", "", VL))
+  VL <- unlist(strsplit(VL, ";")) # split on any ; nc if not present
+  # check to see if there are , present, if so, split on spaces not preceded by a ,
+  if (any(grepl(",", VL))) {
+    VL <- unlist(strsplit(trimws(VL), "(?<!,)\\s+", perl = TRUE))
+    xValues <- as.numeric(sub(",\\s*[+-]{0,1}[0-9]+\\.{0,1}[0-9]*E{0,1}[0-9]*", "", VL))
+    yValues <- as.numeric(sub("\\s*[+-]{0,1}[0-9]+\\.{0,1}[0-9]*E{0,1}[0-9]*,", "", VL))
+  }
+
+  # if no commas present, this is apparently x space y, one per line, don't process much further
+  if (!any(grepl(",", VL))) {
+    xValues <- as.numeric(sub("\\s+[+-]{0,1}[0-9]+\\.{0,1}[0-9]*E{0,1}[0-9]*$", "", VL))
+    yValues <- as.numeric(sub("^[+-]{0,1}[0-9]+\\.{0,1}[0-9]*E{0,1}[0-9]*\\s+", "", VL))
+  }
+
   data.frame(x = xValues, y = yValues)
 }

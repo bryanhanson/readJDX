@@ -36,8 +36,8 @@ findVariableLists <- function(jdx, debug = 0) {
     "XII", # imaginary NMR
     "NMR_2D", # real 2D NMR in NTUPLE format
     "LC_MS", # LC or GC-MS data in NTUPLE format
-    "PEAK_TABLE", # Simple peak list; AFFN assumed
-    "XYXY" # one x,y pair per line in AFFN
+    "XYXY", # PEAK TABLE, equal to the next one in practice
+    "XYXY" # XYXY
   )
 
   nf <- length(VL_fmts)
@@ -64,6 +64,10 @@ findVariableLists <- function(jdx, debug = 0) {
     "^\\s*##END\\s*=",
     "^\\s*##END\\s*="
   )
+
+  # Developer sanity checks:
+  if (length(ST_pats) != nf) stop("Wrong number of ST_pats")
+  if (length(END_pats) != nf) stop("Wrong number of END_pats")
 
   # Find the beginning & end of each variable list.
   # We are checking for any and all formats in the file
@@ -178,7 +182,7 @@ findVariableLists <- function(jdx, debug = 0) {
     VL[[i]] <- c(DF$Format[i - 2], jdx[DF$FirstLine[i - 2]:DF$LastLine[i - 2]])
   }
 
-  # The generic VL_1 names are replaced when these results are passed back to readJDX
+  # The generic VL_X names are replaced when these results are passed back to readJDX
   names(VL) <- c("DataGuide", "Metadata", "Comments", paste("VL", 1:(length(VL) - 3), sep = "_"))
   return(VL)
 }
