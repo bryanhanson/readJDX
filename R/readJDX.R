@@ -278,7 +278,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
       
     }
 
-    # Get the retention times
+    # Get the retention times & use to label list elements
     rti <- grep("##PAGE= T=", jdx)
     rt <- jdx[rti]
     rt <- sub("##PAGE= ", "", rt)

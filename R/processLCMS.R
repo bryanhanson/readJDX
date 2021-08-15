@@ -1,5 +1,5 @@
 #'
-#' Extract the values in JCAMP-DX file with a "Data Table" variable list with X, Y Values
+#' Extract the x, y Values in a LC-MS Variable List
 #'
 #' This function is NOT EXPORTED.
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
@@ -19,11 +19,12 @@
 #' @noRd
 #'
 
-processDT <- function(VL, SOFC, debug = 0) {
+processLCMS <- function(VL, SOFC, debug = 0) {
 
-  # This function handles ##DATA TABLE= (XI..XI), PEAKS format, which is not clearly 
-  # documented in the standard, but at least is consistent.
-  # Found in Waters QDA exported files, where the data lines are like 123.45 6.789
+  # This function handles ##DATA TABLE= (XY..XY), PEAKS format
+  # This is one time point/one page in a spectral series (Lampen 1994 sec 5.5.3)
+  # Data are required to be in AFFN as x, y pairs, one or more to line
+  # Found in Waters QDA exported files as (XI..XI) meaning mass and intensity
 
   if (debug >= 1) {
     cat("\nProcessing retention time...", VL[2], "\n")
@@ -31,17 +32,14 @@ processDT <- function(VL, SOFC, debug = 0) {
   # Remove the pre-pended format string & ##PAGE= T=  now that we have used it for debugging.
   VL <- VL[-c(1, 2)] 
 
-  # Get the number of data points for this page
-  # I'm not certain if we can get the far if it is not... we may have wrong lines in that case
-  np <- grepl("^\\s*##NPOINTS\\s*=", VL[1]) # see if NPOINTS is present
-  if (!np) warning("Could not find NPOINTS, continuing")
-  if (np) {
-    npoints <- VL[1]
-    npoints <- sub("^\\s*##NPOINTS\\s*=", replacement = "", npoints)
-    npoints <- as.integer(npoints)
-    if (SOFC) if (!is.integer(npoints)) stop("Couldn't find NPOINTS")
-    VL <- VL[-1] # remove the NPOINTS line
-  }
+  # Get the number of data points for this page; this is required
+  np <- grepl("^\\s*##NPOINTS\\s*=", VL[1]) # verify NPOINTS is present
+  if (!np) stop("Could not find NPOINTS, continuing")
+  npoints <- VL[1]
+  npoints <- sub("^\\s*##NPOINTS\\s*=", replacement = "", npoints)
+  npoints <- as.integer(npoints)
+  if (SOFC) if (!is.integer(npoints)) stop("Found NPOINTS but could not convert to integer")
+  VL <- VL[-1] # remove the NPOINTS line
 
   # Remove comment only lines entirely (single line comments; not checking for multiline comments)
   comOnly <- grepl("^\\$\\$", VL)
@@ -56,11 +54,12 @@ processDT <- function(VL, SOFC, debug = 0) {
 
   ### Step 2. Check the integrity of the results
   # Check that we got the right number of data points
-  if (np) {
-    if (debug == 2) cat("\nNPOINTS =", npoints, "\n")
-    if (debug == 2) cat("Actual no. data points found  =", length(xValues), "\n")
-    if (!npoints == length(xValues)) stop("NPOINTS and length of parsed data don't match")
+  if (debug == 2) {
+    cat("\nNPOINTS =", npoints, "\n")
+    cat("Actual no. data points found  =", length(xValues), "\n")
   }
+  if (!npoints == length(xValues)) stop("NPOINTS and length of parsed x-values don't match")
+  if (!npoints == length(yValues)) stop("NPOINTS and length of parsed y-values don't match")
 
   ### And we're done...
 

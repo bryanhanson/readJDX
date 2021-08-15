@@ -26,8 +26,7 @@ processXYXY <- function(VL, params, mode, SOFC, debug = 0) {
   VL <- VL[-1] # Remove the pre-pended format string
   if (debug >= 1) cat("\nProcessing variable list...\n")
 
-  # This format is typical of a single mass spectrum is also used in LC_MS for
-  # each time point
+  # This format is typical of a single mass spectrum
 
   ### Step 1. Convert to numeric values
   xValues <- charXYnumXY(VL)$x
