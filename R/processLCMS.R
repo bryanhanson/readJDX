@@ -51,11 +51,11 @@ processLCMS <- function(VL, SOFC, debug = 0) {
   # Verify expected numerical format
   comp <- getComp(VL)
   if (length(comp) != 1L) {
-    cat("\Compression found:", comp, "\n")
+    cat("\nCompression found:", comp, "\n")
     stop("For LC-MS data is expected to be in AFFN format")
   }
   if (comp != "AFFN") {
-    cat("\Compression found:", comp, "\n")
+    cat("\nCompression found:", comp, "\n")
     stop("For LC-MS data is expected to be in AFFN format")
   }
 
