@@ -11,7 +11,6 @@
 #'
 #' @importFrom stringr str_detect str_replace_all
 #'
-#' @noRd
 #'
 
 unDIF <- function(line) {

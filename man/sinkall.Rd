@@ -2,7 +2,7 @@
 % Please edit documentation in R/sinkall.R
 \name{sinkall}
 \alias{sinkall}
-\title{Divert stdout and stderr to a File}
+\title{Divert Both stdout and stderr to a File}
 \usage{
 sinkall(filename = NULL)
 }

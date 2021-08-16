@@ -14,7 +14,6 @@
 #'
 #' @return A numeric vector.
 #'
-#' @noRd
 #'
 deDIF <- function(i, lineList, debug = 0) {
 

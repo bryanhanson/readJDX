@@ -5,12 +5,10 @@
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #'
-#' @param VL Character.  The variable list to be processed as a character vector.
-#'        All non-numeric data should have already been removed.
+#' @template VL-arg
 #'
 #' @return A data frame with elements \code{x} and \code{y}.
 #' 
-#' @noRd
 #'
 charXYnumXY <- function(VL) {
   # From the standard (can't find the exact reference, but very common in MS)

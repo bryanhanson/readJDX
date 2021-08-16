@@ -21,7 +21,6 @@
 #'
 #' @importFrom stats na.omit
 #'
-#' @noRd
 #'
 findVariableLists <- function(jdx, debug = 0) {
 

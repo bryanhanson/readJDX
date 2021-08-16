@@ -1,13 +1,11 @@
 #'
-#' Extract the values in JCAMP-DX file with an XYY variable list.
+#' Extract the values in JCAMP-DX file with a (X++(Y..Y)) variable list.
 #'
 #' This function is NOT EXPORTED.
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #'
-#' @param VL Character.  The variable list to be processed as a character vector. Includes one pre-pended
-#' line giving the format of data (e.g. XYY, XRR, XII).
-#'
+#' @template VL-arg
 #' @template params-arg
 #' @template SOFC-arg
 #' @template debug-arg
@@ -17,7 +15,6 @@
 #'
 #' @importFrom stringr str_locate str_trim
 #'
-#' @noRd
 #'
 
 processXYY <- function(VL, params, mode, SOFC, debug = 0) {
@@ -36,12 +33,6 @@ processXYY <- function(VL, params, mode, SOFC, debug = 0) {
   }
   if (fmt == "XYY") {
     if (debug >= 1) cat("\nProcessing variable list...\n")
-  }
-  if (fmt == "NMR_2D") {
-    if (debug >= 1) {
-      cat("\nProcessing F2 spectra...", VL[1], "\n")
-    }
-    VL <- VL[-1] # Remove e.g. ##PAGE= F1= 4.7865152724775 now that we have used it for debugging.
   }
 
   ### Step 1. Decompress the lines.  This is most of the work.
@@ -157,7 +148,7 @@ processXYY <- function(VL, params, mode, SOFC, debug = 0) {
     dx <- (lastX - firstX) / (npoints - 1)
     xValues <- seq(firstX, lastX, by = dx)
     yValues <- yValues * factorY
-  } # end of mode = "XY_data"
+  } # end of mode = "XYY"
 
   if (mode == "NMR_1D") {
     pointsX <- as.integer(params[1])

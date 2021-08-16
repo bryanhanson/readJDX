@@ -5,23 +5,17 @@
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #'
-#' @param VL Character.  A vector of character strings which contains
-#' the variable list.  First line should be the format code (an
-#' extra line inserted by this package).  Depending upon mode, there
-#' may be some other stuff that still needs to be stripped off to get to just numbers.
-#'
-#' @param params Numeric. Vector of parameters from file header.
-#'
 #' @param  lineNos Two integers giving the first and last lines
 #'         of the variable list in the original file. Used to label debugging responses.
 #'
+#' @template VL-arg
 #' @template SOFC-arg
 #' @template debug-arg
 #' @template mode-arg
+#' @template params-arg
 #'
 #' @return A data frame with elements \code{x} and \code{y}, unless the file contains 2D NMR, in which case a matrix.
 #'
-#' @noRd
 #'
 processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
 
@@ -71,10 +65,11 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
   if (mode == "NMR_2D") {
     # Keep line 1 of VL; it has the format
     # Keep line 2 of VL for debug reporting during decompression (e.g. ##PAGE= F1= 4.7865152724775)
-    VL <- VL[-c(3, 4)]
+    # Keep line 3 for possible checking
+    VL <- VL[-4]
     st <- lineNos[1]
     end <- lineNos[2]
-    lineNos <- c(NA_integer_, st, (st + 3L):end)
+    lineNos <- c(NA_integer_, st, (st + 2L):end)
   }
 
 
@@ -97,7 +92,7 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
 
   names(VL) <- paste("Line", lineNos, sep = "_") # name it for debugging purposes downstream
 
-  if ((fmt == "XRR") | (fmt == "XII") | (fmt == "NMR_2D") | (fmt == "XYY")) {
+  if ((fmt == "XRR") | (fmt == "XII") | (fmt == "XYY")) {
     xydata <- processXYY(VL, params, mode, SOFC, debug = debug)
     return(xydata)
   }
@@ -108,7 +103,12 @@ processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
   }
 
   if (fmt == "LC_MS") {
-    xydata <- processLCMS(VL, SOFC, debug = debug)
+    xydata <- processLCMS(VL, SOFC, debug = debug) # does not use params currently
+    return(xydata)
+  }
+
+  if (fmt == "NMR_2D") {
+    xydata <- process2DNMR(VL, params, mode, SOFC, debug = debug)
     return(xydata)
   }
 

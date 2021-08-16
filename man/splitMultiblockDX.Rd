@@ -11,7 +11,7 @@ splitMultiblockDX(file = NULL)
 }
 \value{
 A list is returned invisibly that has one DX data set per list element.  \pkg{Individual files
-       are written into the current directory, so you probably want to create a dedicated folder
+       are written into the current directory, so you probably want to work on a copy of the data
        for this task}.  File names are extracted from the
        \code{##TITLE= sample_name} field and will be \code{sample_name} (more precisely,
        the name will be whatever follows \code{##TITLE=} on the line).  If
@@ -26,8 +26,8 @@ Process a multiblock JCAMP-DX file into separate files, one for each data set.
 }
 \section{Warning}{
 
-\pkg{Individual data sets are written into the current directory, so you probably want to create
-a dedicated folder for this task}.
+\pkg{Individual data sets are written into the current directory, so you probably want to
+work on a copy of the data for this task}.
 }
 
 \author{

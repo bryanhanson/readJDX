@@ -16,7 +16,6 @@
 #' @return A list of numeric vectors, after the y check has been done and any extra Y
 #'         values removed.
 #'
-#' @noRd
 #'
 
 yValueCheck <- function(lineList, debug = 0) {

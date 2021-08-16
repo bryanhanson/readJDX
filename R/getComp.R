@@ -1,18 +1,16 @@
 #'
-#' Determine the type(s) of Compression in Use
+#' Determine the Type(s) of Compression in Use
 #'
 #' This function is NOT EXPORTED.
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #'
-#' @param VL Character.  The string to be checked.  If a vector of
-#' strings (as is a variable list) it will be collapsed to a single string.
+#' @template VL-arg
 #'
 #' @param debug Integer. See \code{\link{readJDX}} for details.
 #'
 #' @return A string giving all compression formats found.
 #'
-#' @noRd
 #'
 getComp <- function(VL, debug = 0) {
 

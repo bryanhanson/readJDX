@@ -11,7 +11,6 @@
 #'
 #' @return A string representing a processed line.
 #'
-#' @noRd
 #'
 
 insertDUPs <- function(line, debug) {

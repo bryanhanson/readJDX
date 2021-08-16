@@ -5,9 +5,10 @@
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #'
-#' @param VL Character.  The variable list to be processed as a character vector. Includes one pre-pended
-#' line giving the format of data (e.g. XYY, XRR, XII, PEAK_TABLE, etc).
+#' @section Note:
+#' This function is analogous to \code{\link{process2DNMR}} but differs in detail.
 #'
+#' @template VL-arg
 #' @template SOFC-arg
 #' @template debug-arg
 #'
@@ -15,7 +16,6 @@
 #'
 #' @importFrom stringr str_locate str_trim
 #'
-#' @noRd
 #'
 
 processLCMS <- function(VL, SOFC, debug = 0) {

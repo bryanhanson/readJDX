@@ -7,9 +7,13 @@
 decompLines(VL, debug = 0)
 }
 \arguments{
-\item{VL}{Character.  A vector of character strings composed of the compressed
-data strings in the file.  If coming from the package internals, named as "Line_1" etc.
-If used in standalone mode, names will be added/overwritten as "Line_1" etc.}
+\item{VL}{Character.  The variable list to be processed as a character vector.
+       Depending upon the \code{mode} and the stage of processing:
+\itemize{
+  \item the lines may be named as "Line_1" etc
+  \item a format code may be present as the first entry
+  \item there may be other non-numeric lines that eventually get stripped off
+}}
 
 \item{debug}{Integer.  See \code{\link{readJDX}} for details.}
 }

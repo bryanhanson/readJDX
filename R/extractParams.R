@@ -8,15 +8,12 @@
 #' @param md Character.  A vector of character strings which contains the metadata.
 #'
 #' @template mode-arg
-#'
 #' @template SOFC-arg
-#'
 #' @template debug-arg
 #'
 #' @return A named numeric vector containing the extracted parameters.
 #'         Contents will vary by \code{mode}.
 #'
-#' @noRd
 #'
 extractParams <- function(md, mode, SOFC, debug = 0) {
 

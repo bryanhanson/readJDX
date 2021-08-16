@@ -4,10 +4,7 @@
 #' This function is used by the package, and can also be called by the user who wishes
 #' to study problematic lines in a file in a standalone manner.  See the examples.
 #'
-#' @param VL Character.  A vector of character strings composed of the compressed
-#'        data strings in the file.  If coming from the package internals, named as "Line_1" etc.
-#'        If used in standalone mode, names will be added/overwritten as "Line_1" etc.
-#'
+#' @template VL-arg
 #' @template debug-arg
 #'
 #' @return A list of numeric strings, the result of unpacking the compressed data.  One list

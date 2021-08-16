@@ -1,13 +1,11 @@
 #'
-#' Extract the values in JCAMP-DX file with an PEAK_TABLE variable list.
+#' Extract the values in JCAMP-DX file with a (XY..XY) variable list.
 #'
 #' This function is NOT EXPORTED.
 #' Users would not normally call this function.  See \code{\link{readJDX}}.
 #' Documentation is provided for developers wishing to contribute to the package.
 #'
-#' @param VL Character.  The variable list to be processed as a character vector. Includes one pre-pended
-#' line giving the format of data (e.g. XYY, XRR, XII, PEAK_TABLE).
-#'
+#' @template VL-arg
 #' @template params-arg
 #' @template SOFC-arg
 #' @template debug-arg
@@ -15,7 +13,6 @@
 #'
 #' @return A data frame with elements \code{x} and \code{y}.
 #'
-#' @noRd
 #'
 
 processXYXY <- function(VL, params, mode, SOFC, debug = 0) {

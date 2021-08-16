@@ -1,5 +1,5 @@
 #'
-#' Divert stdout and stderr to a File
+#' Divert Both stdout and stderr to a File
 #'
 #' This is a simple utility function to direct the output of stdout and stderr
 #' to a file.  stdout is the information normally printed in the console, for instance
