@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{MiniDIFDUP_1}
+%\VignetteIndexEntry{3. MiniDIFDUP_1}
 %\VignettePackage{readJDX}
 %\VignetteIndexEntry{readJDX}
 %\VignetteKeyword{JCAMP, DX, NMR, IR, Raman}
@@ -66,7 +66,7 @@ Key to the above:
 \begin{itemize}
   \item \textcolor{red}{Entire File}. Input for \textit{findVariableLists}, as a vector of character strings.
   \item \textcolor{blue}{Metadata}.  Input for \textit{extractParams}, as a vector of character strings.
-  \item \textcolor{orange}{Variable List}. Input for \textit{processVariableList} and \textit{decompressXYY}, as a vector of character strings.
+  \item \textcolor{orange}{Variable List}. Input for \textit{processVariableList} and \textit{processXYY}, as a vector of character strings.
 \end{itemize}
 
 << setup, echo = FALSE >>=

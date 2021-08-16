@@ -1,48 +1,29 @@
 ---
-title: Guide to readJDX Vignettes
-
-# Use letters for affiliations
+title:  "A Guide to readJDX Vignettes"
 author:
-  - name: Bryan A. Hanson
-    affiliation: a
-
-address:
-  - code: a
-    address: Dept. of Chemistry \& Biochemistry, DePauw University; \url{hanson@depauw.edu}
-
-# Place DOI URL or CRAN Package URL here
-doi: "github.com/bryanhanson/readJDX"
-
-# Font size of the document, values of 9pt (default), 10pt, 11pt and 12pt
-fontsize: 10pt
-
-# Optional: Force one-column layout, default is two-column
-one_column: true
-
-# Optional: Enable section numbering, default is unnumbered
-#numbersections: true
-
-# Optional: Specify the depth of section number, default is 5
-#secnumdepth: 5
-
-# Optional: Bibliography
-#bibliography: JCAMP-DX
-
-# Optional: Enable a 'Draft' watermark on the document
-watermark: false
-
-# Customize footer, eg by referencing the vignette
-footer_contents: "Vignette Overview"
-
-# Produce a pinp document
-output: pinp::pinp
-
+  - name: Bryan A. Hanson^1^
+    email: hanson@depauw.edu
+    affiliation: |
+        1. Professor Emeritus of Chemistry & Biochemistry, DePauw University, Greencastle IN USA.
+date:  "`r Sys.Date()`"
+output:
+    bookdown::html_document2:
+      toc: no
+      toc_depth: 3
+      fig_caption: yes
+      number_sections: true
 # Required: Vignette metadata for inclusion in a package.
 vignette: >
-  %\VignetteIndexEntry{GuideToVignettes}
-  %\VignetteKeyword{JCAMP, DX, NMR, IR, Raman}
-  %\VignettePackage{readJDX}
-  %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteIndexEntry{0. Guide to readJDX Vignettes}
+    %\VignetteKeyword{JCAMP-DX, NMR, IR, Raman, MS, UV-Vis}
+    %\VignettePackage{readJDX}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+link-citations: yes
+bibliography: JCAMP-DX.bib
+#biblio-style: plain
+pkgdown:
+  as_is: true
 ---
 
 ```{r results = "hide", echo = FALSE}
@@ -59,6 +40,6 @@ The following vignettes are available, in addition to this one:
 
 * *readJDX*, a general introduction and overview.
 * The following vignettes will be useful for those wishing to contribute to the development of `readJDX` and those that are troubleshooting files:
-    + *Program Flow*, a overview of how `readJDX` functions are organized and the input they require.
-    + *MiniDIFDUP_1* is an annotated version of the `MiniDIFDUP` data set.
+    + *Taxonomy* describes a taxonomy of JCAMP-DX file formats along with a diagram of which `readJDX` functions call each other.
+    + *MiniDIFDUP_1* is an annotated version of the `MiniDIFDUP` data set illustrating the ASDF compression scheme.
     + *MiniDIFDUP_2* is an expanded and annotated version of the `MiniDIFDUP` data set.

@@ -14,7 +14,7 @@ output:
       number_sections: true
 # Required: Vignette metadata for inclusion in a package.
 vignette: >
-    %\VignetteIndexEntry{readJDX}
+    %\VignetteIndexEntry{2. A Taxonomy of readJDX Files}
     %\VignetteKeyword{JCAMP-DX, NMR, IR, Raman, MS, UV-Vis}
     %\VignettePackage{readJDX}
     %\VignetteEngine{knitr::rmarkdown}
