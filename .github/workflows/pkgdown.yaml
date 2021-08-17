@@ -39,6 +39,7 @@ jobs:
 
       - name: Roxygenize
         run: |
+          install.packages("roxygen2")
           roxygen2::roxygenize()
         shell: Rscript {0}
 
