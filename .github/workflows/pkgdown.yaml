@@ -32,14 +32,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          install.packages("remotes")
-          remotes::install_dev("pkgdown")
+          install.packages("roxygen2")
+          install.packages("pkgdown")
+          install.packages("bookdown")
           remotes::install_github("bryanhanson/readJDX", dependencies = TRUE)
         shell: Rscript {0}
 
       - name: Roxygenize
         run: |
-          install.packages("roxygen2")
           roxygen2::roxygenize()
         shell: Rscript {0}
 
