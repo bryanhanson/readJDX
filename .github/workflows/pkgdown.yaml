@@ -34,7 +34,7 @@ jobs:
         run: |
           install.packages("remotes")
           remotes::install_dev("pkgdown")
-          remotes::install_github("bryanhanson/LearnPCA", dependencies = TRUE)
+          remotes::install_github("bryanhanson/readJDX", dependencies = TRUE)
         shell: Rscript {0}
 
       - name: Roxygenize
