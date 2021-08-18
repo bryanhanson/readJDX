@@ -7,7 +7,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-<!-- https://github.com/r-lib/pkgdown/issues/781#issuecomment-792208432 -->
+<!-- This approach described in
+    https://github.com/r-lib/pkgdown/issues/781#issuecomment-792208432 -->
 
 ```{r, echo = FALSE}
 system('R CMD Sweave MiniDIFDUP_1.Rnw')
@@ -16,7 +17,7 @@ system('R CMD Sweave MiniDIFDUP_2.Rnw')
 system('pdflatex MiniDIFDUP_2.tex')
 ```
 
-<!--- <iframe src="vignette_1.pdf"/> -->
+<!--- <iframe src="MiniDIFDUP_1.pdf"/> -->
 
-[MiniDIFDUP_1](MiniDIFDUP_1.pdf){target="_blank"}
-[MiniDIFDUP_2](MiniDIFDUP_2.pdf){target="_blank"}
+*[MiniDIFDUP_1](MiniDIFDUP_1.pdf){target="_blank"}
+*[MiniDIFDUP_2](MiniDIFDUP_2.pdf){target="_blank"}
