@@ -18,6 +18,7 @@ system('pdflatex MiniDIFDUP_2.tex')
 ```
 
 <!--- <iframe src="MiniDIFDUP_1.pdf"/> -->
-
 *[MiniDIFDUP_1](MiniDIFDUP_1.pdf){target="_blank"}
+
+<!--- <iframe src="MiniDIFDUP_2.pdf"/> -->
 *[MiniDIFDUP_2](MiniDIFDUP_2.pdf){target="_blank"}
