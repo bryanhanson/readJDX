@@ -1,0 +1,22 @@
+---
+title: "PDF Vignettes"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{PDF Vignettes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<!-- https://github.com/r-lib/pkgdown/issues/781#issuecomment-792208432 -->
+
+```{r, echo = FALSE}
+system('R CMD Sweave MiniDIFDUP_1.Rnw')
+system('pdflatex MiniDIFDUP_1.tex')
+system('R CMD Sweave MiniDIFDUP_2.Rnw')
+system('pdflatex MiniDIFDUP_2.tex')
+```
+
+<!--- <iframe src="vignette_1.pdf"/> -->
+
+[MiniDIFDUP_1](MiniDIFDUP_1.pdf){target="_blank"}
+[MiniDIFDUP_2](MiniDIFDUP_2.pdf){target="_blank"}

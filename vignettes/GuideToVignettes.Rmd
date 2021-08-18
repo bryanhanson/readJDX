@@ -1,5 +1,5 @@
 ---
-title:  "A Guide to readJDX Vignettes"
+title:  "0. A Guide to readJDX Vignettes"
 author:
   - name: Bryan A. Hanson^1^
     email: hanson@depauw.edu

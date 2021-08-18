@@ -1,5 +1,5 @@
 ---
-title:  "An Introduction to readJDX"
+title:  "1. An Introduction to readJDX"
 author:
   - name: Bryan A. Hanson^1^
     email: hanson@depauw.edu

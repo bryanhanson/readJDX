@@ -1,5 +1,5 @@
 ---
-title:  "A Taxonomy of JCAMP-DX Files"
+title:  "2. A Taxonomy of JCAMP-DX Files"
 author:
   - name: Bryan A. Hanson^1^
     email: hanson@depauw.edu
