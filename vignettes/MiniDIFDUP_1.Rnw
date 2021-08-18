@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{3. MiniDIFDUP_1}
+%\VignetteIndexEntry{MiniDIFDUP_1}
 %\VignettePackage{readJDX}
 %\VignetteIndexEntry{readJDX}
 %\VignetteKeyword{JCAMP, DX, NMR, IR, Raman}
