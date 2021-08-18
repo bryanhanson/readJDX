@@ -34,6 +34,7 @@ jobs:
         run: |
           install.packages("roxygen2")
           install.packages("bookdown")
+          install.packages("mvbutils")
           remotes::install_dev("pkgdown")
           remotes::install_github("bryanhanson/readJDX", dependencies = TRUE)
         shell: Rscript {0}
