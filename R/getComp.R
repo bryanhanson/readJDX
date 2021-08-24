@@ -11,6 +11,7 @@
 #'
 #' @return A string giving all compression formats found.
 #'
+#' @noRd
 #'
 getComp <- function(VL, debug = 0) {
 

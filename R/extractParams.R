@@ -14,6 +14,7 @@
 #' @return A named numeric vector containing the extracted parameters.
 #'         Contents will vary by \code{mode}.
 #'
+#' @noRd
 #'
 extractParams <- function(md, mode, SOFC, debug = 0) {
 

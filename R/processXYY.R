@@ -15,6 +15,7 @@
 #'
 #' @importFrom stringr str_locate str_trim
 #'
+#' @noRd
 #'
 
 processXYY <- function(VL, params, mode, SOFC, debug = 0) {

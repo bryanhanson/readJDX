@@ -6,7 +6,7 @@
 #' Documentation is provided for developers wishing to contribute to the package.
 #'
 #' @template VL-arg
-#'
+#' @noRd
 #' @return A data frame with elements \code{x} and \code{y}.
 #' 
 #'

@@ -5,6 +5,7 @@
 #'
 #' @return A charcter string in which the SQZ letter code has been replaced by a number.
 #'
+#' @noRd
 #'
 
 unSQZ <- function(string) {

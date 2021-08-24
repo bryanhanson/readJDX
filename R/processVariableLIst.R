@@ -16,6 +16,7 @@
 #'
 #' @return A data frame with elements \code{x} and \code{y}, unless the file contains 2D NMR, in which case a matrix.
 #'
+#' @noRd
 #'
 processVariableList <- function(VL, params, mode, lineNos, SOFC, debug = 0) {
 

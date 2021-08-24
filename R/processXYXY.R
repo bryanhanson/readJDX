@@ -13,6 +13,7 @@
 #'
 #' @return A data frame with elements \code{x} and \code{y}.
 #'
+#' @noRd
 #'
 
 processXYXY <- function(VL, params, mode, SOFC, debug = 0) {

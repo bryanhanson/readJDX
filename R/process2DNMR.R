@@ -18,6 +18,7 @@
 #'
 #' @importFrom stringr str_locate str_trim
 #'
+#' @noRd
 #'
 
 process2DNMR <- function(VL, params, mode, SOFC, debug = 0) {

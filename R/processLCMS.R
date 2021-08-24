@@ -16,6 +16,7 @@
 #'
 #' @importFrom stringr str_locate str_trim
 #'
+#' @noRd
 #'
 
 processLCMS <- function(VL, SOFC, debug = 0) {
