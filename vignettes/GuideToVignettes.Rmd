@@ -43,3 +43,9 @@ The following vignettes are available, in addition to this one:
     + *Taxonomy* describes a taxonomy of JCAMP-DX file formats along with a diagram of which `readJDX` functions call each other.
     + *MiniDIFDUP_1* is an annotated version of the `MiniDIFDUP` data set illustrating the ASDF compression scheme.
     + *MiniDIFDUP_2* is an expanded and annotated version of the `MiniDIFDUP` data set.
+
+To see the last two vignettes (in PDF format), do the following:
+
+```{r, eval = FALSE}
+browseVignettes("readJDX")
+```
