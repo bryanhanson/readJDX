@@ -1,9 +1,14 @@
 # readJDX 0.5.? (2021-08-11)
 ## Enhancements
 * `readJDX` can now read the `##XYPOINTS=(XY..XY)` format.
+* Now using `pkgdown` for html documentation.
+* Vignettes improved, including new vignette "Taxonomy".
 
 ## Behind the Scenes
-* `processPT` renamed to `processXY` as part of simplifying the reading of any format that contains one x,y pair per line in AFFN format.
+* `processPT` renamed to `processXYXY` as part of simplifying the reading of any format that contains one x,y pair per line in AFFN format.
+* `processDT` renamed to `processLCMS` to better reflect what it does.
+* Function `process2DNMR` and `processXYY` re-worked to simplify and generalize the processing workflow.
+* See the "Taxonomy" vignette for a call graph of the functions.
 
 # readJDX 0.5.61 (2021-08-07)
 ## Enhancements
