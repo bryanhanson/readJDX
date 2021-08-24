@@ -46,6 +46,7 @@ jobs:
           tlmgr install colortbl
           tlmgr install parskip
           tlmgr install ae
+          tlmgr install upquote
 
 
       - name: Query dependencies
