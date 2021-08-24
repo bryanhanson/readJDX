@@ -142,12 +142,18 @@
 <a href="#enhancements" class="anchor" aria-hidden="true"></a>Enhancements</h2>
 <ul><li>
 <code>readJDX</code> can now read the <code>##XYPOINTS=(XY..XY)</code> format.</li>
+<li>Now using <code>pkgdown</code> for html documentation.</li>
+<li>Vignettes improved, including new vignette “Taxonomy”.</li>
 </ul></div>
 <div id="behind-the-scenes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#behind-the-scenes" class="anchor" aria-hidden="true"></a>Behind the Scenes</h2>
 <ul><li>
-<code>processPT</code> renamed to <code>processXY</code> as part of simplifying the reading of any format that contains one x,y pair per line in AFFN format.</li>
+<code>processPT</code> renamed to <code>processXYXY</code> as part of simplifying the reading of any format that contains one x,y pair per line in AFFN format.</li>
+<li>
+<code>processDT</code> renamed to <code>processLCMS</code> to better reflect what it does.</li>
+<li>Function <code>process2DNMR</code> and <code>processXYY</code> re-worked to simplify and generalize the processing workflow.</li>
+<li>See the “Taxonomy” vignette for a call graph of the functions.</li>
 </ul></div>
 </div>
     <div id="readjdx-0561-2021-08-07" class="section level1">

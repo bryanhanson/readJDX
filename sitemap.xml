@@ -25,63 +25,18 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/charXYnumXY.html</loc>
-  </url>
-  <url>
-    <loc>/reference/deDIF.html</loc>
-  </url>
-  <url>
     <loc>/reference/decompLines.html</loc>
-  </url>
-  <url>
-    <loc>/reference/extractParams.html</loc>
-  </url>
-  <url>
-    <loc>/reference/findVariableLists.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getComp.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/insertDUPs.html</loc>
-  </url>
-  <url>
-    <loc>/reference/process2DNMR.html</loc>
-  </url>
-  <url>
-    <loc>/reference/processLCMS.html</loc>
-  </url>
-  <url>
-    <loc>/reference/processVariableList.html</loc>
-  </url>
-  <url>
-    <loc>/reference/processXYXY.html</loc>
-  </url>
-  <url>
-    <loc>/reference/processXYY.html</loc>
-  </url>
-  <url>
     <loc>/reference/readJDX.html</loc>
-  </url>
-  <url>
-    <loc>/reference/repDUPs.html</loc>
   </url>
   <url>
     <loc>/reference/sinkall.html</loc>
   </url>
   <url>
     <loc>/reference/splitMultiblockDX.html</loc>
-  </url>
-  <url>
-    <loc>/reference/unDIF.html</loc>
-  </url>
-  <url>
-    <loc>/reference/unSQZ.html</loc>
-  </url>
-  <url>
-    <loc>/reference/yValueCheck.html</loc>
   </url>
 </urlset>
