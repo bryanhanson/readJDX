@@ -164,7 +164,7 @@
 #' chk <- readJDX(mdd, debug = 6)
 #' sinkall() # close the file connection
 #' file.show(tf)
-#'
+#' 
 #' # 2D HETCORR spectrum
 #' \dontrun{
 #' nmr2d <- system.file("extdata", "isasspc1.dx", package = "readJDX")
@@ -234,7 +234,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
     # dataGuide, metadata & comments already in place; process each variable list
 
     for (i in 4:length(VL)) {
-      VL[[i]] <- processVariableList(VL[[i]], params, mode, VL[[1]][i - 2, c(2, 3)], SOFC, debug)
+      VL[[i]] <- processVariableList(VL[[i]], params, mode, SOFC, debug)
     }
 
     # Fix up names
@@ -255,7 +255,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
     M <- matrix(NA_real_, ncol = params[2], nrow = params[1]) # matrix to store result
 
     for (i in 4:length(VL)) {
-      tmp <- processVariableList(VL[[i]], params, mode, VL[[1]][i - 2, c(2, 3)], SOFC, debug)
+      tmp <- processVariableList(VL[[i]], params, mode, SOFC, debug)
       M[i - 3, ] <- tmp$y
     }
 
@@ -274,7 +274,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
     # Return value is a list: dataGuide, metadata, comment lines, a data frame for each time point
     # dataGuide, metadata & comments already in place; add data frames for each time point
     for (i in 4:length(VL)) {
-      VL[[i]] <- processVariableList(VL[[i]], params, mode, VL[[1]][i - 2, c(2, 3)], SOFC, debug)
+      VL[[i]] <- processVariableList(VL[[i]], params, mode, SOFC, debug)
       
     }
 
@@ -287,7 +287,7 @@ readJDX <- function(file = "", SOFC = TRUE, debug = 0) {
 
   if (mode == "XYXY") {
     for (i in 4:length(VL)) {
-      VL[[i]] <- processVariableList(VL[[i]], params, mode, VL[[1]][i - 2, c(2, 3)], SOFC, debug)
+      VL[[i]] <- processVariableList(VL[[i]], params, mode, SOFC, debug)
     }
     specnames <- jdx[blocks] # each line with ##TITLE= (there is only one however)
     specnames <- str_trim(substring(specnames, 9, nchar(specnames)))

@@ -118,7 +118,7 @@ findVariableLists <- function(jdx, debug = 0) {
 
   # Find all comment-only lines exclusive of metadata; these cause a variety of problems.
   # Keep original line numbers. CURRENTLY NOT USED OTHER THAN THIS FUNCTION, but is returned.
-  # There is a multi-line comment label "##=" but we do not search for this (not sure I've seen it).
+  # There is a multi-line comment label "##=" but we do not search for this (not sure I've ever seen it).
 
   comOnly <- grep("^\\$\\$", jdx)
   comOnly <- setdiff(comOnly, 1:(spec_st[1] - 1))
@@ -179,7 +179,13 @@ findVariableLists <- function(jdx, debug = 0) {
   VL[[3]] <- comOnly
 
   for (i in 4:length(VL)) {
-    VL[[i]] <- c(DF$Format[i - 2], jdx[DF$FirstLine[i - 2]:DF$LastLine[i - 2]])
+    st_line <- DF$FirstLine[i - 2]
+    end_line <- DF$LastLine[i - 2]
+    keep_lines <- st_line:end_line
+    # first entry is fmt (for later dispatch to the right processing)
+    VL[[i]] <- c(DF$Format[i - 2], jdx[keep_lines])
+    name_vec <- c("fmt", paste("Line", keep_lines, sep = "_"))
+    names(VL[[i]]) <-name_vec # name it for debugging purposes downstream
   }
 
   # The generic VL_X names are replaced when these results are passed back to readJDX
