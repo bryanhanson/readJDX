@@ -1,4 +1,4 @@
-# readJDX 0.6.0 (2021-09-20)
+# readJDX 0.6.1 (2021-09-20)
 ## Enhancements
 * `readJDX` can now read the `##XYPOINTS=(XY..XY)` format.
 * Now using `pkgdown` for html documentation.
