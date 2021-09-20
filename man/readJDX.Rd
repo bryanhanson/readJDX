@@ -166,6 +166,7 @@ plot(chk[[4]]$x, chk[[4]]$y,
 # Capturing processing for troubleshooting
 mdd <- system.file("extdata", "MiniDIFDUP.JDX", package = "readJDX")
 tf <- tempfile(pattern = "Troubleshooting", fileext = "txt")
+sinkall(tf)
 chk <- readJDX(mdd, debug = 6)
 sinkall() # close the file connection
 file.show(tf)
