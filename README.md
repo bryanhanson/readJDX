@@ -1,5 +1,4 @@
-[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![Downloads](https://cranlogs.r-pkg.org/badges/readJDX)](https://cran.r-project.org/package=readJDX)
-
+[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![CRAN status](https://www.r-pkg.org/badges/version-last-release/ChemoSpec)]() [![metacran downloads](https://cranlogs.r-pkg.org/badges/grand-total/ChemoSpec)]()  [![Build & Check](https://github.com/bryanhanson/ChemoSpec/workflows/Build-Check/badge.svg)]() [![Docs Current](https://github.com/bryanhanson/ChemoSpec/workflows/Update-Docs/badge.svg)]() [![Downloads](https://cranlogs.r-pkg.org/badges/ChemoSpec)]() [![status](https://tinyverse.netlify.com/badge/ChemoSpec)]()
 
 ## readJDX -- Import data in the JCAMP-DX format.
 
