@@ -1,4 +1,8 @@
-[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active) [![CRAN status](https://www.r-pkg.org/badges/version-last-release/readJDX)]() [![Build & Check](https://github.com/bryanhanson/readJDX/workflows/Build-Check/badge.svg)]() [![Docs Current](https://github.com/bryanhanson/readJDX/workflows/Update-Docs/badge.svg)]() [![Downloads](https://cranlogs.r-pkg.org/badges/readJDX)]() [![status](https://tinyverse.netlify.com/badge/readJDX)]()
+<!-- Each image below is embedded in an empty link which gives space around each badge -->
+
+[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)]() [![Build & Check](https://github.com/bryanhanson/readJDX/workflows/Build-Check/badge.svg)]() [![Docs Current](https://github.com/bryanhanson/readJDX/workflows/Update-Docs/badge.svg)]()
+
+[![CRAN status](https://www.r-pkg.org/badges/version-last-release/readJDX)]() [![metacran downloads](https://cranlogs.r-pkg.org/badges/grand-total/readJDX)]() [![Downloads](https://cranlogs.r-pkg.org/badges/readJDX)]() [![status](https://tinyverse.netlify.com/badge/readJDX)]() 
 
 ## readJDX -- Import data in the JCAMP-DX format.
 
