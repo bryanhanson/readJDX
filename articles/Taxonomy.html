@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">readJDX</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.1</span>
       </span>
     </div>
 
@@ -81,18 +81,7 @@
 
       
 
-      </header><script src="Taxonomy_files/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="Taxonomy_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet">
-<script src="Taxonomy_files/bootstrap-3.3.5/js/bootstrap.min.js"></script><script src="Taxonomy_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script><script src="Taxonomy_files/bootstrap-3.3.5/shim/respond.min.js"></script><style>h1 {font-size: 34px;}
-       h1.title {font-size: 38px;}
-       h2 {font-size: 30px;}
-       h3 {font-size: 24px;}
-       h4 {font-size: 18px;}
-       h5 {font-size: 16px;}
-       h6 {font-size: 12px;}
-       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
-       pre:not([class]) { background-color: white }</style>
-<script src="Taxonomy_files/navigation-1.1/tabsets.js"></script><script src="Taxonomy_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>2. A Taxonomy of JCAMP-DX Files</h1>
@@ -105,9 +94,9 @@
 <br><a class="author_email" href="mailto:#"></a><a href="mailto:hanson@depauw.edu" class="email">hanson@depauw.edu</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2021-09-21</h4>
+            <h4 data-toc-skip class="date">2021-12-22</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/bryanhanson/readJDX/blob/master/vignettes/Taxonomy.Rmd" class="external-link"><code>vignettes/Taxonomy.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/bryanhanson/readJDX/blob/HEAD/vignettes/Taxonomy.Rmd" class="external-link"><code>vignettes/Taxonomy.Rmd</code></a></small>
       <div class="hidden name"><code>Taxonomy.Rmd</code></div>
 
     </div>
@@ -117,50 +106,58 @@
 <p>This vignette is based on <code>readJDX</code> version 0.6.1.</p>
 <p>This vignette describes a taxonomy of JCAMP-DX files from the point of view of the <code>readJDX</code> package. It’s based on reading and re-reading of the cited references, as well as inspection of files found in the wild and files shared with the author. No single publication includes all the needed information as the standard has evolved over time. This viewpoint may not be a perfect reflection of the actual standards and may include errors. Nevertheless, this is how the author looks at the structure of the files at this point in time, especially aspects that determine how the files should be processed. A table of the program flow is included as well.</p>
 <p>At the most basic level, JCAMP-DX files are either simple or compound.</p>
-<div id="compound-files" class="section level1">
-<h1 class="hasAnchor">
-<a href="#compound-files" class="anchor" aria-hidden="true"></a><span class="header-section-number">1</span> Compound Files</h1>
+<div class="section level1">
+<h1 id="compound-files">
+<span class="header-section-number">1</span> Compound Files<a class="anchor" aria-label="anchor" href="#compound-files"></a>
+</h1>
 <p>Compound files contain more than one spectrum or type of information <span class="citation">(McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>, sec. 3.3.2)</span>. <code>readJDX</code> does not support the processing of compound files. However, a utility function, <code>splitMultiblockDX</code>, is provided that will split such files into separate files which can be processed with <code>readJDX</code>.</p>
 </div>
-<div id="simple-files" class="section level1">
-<h1 class="hasAnchor">
-<a href="#simple-files" class="anchor" aria-hidden="true"></a><span class="header-section-number">2</span> Simple Files</h1>
+<div class="section level1">
+<h1 id="simple-files">
+<span class="header-section-number">2</span> Simple Files<a class="anchor" aria-label="anchor" href="#simple-files"></a>
+</h1>
 <p>Simple files contain the data for one experiment <span class="citation">(McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>, sec. 3.3.1)</span>. This experiment could be a single spectrum. However, it can also be a more complex experiment, in which case the NTUPLES tag is used. Examples of more complex experiments are NMR spectra in which both the real and imaginary points are reported, 2D NMR spectra, and LC-MS or GC-MS results.</p>
-<div id="single-spectra" class="section level2">
-<h2 class="hasAnchor">
-<a href="#single-spectra" class="anchor" aria-hidden="true"></a><span class="header-section-number">2.1</span> Single Spectra</h2>
+<div class="section level2">
+<h2 id="single-spectra">
+<span class="header-section-number">2.1</span> Single Spectra<a class="anchor" aria-label="anchor" href="#single-spectra"></a>
+</h2>
 <p>A single spectrum could be any basic spectroscopic experiment: IR, processed NMR, UV-Vis, MS, Raman, ESR, CD etc.</p>
-<div id="xydata-xy--y" class="section level3">
-<h3 class="hasAnchor">
-<a href="#xydata-xy--y" class="anchor" aria-hidden="true"></a><span class="header-section-number">2.1.1</span> XYDATA= (X++(Y..Y))</h3>
+<div class="section level3">
+<h3 id="xydata-xy--y">
+<span class="header-section-number">2.1.1</span> XYDATA= (X++(Y..Y))<a class="anchor" aria-label="anchor" href="#xydata-xy--y"></a>
+</h3>
 <p>This format assumes equal spacing along the x-axis. The notation <code>(X++(Y..Y))</code> means that each line begins with an x-value and is followed by as many y-values as will fit on the line <span class="citation">(McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>, sec. 5.1.1 &amp; 6.4.1)</span>. There are a number of checks built into this format.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">##XYDATA= (X++(Y..Y))</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a></span>
 <span id="cb1-3"><a href="#cb1-3"></a>[followed by x, y1, y2, y3... data <span class="cf">in</span> AFFN or ASDF]</span></code></pre></div>
 </div>
-<div id="xypoints-xy--xy" class="section level3">
-<h3 class="hasAnchor">
-<a href="#xypoints-xy--xy" class="anchor" aria-hidden="true"></a><span class="header-section-number">2.1.2</span> XYPOINTS= (XY..XY)</h3>
+<div class="section level3">
+<h3 id="xypoints-xy--xy">
+<span class="header-section-number">2.1.2</span> XYPOINTS= (XY..XY)<a class="anchor" aria-label="anchor" href="#xypoints-xy--xy"></a>
+</h3>
 <p>This format assumes arbitrary spacing along the x-axis, but the data is essentially continuous in nature <span class="citation">(McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>, sec. 6.4.2)</span>. This variable list is handled the same as the next one, as they both come down to processing series of <code>x,y</code> points.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co">##XYPOINTS= (XY..XY)</span></span>
 <span id="cb2-2"><a href="#cb2-2"></a></span>
 <span id="cb2-3"><a href="#cb2-3"></a>[followed by x, y data <span class="cf">in</span> AFFN]</span></code></pre></div>
 </div>
-<div id="peak-table-xy--xy" class="section level3">
-<h3 class="hasAnchor">
-<a href="#peak-table-xy--xy" class="anchor" aria-hidden="true"></a><span class="header-section-number">2.1.3</span> PEAK TABLE= (XY..XY)</h3>
+<div class="section level3">
+<h3 id="peak-table-xy--xy">
+<span class="header-section-number">2.1.3</span> PEAK TABLE= (XY..XY)<a class="anchor" aria-label="anchor" href="#peak-table-xy--xy"></a>
+</h3>
 <p>This format assumes arbitrary spacing along the x-axis, and implies some curation of the data has occurred, e.g. only counting peaks above a threshold <span class="citation">(McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>, sec. 6.4.3)</span>. Data is fundamentally discontinuous. This variable list is handled the same as the previous one, as they both come down to processing series of <code>x,y</code> points.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">##PEAK TABLE= (XY..XY)</span></span>
 <span id="cb3-2"><a href="#cb3-2"></a></span>
 <span id="cb3-3"><a href="#cb3-3"></a>[followed by x, y data <span class="cf">in</span> AFFN]</span></code></pre></div>
 </div>
 </div>
-<div id="multiple-spectra-in-ntuples-format" class="section level2">
-<h2 class="hasAnchor">
-<a href="#multiple-spectra-in-ntuples-format" class="anchor" aria-hidden="true"></a><span class="header-section-number">2.2</span> Multiple Spectra in NTUPLES Format</h2>
-<div id="d-nmr" class="section level3">
-<h3 class="hasAnchor">
-<a href="#d-nmr" class="anchor" aria-hidden="true"></a><span class="header-section-number">2.2.1</span> 1D NMR</h3>
+<div class="section level2">
+<h2 id="multiple-spectra-in-ntuples-format">
+<span class="header-section-number">2.2</span> Multiple Spectra in NTUPLES Format<a class="anchor" aria-label="anchor" href="#multiple-spectra-in-ntuples-format"></a>
+</h2>
+<div class="section level3">
+<h3 id="d-nmr">
+<span class="header-section-number">2.2.1</span> 1D NMR<a class="anchor" aria-label="anchor" href="#d-nmr"></a>
+</h3>
 <p>A processed 1D NMR spectrum composed of the real data points would be reported in one of the formats for simple files. NTUPLES is used when both the real and imaginary data are reported <span class="citation">(Davies and Lampen <a href="#ref-Davies1993" role="doc-biblioref">1993</a>, sec. 7)</span>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">##NTUPLES= NMR</span></span>
 <span id="cb4-2"><a href="#cb4-2"></a>.</span>
@@ -180,9 +177,10 @@
 <span id="cb4-16"><a href="#cb4-16"></a><span class="co">##</span><span class="re">END</span><span class="co"> NTUPLES= NMR</span></span>
 <span id="cb4-17"><a href="#cb4-17"></a><span class="co">##</span><span class="re">END</span><span class="co">=</span></span></code></pre></div>
 </div>
-<div id="d-nmr-1" class="section level3">
-<h3 class="hasAnchor">
-<a href="#d-nmr-1" class="anchor" aria-hidden="true"></a><span class="header-section-number">2.2.2</span> 2D NMR</h3>
+<div class="section level3">
+<h3 id="d-nmr-1">
+<span class="header-section-number">2.2.2</span> 2D NMR<a class="anchor" aria-label="anchor" href="#d-nmr-1"></a>
+</h3>
 <p>The author is unaware of official documentation of this format, though unofficial documents can be found on the web. It is analogous to the spectral series used for LC-MS data, among others</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">##NTUPLES= nD NMR SPECTRUM</span></span>
 <span id="cb5-2"><a href="#cb5-2"></a>.</span>
@@ -209,9 +207,10 @@
 <span id="cb5-23"><a href="#cb5-23"></a><span class="co">##</span><span class="re">END</span><span class="co"> NTUPLES= nD NMR SPECTRUM</span></span>
 <span id="cb5-24"><a href="#cb5-24"></a><span class="co">##</span><span class="re">END</span><span class="co">=</span></span></code></pre></div>
 </div>
-<div id="lc-ms-or-gc-ms" class="section level3">
-<h3 class="hasAnchor">
-<a href="#lc-ms-or-gc-ms" class="anchor" aria-hidden="true"></a><span class="header-section-number">2.2.3</span> LC-MS or GC-MS</h3>
+<div class="section level3">
+<h3 id="lc-ms-or-gc-ms">
+<span class="header-section-number">2.2.3</span> LC-MS or GC-MS<a class="anchor" aria-label="anchor" href="#lc-ms-or-gc-ms"></a>
+</h3>
 <p>In this case the NTUPLES tag is used to report a page for each time format, with the spectral data in <code>(XY..XY)</code> format <span class="citation">(referred to as a “spectral series” in Lampen et al. <a href="#ref-Lampen1994" role="doc-biblioref">1994</a>, sec. 5.3.3)</span>. Processing these files requires dealing with the paging structure, but each page can be processed like an <code>(XY..XY)</code> data set.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">##NTUPLES= MASS SPECTRUM</span></span>
 <span id="cb6-2"><a href="#cb6-2"></a>.</span>
@@ -240,17 +239,19 @@
 </div>
 </div>
 </div>
-<div id="number-formats" class="section level1">
-<h1 class="hasAnchor">
-<a href="#number-formats" class="anchor" aria-hidden="true"></a><span class="header-section-number">3</span> Number Formats</h1>
+<div class="section level1">
+<h1 id="number-formats">
+<span class="header-section-number">3</span> Number Formats<a class="anchor" aria-label="anchor" href="#number-formats"></a>
+</h1>
 <ul>
 <li>AFFN (ASCII Free Format Numeric) is x, y pairs separated by ; or any amount of white space <span class="citation">(McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>, sec. 4.5.3)</span>. “A field that starts with a +, -, decimal point or digit is treated as a numeric field…E is the only other allowed character. A numeric field is terminated by E, comma or blank. If E is followed immediately by either + or - and a two- or three-digit integer, it gives the power of 10 by which the initial field must be multiplied.”</li>
 <li>ASDF (ASCII Squeezed Difference Form) is a particular means of compressing data in the sequence x, y1, y2, … <span class="citation">(covered in detail in McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>, sec. 5)</span>.</li>
 </ul>
 </div>
-<div id="program-flow" class="section level1">
-<h1 class="hasAnchor">
-<a href="#program-flow" class="anchor" aria-hidden="true"></a><span class="header-section-number">4</span> Program Flow</h1>
+<div class="section level1">
+<h1 id="program-flow">
+<span class="header-section-number">4</span> Program Flow<a class="anchor" aria-label="anchor" href="#program-flow"></a>
+</h1>
 <p><code>readJDX</code> is coded in such a way that it should be easy to add features. Contributions to improve or expand the package, including pull requests, are always welcome! Figure <a href="#fig:PF">4.1</a> shows the overall flow of the function calls. Only a couple of these functions are exported, so take a look at the source code for documentation. Be sure to check out the <em>MiniDIFDUP_1</em> and <em>MiniDIFDUP_2</em> vignettes for additional information about the JCAMP-DX file structure and how <code>readJDX</code> functions extract the data.</p>
 <div class="figure">
 <span style="display:block;" id="fig:PF"></span>
@@ -259,9 +260,9 @@ Figure 4.1: Functions &amp; the flow of file processing.
 </p>
 </div>
 </div>
-<div id="references" class="section level1 unnumbered">
-<h1 class="hasAnchor">
-<a href="#references" class="anchor" aria-hidden="true"></a>References</h1>
+<div class="section level1 unnumbered">
+<h1 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h1>
 <div id="refs" class="references">
 <div id="ref-Davies1993">
 <p>Davies, AN, and P Lampen. 1993. “JCAMP-DX for NMR.” <em>Applied Spectroscopy</em> 47 (8): 1093–9. <a href="https://doi.org/%7B10.1366/0003702934067874%7D" class="external-link">https://doi.org/{10.1366/0003702934067874}</a>.</p>
@@ -293,7 +294,7 @@ Figure 4.1: Functions &amp; the flow of file processing.
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.9000.</p>
 </div>
 
       </footer>

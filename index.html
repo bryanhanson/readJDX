@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">readJDX</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.1</span>
       </span>
     </div>
 
@@ -66,7 +66,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/bryanhanson/readJDX/">
+  <a href="https://github.com/bryanhanson/readJDX/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -86,26 +86,26 @@
 
 
 <p><a href=""><img src="https://www.r-pkg.org/badges/version-last-release/readJDX" alt="CRAN status"></a> <a href=""><img src="https://cranlogs.r-pkg.org/badges/grand-total/readJDX" alt="metacran downloads"></a> <a href=""><img src="https://cranlogs.r-pkg.org/badges/readJDX" alt="Downloads"></a> <a href=""><img src="https://tinyverse.netlify.com/badge/readJDX" alt="status"></a></p>
-<div id="readjdx--import-data-in-the-jcamp-dx-format" class="section level2">
-<h2 class="hasAnchor">
-<a href="#readjdx--import-data-in-the-jcamp-dx-format" class="anchor" aria-hidden="true"></a>readJDX – Import data in the JCAMP-DX format.</h2>
+<div class="section level2">
+<h2 id="readjdx--import-data-in-the-jcamp-dx-format">readJDX – Import data in the JCAMP-DX format.<a class="anchor" aria-label="anchor" href="#readjdx--import-data-in-the-jcamp-dx-format"></a>
+</h2>
 <p>Import data written in the JCAMP-DX format. This is an instrument-independent format used in the field of spectroscopy. Examples include IR, NMR, and Raman spectroscopy. See the vignette for background and supported formats.</p>
 <p><code>readJDX</code> is tested against a wide variety of JCAMP-DX formatted files provided by collaborators and available in various places on the internet. Details about supported formats, known issues and literature references are available in the vignette.</p>
 </div>
-<div id="how-to-install-readjdx" class="section level2">
-<h2 class="hasAnchor">
-<a href="#how-to-install-readjdx" class="anchor" aria-hidden="true"></a>How to install readJDX</h2>
-<div id="from-cran-using-r" class="section level3">
-<h3 class="hasAnchor">
-<a href="#from-cran-using-r" class="anchor" aria-hidden="true"></a>From CRAN using R:</h3>
+<div class="section level2">
+<h2 id="how-to-install-readjdx">How to install readJDX<a class="anchor" aria-label="anchor" href="#how-to-install-readjdx"></a>
+</h2>
+<div class="section level3">
+<h3 id="from-cran-using-r">From CRAN using R:<a class="anchor" aria-label="anchor" href="#from-cran-using-r"></a>
+</h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/chooseCRANmirror.html" class="external-link">chooseCRANmirror</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># choose a CRAN mirror</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"readJDX"</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/bryanhanson/readJDX" class="external-link">"readJDX"</a></span><span class="op">)</span></code></pre></div>
 </div>
-<div id="to-install-from-github-using-r" class="section level3">
-<h3 class="hasAnchor">
-<a href="#to-install-from-github-using-r" class="anchor" aria-hidden="true"></a>To install from Github using R:</h3>
+<div class="section level3">
+<h3 id="to-install-from-github-using-r">To install from Github using R:<a class="anchor" aria-label="anchor" href="#to-install-from-github-using-r"></a>
+</h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org" class="external-link">"remotes"</a></span><span class="op">)</span>
@@ -113,15 +113,15 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/bryanhanson/readJDX" class="external-link">"readJDX"</a></span><span class="op">)</span></code></pre></div>
 <p>If you use <code>@devel</code> you can get the development branch if it is available (and there may be other branches out there too). Development branches have new, possibly incompletely tested features. They may may also not be ready to pass checks and thus may not install automatically using the method above. Check the news file to see what’s up.</p>
 </div>
-<div id="to-view-the-vignettes" class="section level3">
-<h3 class="hasAnchor">
-<a href="#to-view-the-vignettes" class="anchor" aria-hidden="true"></a>To view the Vignettes:</h3>
+<div class="section level3">
+<h3 id="to-view-the-vignettes">To view the Vignettes:<a class="anchor" aria-label="anchor" href="#to-view-the-vignettes"></a>
+</h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span><span class="st">"readJDX"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="license-information" class="section level3">
-<h3 class="hasAnchor">
-<a href="#license-information" class="anchor" aria-hidden="true"></a>License Information</h3>
+<div class="section level3">
+<h3 id="license-information">License Information<a class="anchor" aria-label="anchor" href="#license-information"></a>
+</h3>
 <p><code>readJDX</code> is distributed under the GPL-3 license, as stated in the DESCRIPTION file. For more info, see the <a href="https://gnu.org/licenses/gpl.html" class="external-link">GPL site.</a></p>
 <p>Questions? <a href="mailto:hanson@depauw.edu" class="email">hanson@depauw.edu</a></p>
 </div>
@@ -133,12 +133,9 @@
     <div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=readJDX">https://​cloud.r-project.org/​package=readJDX</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/bryanhanson/readJDX/">https://​github.com/​bryanhanson/​readJDX/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/bryanhanson/readJDX/issues">https://​github.com/​bryanhanson/​readJDX/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=readJDX" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/bryanhanson/readJDX/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/bryanhanson/readJDX/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -150,10 +147,17 @@
 </div>
 
 
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing readJDX</a></li>
+</ul>
+</div>
+
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Bryan A. Hanson <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-3536-8246" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Bryan A. Hanson <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-3536-8246" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 
@@ -177,7 +181,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.9000.</p>
 </div>
 
       </footer>
