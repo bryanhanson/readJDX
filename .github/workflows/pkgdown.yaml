@@ -1,8 +1,7 @@
 on:
   push:
     branches:
-      - master
-      - devel
+      - main
 
 name: Update pkgdown site
 
