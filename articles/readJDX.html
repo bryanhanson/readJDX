@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">readJDX</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.3</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -90,11 +90,11 @@
             <address class="author_afil">
       <ol style="list-style-type: decimal">
 <li>Professor Emeritus of Chemistry &amp; Biochemistry, DePauw University, Greencastle IN USA.</li>
-      </ol>
+</ol>
 <br><a class="author_email" href="mailto:#"></a><a href="mailto:hanson@depauw.edu" class="email">hanson@depauw.edu</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2021-12-22</h4>
+            <h4 data-toc-skip class="date">2022-12-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bryanhanson/readJDX/blob/HEAD/vignettes/readJDX.Rmd" class="external-link"><code>vignettes/readJDX.Rmd</code></a></small>
       <div class="hidden name"><code>readJDX.Rmd</code></div>
@@ -103,35 +103,35 @@
 
     
     
-<pre><code><span class="co">## </span>
-<span class="co">## readJDX is tested with &gt; 175 files before release.</span>
-<span class="co">## However, there are still challenging files out in the wild.</span>
-<span class="co">## If you have trouble importing a file, please file an issue at</span>
-<span class="co">## github.com/bryanhanson/readJDX/issues</span></code></pre>
-<p>This vignette is based on <code>readJDX</code> version 0.6.1.</p>
-<div class="section level1">
-<h1 id="background">
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## readJDX is tested with &gt; 175 files before release.</span></span>
+<span><span class="co">## However, there are still challenging files out in the wild.</span></span>
+<span><span class="co">## If you have trouble importing a file, please file an issue at</span></span>
+<span><span class="co">## github.com/bryanhanson/readJDX/issues</span></span></code></pre>
+<p>This vignette is based on <code>readJDX</code> version 0.6.3.</p>
+<div class="section level2" number="1">
+<h2 id="background">
 <span class="header-section-number">1</span> Background<a class="anchor" aria-label="anchor" href="#background"></a>
-</h1>
-<p>The JCAMP-DX format was developed as an manufacturer-independent means of sharing spectroscopic <a href="http://www.jcamp-dx.org" class="external-link">data</a>. The standard is described in a series of publications <span class="citation">(McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>; Grasselli <a href="#ref-Grasselli1991" role="doc-biblioref">1991</a>; Davies and Lampen <a href="#ref-Davies1993" role="doc-biblioref">1993</a>; Lampen et al. <a href="#ref-Lampen1994" role="doc-biblioref">1994</a>, <a href="#ref-Lampen1999" role="doc-biblioref">1999</a>; Baumbach et al. <a href="#ref-Bumbach2001" role="doc-biblioref">2001</a>; Cammack et al. <a href="#ref-Cammack2006" role="doc-biblioref">2006</a>; Woollett et al. <a href="#ref-Woollett2012" role="doc-biblioref">2012</a>)</span>. JCAMP-DX was developed during a time when data storage was expensive, and hence makes extensive use of compression schemes. The original application was to IR spectroscopy, but the standard has evolved over time to accommodate other spectroscopies.</p>
+</h2>
+<p>The JCAMP-DX format was developed as an manufacturer-independent means of sharing spectroscopic <a href="http://www.jcamp-dx.org" class="external-link">data</a>. The standard is described in a series of publications <span class="citation">(<a href="#ref-McDonald1988" role="doc-biblioref">McDonald and Wilks 1988</a>; <a href="#ref-Grasselli1991" role="doc-biblioref">Grasselli 1991</a>; <a href="#ref-Davies1993" role="doc-biblioref">Davies and Lampen 1993</a>; <a href="#ref-Lampen1994" role="doc-biblioref">Lampen et al. 1994</a>, <a href="#ref-Lampen1999" role="doc-biblioref">1999</a>; <a href="#ref-Bumbach2001" role="doc-biblioref">Baumbach et al. 2001</a>; <a href="#ref-Cammack2006" role="doc-biblioref">Cammack et al. 2006</a>; <a href="#ref-Woollett2012" role="doc-biblioref">Woollett et al. 2012</a>)</span>. JCAMP-DX was developed during a time when data storage was expensive, and hence makes extensive use of compression schemes. The original application was to IR spectroscopy, but the standard has evolved over time to accommodate other spectroscopies.</p>
 </div>
-<div class="section level1">
-<h1 id="file-structure">
+<div class="section level2" number="2">
+<h2 id="file-structure">
 <span class="header-section-number">2</span> File Structure<a class="anchor" aria-label="anchor" href="#file-structure"></a>
-</h1>
+</h2>
 <p>JCAMP-DX files consist of two parts:</p>
 <ul>
 <li>A more-or-less human readible set of metadata which is needed to understand the data and verify the accuracy of any needed decompression. Besides required basic information about the data itself, most files contain instrument and manufacturer-specific parameters in the metadata.</li>
 <li>A variable list, compressed in various ways.</li>
 </ul>
 </div>
-<div class="section level1">
-<h1 id="challenges-when-reading-files">
+<div class="section level2" number="3">
+<h2 id="challenges-when-reading-files">
 <span class="header-section-number">3</span> Challenges When Reading Files<a class="anchor" aria-label="anchor" href="#challenges-when-reading-files"></a>
-</h1>
+</h2>
 <p>The JCAMP-DX standard allows a lot of flexibility and instrument manufacturers have written widely varying export functions. Some of the challenges in reading a JCAMP-DX file include:</p>
 <ul>
-<li>JCAMP-DX files can contain different kinds of data, including non-spectroscopic data <span class="citation">(Gasteiger et al. <a href="#ref-Gasteiger1991" role="doc-biblioref">1991</a>)</span> and more than one type of spectroscopic data.</li>
+<li>JCAMP-DX files can contain different kinds of data, including non-spectroscopic data <span class="citation">(<a href="#ref-Gasteiger1991" role="doc-biblioref">Gasteiger et al. 1991</a>)</span> and more than one type of spectroscopic data.</li>
 <li>JCAMP-DX files can contain more than one spectrum in the file.</li>
 <li>Instruments may be configured to use . or , as the decimal point when writing files. This is generally a geographical / cultural nuance.</li>
 <li>Numbers may be written using E to signify exponent, but only in some compression formats.</li>
@@ -139,10 +139,10 @@
 <li>Some manufacturers take liberties with the required format.</li>
 </ul>
 </div>
-<div class="section level1">
-<h1 id="supported-formats">
+<div class="section level2" number="4">
+<h2 id="supported-formats">
 <span class="header-section-number">4</span> Supported Formats<a class="anchor" aria-label="anchor" href="#supported-formats"></a>
-</h1>
+</h2>
 <ul>
 <li>Variable lists can be presented in several different formats. The supported formats are:
 <ul>
@@ -180,17 +180,17 @@
 </li>
 </ul>
 </div>
-<div class="section level1">
-<h1 id="formats-that-are-not-supported">
+<div class="section level2" number="5">
+<h2 id="formats-that-are-not-supported">
 <span class="header-section-number">5</span> Formats That are Not Supported<a class="anchor" aria-label="anchor" href="#formats-that-are-not-supported"></a>
-</h1>
+</h2>
 <ul>
 <li>Mixed spectroscopic types and non-spectroscopic entries (such as structures) are not supported by <code>readJDX</code> and will not be supported in the future.</li>
 <li>Compound files: JCAMP-DX files may contain more than one spectrum in the file. The following JCAMP-DX standards require a compound file and are therefore not directly supported, however a utility function <code>splitMultiblockDX</code> can separate these compound files into separate files that can be read by <code>readJDX</code>:
 <ul>
-<li>EMR, EPR, ESR spectroscopy <span class="citation">(Cammack et al. <a href="#ref-Cammack2006" role="doc-biblioref">2006</a>)</span>
+<li>EMR, EPR, ESR spectroscopy <span class="citation">(<a href="#ref-Cammack2006" role="doc-biblioref">Cammack et al. 2006</a>)</span>
 </li>
-<li>CD spectroscopy <span class="citation">(Woollett et al. <a href="#ref-Woollett2012" role="doc-biblioref">2012</a>)</span>
+<li>CD spectroscopy <span class="citation">(<a href="#ref-Woollett2012" role="doc-biblioref">Woollett et al. 2012</a>)</span>
 </li>
 </ul>
 </li>
@@ -198,44 +198,44 @@
 <code>readJDX</code> is geared toward raw spectral data. Therefore variable lists formats representing derived information like PEAK ASSIGNMENTS are not supported (but your pull requests are welcomed!).</li>
 </ul>
 </div>
-<div class="section level1">
-<h1 id="practical-matters">
+<div class="section level2" number="6">
+<h2 id="practical-matters">
 <span class="header-section-number">6</span> Practical Matters<a class="anchor" aria-label="anchor" href="#practical-matters"></a>
-</h1>
+</h2>
 <p><code>readJDX</code> tries its best to deal with all these options. If you have a file that you believe should be supported but gives an error, please file an issue at GitHub. Be sure to attach the file that is giving you problems.</p>
 <p>Before release, <code>readJDX</code> is tested against a large collection of files with varying formats. A few of these files were obtained locally. Others were collected from publically available sources (e.g. <a href="http://www.jcamp-dx.org/testdata.html" class="external-link">www.jcamp-dx.org</a>). These files are not included with the package to save space, and in addition, while they are publically available, for many of them the licensing status is unclear (i.e. the OWNER entry).</p>
 <p>The JCAMP standard requires a number of checks on the integrity of the data decompression process. <code>readJDX</code> implements most of these either directly or indirectly. Verification is important, and we have found JCAMP files that were not written correctly in the process of checking integrity. For details about how data decompression is checked, please see the original source files.</p>
 </div>
-<div class="section level1 unnumbered">
-<h1 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h1>
-<div id="refs" class="references">
-<div id="ref-Bumbach2001">
-<p>Baumbach, JI, AN Davies, P Lampen, and H Schmidt. 2001. “JCAMP-DX. A Standard Format for the Exchange of Ion Mobility Spectrometry Data - (IUPAC recommendations 2001).” <em>Pure and Applied Chemistry</em> 73 (11): 1765–82. <a href="https://doi.org/%7B10.1351/pac200173111765%7D" class="external-link">https://doi.org/{10.1351/pac200173111765}</a>.</p>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Bumbach2001" class="csl-entry">
+Baumbach, JI, AN Davies, P Lampen, and H Schmidt. 2001. <span>“<span class="nocase">JCAMP-DX. A Standard Format for the Exchange of Ion Mobility Spectrometry Data - (IUPAC recommendations 2001)</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>73</span> (<span>11</span>): 1765–82. <a href="https://doi.org/%7B10.1351/pac200173111765%7D" class="external-link">https://doi.org/{10.1351/pac200173111765}</a>.
 </div>
-<div id="ref-Cammack2006">
-<p>Cammack, R, Y Fann, RJ Lancashire, JP Maher, PS McIntyre, and R Morse. 2006. “JCAMP-DX for electron magnetic resonance(EMR).” <em>Pure and Applied Chemistry</em> 78 (3): 613–31. <a href="https://doi.org/%7B10.1351/pac200678030613%7D" class="external-link">https://doi.org/{10.1351/pac200678030613}</a>.</p>
+<div id="ref-Cammack2006" class="csl-entry">
+Cammack, R, Y Fann, RJ Lancashire, JP Maher, PS McIntyre, and R Morse. 2006. <span>“<span class="nocase">JCAMP-DX for electron magnetic resonance(EMR)</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>78</span> (<span>3</span>): 613–31. <a href="https://doi.org/%7B10.1351/pac200678030613%7D" class="external-link">https://doi.org/{10.1351/pac200678030613}</a>.
 </div>
-<div id="ref-Davies1993">
-<p>Davies, AN, and P Lampen. 1993. “JCAMP-DX for NMR.” <em>Applied Spectroscopy</em> 47 (8): 1093–9. <a href="https://doi.org/%7B10.1366/0003702934067874%7D" class="external-link">https://doi.org/{10.1366/0003702934067874}</a>.</p>
+<div id="ref-Davies1993" class="csl-entry">
+Davies, AN, and P Lampen. 1993. <span>“<span class="nocase">JCAMP-DX for NMR</span>.”</span> <em><span>Applied Spectroscopy</span></em> <span>47</span> (<span>8</span>): 1093–99. <a href="https://doi.org/%7B10.1366/0003702934067874%7D" class="external-link">https://doi.org/{10.1366/0003702934067874}</a>.
 </div>
-<div id="ref-Gasteiger1991">
-<p>Gasteiger, J., B. M. P. Hendricks, Hoever P., Jochum C., and Somberg H. 1991. “JCAMP-CS: A Standard Exchange Format for Chemical Structure Information in a Computer-Readible Form.” <em>Applied Spectroscopy</em> 45 (1): 4–11.</p>
+<div id="ref-Gasteiger1991" class="csl-entry">
+Gasteiger, J., B. M. P. Hendricks, Hoever P., Jochum C., and Somberg H. 1991. <span>“<span class="nocase">JCAMP-CS: A Standard Exchange Format for Chemical Structure Information in a Computer-Readible Form</span>.”</span> <em><span>Applied Spectroscopy</span></em> 45 (1): 4–11.
 </div>
-<div id="ref-Grasselli1991">
-<p>Grasselli, JG. 1991. “JCAMP-DX, A Standard Format for Exchange of Infrared-Spectra in Computer Readible Form.” <em>Pure and Applied Chemistry</em> 63 (12): 1781–92. <a href="https://doi.org/%7B10.1351/pac199163121781%7D" class="external-link">https://doi.org/{10.1351/pac199163121781}</a>.</p>
+<div id="ref-Grasselli1991" class="csl-entry">
+Grasselli, JG. 1991. <span>“<span class="nocase">JCAMP-DX, A Standard Format for Exchange of Infrared-Spectra in Computer Readible Form</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>63</span> (<span>12</span>): 1781–92. <a href="https://doi.org/%7B10.1351/pac199163121781%7D" class="external-link">https://doi.org/{10.1351/pac199163121781}</a>.
 </div>
-<div id="ref-Lampen1994">
-<p>Lampen, P, H Hillig, AN Davies, and M Linscheid. 1994. “JCAMP-DX for Mass Spectrometry.” <em>Applied Spectroscopy</em> 48 (12): 1545–52.</p>
+<div id="ref-Lampen1994" class="csl-entry">
+Lampen, P, H Hillig, AN Davies, and M Linscheid. 1994. <span>“<span class="nocase">JCAMP-DX for Mass Spectrometry</span>.”</span> <em><span>Applied Spectroscopy</span></em> <span>48</span> (<span>12</span>): 1545–52.
 </div>
-<div id="ref-Lampen1999">
-<p>Lampen, P, J Lambert, RJ Lancashire, RS McDonald, PS McIntyre, DN Rutledge, T Frohlich, and AN Davies. 1999. “An Extension to the JCAMP-DX Standard File Format, JCAMP-DX V.5.01 (IUPAC Recommendations 1999).” <em>Pure and Applied Chemistry</em> 71 (8): 1549–56. <a href="https://doi.org/%7B10.1351/pac199971081549%7D" class="external-link">https://doi.org/{10.1351/pac199971081549}</a>.</p>
+<div id="ref-Lampen1999" class="csl-entry">
+Lampen, P, J Lambert, RJ Lancashire, RS McDonald, PS McIntyre, DN Rutledge, T Frohlich, and AN Davies. 1999. <span>“<span class="nocase">An Extension to the JCAMP-DX Standard File Format, JCAMP-DX V.5.01 (IUPAC Recommendations 1999)</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>71</span> (<span>8</span>): 1549–56. <a href="https://doi.org/%7B10.1351/pac199971081549%7D" class="external-link">https://doi.org/{10.1351/pac199971081549}</a>.
 </div>
-<div id="ref-McDonald1988">
-<p>McDonald, RS, and PA Wilks. 1988. “JCAMP-DX, A Standard Format for Exchange of Infrared-Spectra in Computer Readible Form.” <em>Applied Spectroscopy</em> 42 (1): 151–62. <a href="https://doi.org/%7B10.1366/0003702884428734%7D" class="external-link">https://doi.org/{10.1366/0003702884428734}</a>.</p>
+<div id="ref-McDonald1988" class="csl-entry">
+McDonald, RS, and PA Wilks. 1988. <span>“<span class="nocase">JCAMP-DX, A Standard Format for Exchange of Infrared-Spectra in Computer Readible Form</span>.”</span> <em><span>Applied Spectroscopy</span></em> <span>42</span> (<span>1</span>): 151–62. <a href="https://doi.org/%7B10.1366/0003702884428734%7D" class="external-link">https://doi.org/{10.1366/0003702884428734}</a>.
 </div>
-<div id="ref-Woollett2012">
-<p>Woollett, Benjamin, Daniel Klose, Richard Cammack, Robert W. Janes, and B. A. Wallace. 2012. “JCAMP-DX for circular dichroism spectra and metadata (IUPAC Recommendations 2012).” <em>Pure and Applied Chemistry</em> 84 (10): 2171–82. <a href="https://doi.org/%7B10.1351/PAC-REC-12-02-03%7D" class="external-link">https://doi.org/{10.1351/PAC-REC-12-02-03}</a>.</p>
+<div id="ref-Woollett2012" class="csl-entry">
+Woollett, Benjamin, Daniel Klose, Richard Cammack, Robert W. Janes, and B. A. Wallace. 2012. <span>“<span class="nocase">JCAMP-DX for circular dichroism spectra and metadata (IUPAC Recommendations 2012)</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>84</span> (<span>10</span>): 2171–82. <a href="https://doi.org/%7B10.1351/PAC-REC-12-02-03%7D" class="external-link">https://doi.org/{10.1351/PAC-REC-12-02-03}</a>.
 </div>
 </div>
 </div>
@@ -258,7 +258,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

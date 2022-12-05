@@ -18,7 +18,7 @@ to study problematic lines in a file in a standalone manner.  See the examples."
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">readJDX</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.3</span>
       </span>
     </div>
 
@@ -30,7 +30,7 @@ to study problematic lines in a file in a standalone manner.  See the examples."
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -71,7 +71,7 @@ to study problematic lines in a file in a standalone manner.  See the examples.<
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">decompLines</span><span class="op">(</span><span class="va">VL</span>, debug <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">decompLines</span><span class="op">(</span><span class="va">VL</span>, debug <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -82,12 +82,17 @@ to study problematic lines in a file in a standalone manner.  See the examples.<
 <li><p>a format code may be present as the first entry</p></li>
 <li><p>there may be other non-numeric lines that eventually get stripped off</p></li>
 </ul></dd>
+
+
 <dt>debug</dt>
 <dd><p>Integer.  See <code><a href="readJDX.html">readJDX</a></code> for details.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of numeric strings, the result of unpacking the compressed data.  One list
+    
+
+<p>A list of numeric strings, the result of unpacking the compressed data.  One list
         element is returned for each line.  The numeric string is named with the ASDF compression mode.</p>
     </div>
     <div id="details">
@@ -111,13 +116,13 @@ to study problematic lines in a file in a standalone manner.  See the examples.<
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">testLines1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="st">"482A885145L989378k853295J46714q39581j382088R41076k774051J365135l135709P53917"</span>,</span>
-<span class="r-in">  <span class="st">"472a903359j71857q18832K573831k615133L481852l395846L894844l478693M916433"</span>,</span>
-<span class="r-in">  <span class="st">"463B483240m513444O146172m826168N233079m522551M000252m097028L466111l460183"</span>,</span>
-<span class="r-in">  <span class="st">"454i0520L061628k524598K788931k509430L219286k511160K709095k122775J594246"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">demo1</span> <span class="op">&lt;-</span> <span class="fu">decompLines</span><span class="op">(</span><span class="va">testLines1</span>, debug <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">testLines1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="st">"482A885145L989378k853295J46714q39581j382088R41076k774051J365135l135709P53917"</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"472a903359j71857q18832K573831k615133L481852l395846L894844l478693M916433"</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"463B483240m513444O146172m826168N233079m522551M000252m097028L466111l460183"</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"454i0520L061628k524598K788931k509430L219286k511160K709095k122775J594246"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">demo1</span> <span class="op">&lt;-</span> <span class="fu">decompLines</span><span class="op">(</span><span class="va">testLines1</span>, debug <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -250,17 +255,17 @@ to study problematic lines in a file in a standalone manner.  See the examples.<
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]     454 2971108  446510 3235441  726011 3945297 1434137 4143232 2020457</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [10] 3614703</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">testLines2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span class="r-in">  <span class="co"># EU AFFN:</span></span>
-<span class="r-in">  <span class="st">"1898,58486802541 -0,0170190036296844 -0,0170874372124672 -0,0171865783631802"</span>,</span>
-<span class="r-in">  <span class="st">"1917,23501403401 -0,0176097713410854 -0,0177919361740351 -0,0179808251559734"</span>,</span>
-<span class="r-in">  <span class="co"># AFFN with fixed field width/extra space:</span></span>
-<span class="r-in">  <span class="st">"           16383       2259260      -5242968      -7176216      -1616072"</span>,</span>
-<span class="r-in">  <span class="st">"           16379      10650432       4373926      -3660824       2136488"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">demo2</span> <span class="op">&lt;-</span> <span class="fu">decompLines</span><span class="op">(</span><span class="va">testLines2</span>, debug <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">testLines2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="co"># EU AFFN:</span></span></span>
+<span class="r-in"><span>  <span class="st">"1898,58486802541 -0,0170190036296844 -0,0170874372124672 -0,0171865783631802"</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"1917,23501403401 -0,0176097713410854 -0,0177919361740351 -0,0179808251559734"</span>,</span></span>
+<span class="r-in"><span>  <span class="co"># AFFN with fixed field width/extra space:</span></span></span>
+<span class="r-in"><span>  <span class="st">"           16383       2259260      -5242968      -7176216      -1616072"</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"           16379      10650432       4373926      -3660824       2136488"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">demo2</span> <span class="op">&lt;-</span> <span class="fu">decompLines</span><span class="op">(</span><span class="va">testLines2</span>, debug <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -326,7 +331,7 @@ to study problematic lines in a file in a standalone manner.  See the examples.<
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

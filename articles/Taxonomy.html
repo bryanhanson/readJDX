@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">readJDX</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.3</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -90,11 +90,11 @@
             <address class="author_afil">
       <ol style="list-style-type: decimal">
 <li>Professor Emeritus of Chemistry &amp; Biochemistry, DePauw University, Greencastle IN USA.</li>
-      </ol>
+</ol>
 <br><a class="author_email" href="mailto:#"></a><a href="mailto:hanson@depauw.edu" class="email">hanson@depauw.edu</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2021-12-22</h4>
+            <h4 data-toc-skip class="date">2022-12-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bryanhanson/readJDX/blob/HEAD/vignettes/Taxonomy.Rmd" class="external-link"><code>vignettes/Taxonomy.Rmd</code></a></small>
       <div class="hidden name"><code>Taxonomy.Rmd</code></div>
@@ -103,155 +103,155 @@
 
     
     
-<p>This vignette is based on <code>readJDX</code> version 0.6.1.</p>
+<p>This vignette is based on <code>readJDX</code> version 0.6.3.</p>
 <p>This vignette describes a taxonomy of JCAMP-DX files from the point of view of the <code>readJDX</code> package. It’s based on reading and re-reading of the cited references, as well as inspection of files found in the wild and files shared with the author. No single publication includes all the needed information as the standard has evolved over time. This viewpoint may not be a perfect reflection of the actual standards and may include errors. Nevertheless, this is how the author looks at the structure of the files at this point in time, especially aspects that determine how the files should be processed. A table of the program flow is included as well.</p>
 <p>At the most basic level, JCAMP-DX files are either simple or compound.</p>
-<div class="section level1">
-<h1 id="compound-files">
+<div class="section level2" number="1">
+<h2 id="compound-files">
 <span class="header-section-number">1</span> Compound Files<a class="anchor" aria-label="anchor" href="#compound-files"></a>
-</h1>
-<p>Compound files contain more than one spectrum or type of information <span class="citation">(McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>, sec. 3.3.2)</span>. <code>readJDX</code> does not support the processing of compound files. However, a utility function, <code>splitMultiblockDX</code>, is provided that will split such files into separate files which can be processed with <code>readJDX</code>.</p>
+</h2>
+<p>Compound files contain more than one spectrum or type of information <span class="citation">(<a href="#ref-McDonald1988" role="doc-biblioref">McDonald and Wilks 1988, sec. 3.3.2</a>)</span>. <code>readJDX</code> does not support the processing of compound files. However, a utility function, <code>splitMultiblockDX</code>, is provided that will split such files into separate files which can be processed with <code>readJDX</code>.</p>
 </div>
-<div class="section level1">
-<h1 id="simple-files">
+<div class="section level2" number="2">
+<h2 id="simple-files">
 <span class="header-section-number">2</span> Simple Files<a class="anchor" aria-label="anchor" href="#simple-files"></a>
-</h1>
-<p>Simple files contain the data for one experiment <span class="citation">(McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>, sec. 3.3.1)</span>. This experiment could be a single spectrum. However, it can also be a more complex experiment, in which case the NTUPLES tag is used. Examples of more complex experiments are NMR spectra in which both the real and imaginary points are reported, 2D NMR spectra, and LC-MS or GC-MS results.</p>
-<div class="section level2">
-<h2 id="single-spectra">
+</h2>
+<p>Simple files contain the data for one experiment <span class="citation">(<a href="#ref-McDonald1988" role="doc-biblioref">McDonald and Wilks 1988, sec. 3.3.1</a>)</span>. This experiment could be a single spectrum. However, it can also be a more complex experiment, in which case the NTUPLES tag is used. Examples of more complex experiments are NMR spectra in which both the real and imaginary points are reported, 2D NMR spectra, and LC-MS or GC-MS results.</p>
+<div class="section level3" number="2.1">
+<h3 id="single-spectra">
 <span class="header-section-number">2.1</span> Single Spectra<a class="anchor" aria-label="anchor" href="#single-spectra"></a>
-</h2>
+</h3>
 <p>A single spectrum could be any basic spectroscopic experiment: IR, processed NMR, UV-Vis, MS, Raman, ESR, CD etc.</p>
-<div class="section level3">
-<h3 id="xydata-xy--y">
+<div class="section level4" number="2.1.1">
+<h4 id="xydata-xy--y">
 <span class="header-section-number">2.1.1</span> XYDATA= (X++(Y..Y))<a class="anchor" aria-label="anchor" href="#xydata-xy--y"></a>
-</h3>
-<p>This format assumes equal spacing along the x-axis. The notation <code>(X++(Y..Y))</code> means that each line begins with an x-value and is followed by as many y-values as will fit on the line <span class="citation">(McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>, sec. 5.1.1 &amp; 6.4.1)</span>. There are a number of checks built into this format.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">##XYDATA= (X++(Y..Y))</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a></span>
-<span id="cb1-3"><a href="#cb1-3"></a>[followed by x, y1, y2, y3... data <span class="cf">in</span> AFFN or ASDF]</span></code></pre></div>
+</h4>
+<p>This format assumes equal spacing along the x-axis. The notation <code>(X++(Y..Y))</code> means that each line begins with an x-value and is followed by as many y-values as will fit on the line <span class="citation">(<a href="#ref-McDonald1988" role="doc-biblioref">McDonald and Wilks 1988, sec. 5.1.1</a> &amp; 6.4.1)</span>. There are a number of checks built into this format.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">##XYDATA= (X++(Y..Y))</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>[followed by x, y1, y2, y3... data <span class="cf">in</span> AFFN or ASDF]</span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="xypoints-xy--xy">
+<div class="section level4" number="2.1.2">
+<h4 id="xypoints-xy--xy">
 <span class="header-section-number">2.1.2</span> XYPOINTS= (XY..XY)<a class="anchor" aria-label="anchor" href="#xypoints-xy--xy"></a>
-</h3>
-<p>This format assumes arbitrary spacing along the x-axis, but the data is essentially continuous in nature <span class="citation">(McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>, sec. 6.4.2)</span>. This variable list is handled the same as the next one, as they both come down to processing series of <code>x,y</code> points.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co">##XYPOINTS= (XY..XY)</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a></span>
-<span id="cb2-3"><a href="#cb2-3"></a>[followed by x, y data <span class="cf">in</span> AFFN]</span></code></pre></div>
+</h4>
+<p>This format assumes arbitrary spacing along the x-axis, but the data is essentially continuous in nature <span class="citation">(<a href="#ref-McDonald1988" role="doc-biblioref">McDonald and Wilks 1988, sec. 6.4.2</a>)</span>. This variable list is handled the same as the next one, as they both come down to processing series of <code>x,y</code> points.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">##XYPOINTS= (XY..XY)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>[followed by x, y data <span class="cf">in</span> AFFN]</span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="peak-table-xy--xy">
+<div class="section level4" number="2.1.3">
+<h4 id="peak-table-xy--xy">
 <span class="header-section-number">2.1.3</span> PEAK TABLE= (XY..XY)<a class="anchor" aria-label="anchor" href="#peak-table-xy--xy"></a>
-</h3>
-<p>This format assumes arbitrary spacing along the x-axis, and implies some curation of the data has occurred, e.g. only counting peaks above a threshold <span class="citation">(McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>, sec. 6.4.3)</span>. Data is fundamentally discontinuous. This variable list is handled the same as the previous one, as they both come down to processing series of <code>x,y</code> points.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">##PEAK TABLE= (XY..XY)</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a></span>
-<span id="cb3-3"><a href="#cb3-3"></a>[followed by x, y data <span class="cf">in</span> AFFN]</span></code></pre></div>
+</h4>
+<p>This format assumes arbitrary spacing along the x-axis, and implies some curation of the data has occurred, e.g. only counting peaks above a threshold <span class="citation">(<a href="#ref-McDonald1988" role="doc-biblioref">McDonald and Wilks 1988, sec. 6.4.3</a>)</span>. Data is fundamentally discontinuous. This variable list is handled the same as the previous one, as they both come down to processing series of <code>x,y</code> points.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">##PEAK TABLE= (XY..XY)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>[followed by x, y data <span class="cf">in</span> AFFN]</span></code></pre></div>
 </div>
 </div>
-<div class="section level2">
-<h2 id="multiple-spectra-in-ntuples-format">
+<div class="section level3" number="2.2">
+<h3 id="multiple-spectra-in-ntuples-format">
 <span class="header-section-number">2.2</span> Multiple Spectra in NTUPLES Format<a class="anchor" aria-label="anchor" href="#multiple-spectra-in-ntuples-format"></a>
-</h2>
-<div class="section level3">
-<h3 id="d-nmr">
+</h3>
+<div class="section level4" number="2.2.1">
+<h4 id="d-nmr">
 <span class="header-section-number">2.2.1</span> 1D NMR<a class="anchor" aria-label="anchor" href="#d-nmr"></a>
-</h3>
-<p>A processed 1D NMR spectrum composed of the real data points would be reported in one of the formats for simple files. NTUPLES is used when both the real and imaginary data are reported <span class="citation">(Davies and Lampen <a href="#ref-Davies1993" role="doc-biblioref">1993</a>, sec. 7)</span>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">##NTUPLES= NMR</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a>.</span>
-<span id="cb4-3"><a href="#cb4-3"></a>.</span>
-<span id="cb4-4"><a href="#cb4-4"></a>.</span>
-<span id="cb4-5"><a href="#cb4-5"></a><span class="co">##PAGE=  N=1</span></span>
-<span id="cb4-6"><a href="#cb4-6"></a><span class="co">##NPOINTS= xx</span></span>
-<span id="cb4-7"><a href="#cb4-7"></a><span class="co">##DATA TABLE= (X++(R..R)), XYDATA</span></span>
-<span id="cb4-8"><a href="#cb4-8"></a>[followed by x, y1, y2, y3... data <span class="cf">in</span> AFFN or ASDF]</span>
-<span id="cb4-9"><a href="#cb4-9"></a>.</span>
-<span id="cb4-10"><a href="#cb4-10"></a>.</span>
-<span id="cb4-11"><a href="#cb4-11"></a>.</span>
-<span id="cb4-12"><a href="#cb4-12"></a><span class="co">##PAGE=  N=2</span></span>
-<span id="cb4-13"><a href="#cb4-13"></a><span class="co">##NPOINTS= yy</span></span>
-<span id="cb4-14"><a href="#cb4-14"></a><span class="co">##DATA TABLE= (X++(I..I)), XYDATA</span></span>
-<span id="cb4-15"><a href="#cb4-15"></a>[followed by x, y1, y2, y3... data <span class="cf">in</span> AFFN or ASDF]</span>
-<span id="cb4-16"><a href="#cb4-16"></a><span class="co">##</span><span class="re">END</span><span class="co"> NTUPLES= NMR</span></span>
-<span id="cb4-17"><a href="#cb4-17"></a><span class="co">##</span><span class="re">END</span><span class="co">=</span></span></code></pre></div>
+</h4>
+<p>A processed 1D NMR spectrum composed of the real data points would be reported in one of the formats for simple files. NTUPLES is used when both the real and imaginary data are reported <span class="citation">(<a href="#ref-Davies1993" role="doc-biblioref">Davies and Lampen 1993, sec. 7</a>)</span>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">##NTUPLES= NMR</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="do">##PAGE=  N=1</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="do">##NPOINTS= xx</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="do">##DATA TABLE= (X++(R..R)), XYDATA</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>[followed by x, y1, y2, y3... data <span class="cf">in</span> AFFN or ASDF]</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="do">##PAGE=  N=2</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="do">##NPOINTS= yy</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="do">##DATA TABLE= (X++(I..I)), XYDATA</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>[followed by x, y1, y2, y3... data <span class="cf">in</span> AFFN or ASDF]</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="do">##</span><span class="re">END</span><span class="do"> NTUPLES= NMR</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="do">##</span><span class="re">END</span><span class="do">=</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="d-nmr-1">
+<div class="section level4" number="2.2.2">
+<h4 id="d-nmr-1">
 <span class="header-section-number">2.2.2</span> 2D NMR<a class="anchor" aria-label="anchor" href="#d-nmr-1"></a>
-</h3>
+</h4>
 <p>The author is unaware of official documentation of this format, though unofficial documents can be found on the web. It is analogous to the spectral series used for LC-MS data, among others</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">##NTUPLES= nD NMR SPECTRUM</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a>.</span>
-<span id="cb5-3"><a href="#cb5-3"></a>.</span>
-<span id="cb5-4"><a href="#cb5-4"></a>.</span>
-<span id="cb5-5"><a href="#cb5-5"></a><span class="co">##PAGE=  F1= x</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a><span class="co">##FIRST= x, y, z</span></span>
-<span id="cb5-7"><a href="#cb5-7"></a><span class="co">##DATA TABLE= (F2++(Y..Y)), PROFILE</span></span>
-<span id="cb5-8"><a href="#cb5-8"></a>[followed by x, y1, y2, y3... data <span class="cf">in</span> AFFN or ASDF]</span>
-<span id="cb5-9"><a href="#cb5-9"></a>.</span>
-<span id="cb5-10"><a href="#cb5-10"></a>.</span>
-<span id="cb5-11"><a href="#cb5-11"></a>.</span>
-<span id="cb5-12"><a href="#cb5-12"></a><span class="co">##PAGE=  F1= x</span></span>
-<span id="cb5-13"><a href="#cb5-13"></a><span class="co">##FIRST= x, y, z</span></span>
-<span id="cb5-14"><a href="#cb5-14"></a><span class="co">##DATA TABLE= (F2++(Y..Y)), PROFILE</span></span>
-<span id="cb5-15"><a href="#cb5-15"></a>[followed by x, y1, y2, y3... data <span class="cf">in</span> AFFN or ASDF]</span>
-<span id="cb5-16"><a href="#cb5-16"></a>.</span>
-<span id="cb5-17"><a href="#cb5-17"></a>.</span>
-<span id="cb5-18"><a href="#cb5-18"></a>.</span>
-<span id="cb5-19"><a href="#cb5-19"></a><span class="co">##PAGE=  F1= x</span></span>
-<span id="cb5-20"><a href="#cb5-20"></a><span class="co">##FIRST= x, y, z</span></span>
-<span id="cb5-21"><a href="#cb5-21"></a><span class="co">##DATA TABLE= (F2++(Y..Y)), PROFILE</span></span>
-<span id="cb5-22"><a href="#cb5-22"></a>[followed by x, y1, y2, y3... data <span class="cf">in</span> AFFN or ASDF]</span>
-<span id="cb5-23"><a href="#cb5-23"></a><span class="co">##</span><span class="re">END</span><span class="co"> NTUPLES= nD NMR SPECTRUM</span></span>
-<span id="cb5-24"><a href="#cb5-24"></a><span class="co">##</span><span class="re">END</span><span class="co">=</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">##NTUPLES= nD NMR SPECTRUM</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="do">##PAGE=  F1= x</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="do">##FIRST= x, y, z</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="do">##DATA TABLE= (F2++(Y..Y)), PROFILE</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>[followed by x, y1, y2, y3... data <span class="cf">in</span> AFFN or ASDF]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="do">##PAGE=  F1= x</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="do">##FIRST= x, y, z</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="do">##DATA TABLE= (F2++(Y..Y)), PROFILE</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>[followed by x, y1, y2, y3... data <span class="cf">in</span> AFFN or ASDF]</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="do">##PAGE=  F1= x</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="do">##FIRST= x, y, z</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="do">##DATA TABLE= (F2++(Y..Y)), PROFILE</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>[followed by x, y1, y2, y3... data <span class="cf">in</span> AFFN or ASDF]</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="do">##</span><span class="re">END</span><span class="do"> NTUPLES= nD NMR SPECTRUM</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="do">##</span><span class="re">END</span><span class="do">=</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="lc-ms-or-gc-ms">
+<div class="section level4" number="2.2.3">
+<h4 id="lc-ms-or-gc-ms">
 <span class="header-section-number">2.2.3</span> LC-MS or GC-MS<a class="anchor" aria-label="anchor" href="#lc-ms-or-gc-ms"></a>
-</h3>
-<p>In this case the NTUPLES tag is used to report a page for each time format, with the spectral data in <code>(XY..XY)</code> format <span class="citation">(referred to as a “spectral series” in Lampen et al. <a href="#ref-Lampen1994" role="doc-biblioref">1994</a>, sec. 5.3.3)</span>. Processing these files requires dealing with the paging structure, but each page can be processed like an <code>(XY..XY)</code> data set.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">##NTUPLES= MASS SPECTRUM</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a>.</span>
-<span id="cb6-3"><a href="#cb6-3"></a>.</span>
-<span id="cb6-4"><a href="#cb6-4"></a>.</span>
-<span id="cb6-5"><a href="#cb6-5"></a><span class="co">##PAGE=  T=1</span></span>
-<span id="cb6-6"><a href="#cb6-6"></a><span class="co">##NPOINTS= x</span></span>
-<span id="cb6-7"><a href="#cb6-7"></a><span class="co">##DATA TABLE= (XY..XY), PEAKS</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a>[followed by x, y data <span class="cf">in</span> AFFN]</span>
-<span id="cb6-9"><a href="#cb6-9"></a>.</span>
-<span id="cb6-10"><a href="#cb6-10"></a>.</span>
-<span id="cb6-11"><a href="#cb6-11"></a>.</span>
-<span id="cb6-12"><a href="#cb6-12"></a><span class="co">##PAGE=  T=2</span></span>
-<span id="cb6-13"><a href="#cb6-13"></a><span class="co">##NPOINTS= x</span></span>
-<span id="cb6-14"><a href="#cb6-14"></a><span class="co">##DATA TABLE= (XY..XY), PEAKS</span></span>
-<span id="cb6-15"><a href="#cb6-15"></a>[followed by x, y data <span class="cf">in</span> AFFN]</span>
-<span id="cb6-16"><a href="#cb6-16"></a>.</span>
-<span id="cb6-17"><a href="#cb6-17"></a>.</span>
-<span id="cb6-18"><a href="#cb6-18"></a>.</span>
-<span id="cb6-19"><a href="#cb6-19"></a><span class="co">##PAGE=  T=n</span></span>
-<span id="cb6-20"><a href="#cb6-20"></a><span class="co">##NPOINTS= x</span></span>
-<span id="cb6-21"><a href="#cb6-21"></a><span class="co">##DATA TABLE= (XY..XY), PEAKS</span></span>
-<span id="cb6-22"><a href="#cb6-22"></a>[followed by x, y data <span class="cf">in</span> AFFN]</span>
-<span id="cb6-23"><a href="#cb6-23"></a><span class="co">##</span><span class="re">END</span><span class="co"> NTUPLES= MASS SPECTRUM</span></span>
-<span id="cb6-24"><a href="#cb6-24"></a><span class="co">##</span><span class="re">END</span><span class="co">=</span></span></code></pre></div>
+</h4>
+<p>In this case the NTUPLES tag is used to report a page for each time format, with the spectral data in <code>(XY..XY)</code> format <span class="citation">(referred to as a “spectral series” in <a href="#ref-Lampen1994" role="doc-biblioref">Lampen et al. 1994, sec. 5.3.3</a>)</span>. Processing these files requires dealing with the paging structure, but each page can be processed like an <code>(XY..XY)</code> data set.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">##NTUPLES= MASS SPECTRUM</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="do">##PAGE=  T=1</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="do">##NPOINTS= x</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="do">##DATA TABLE= (XY..XY), PEAKS</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>[followed by x, y data <span class="cf">in</span> AFFN]</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="do">##PAGE=  T=2</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="do">##NPOINTS= x</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="do">##DATA TABLE= (XY..XY), PEAKS</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>[followed by x, y data <span class="cf">in</span> AFFN]</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>.</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="do">##PAGE=  T=n</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="do">##NPOINTS= x</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="do">##DATA TABLE= (XY..XY), PEAKS</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>[followed by x, y data <span class="cf">in</span> AFFN]</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="do">##</span><span class="re">END</span><span class="do"> NTUPLES= MASS SPECTRUM</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="do">##</span><span class="re">END</span><span class="do">=</span></span></code></pre></div>
 </div>
 </div>
 </div>
-<div class="section level1">
-<h1 id="number-formats">
+<div class="section level2" number="3">
+<h2 id="number-formats">
 <span class="header-section-number">3</span> Number Formats<a class="anchor" aria-label="anchor" href="#number-formats"></a>
-</h1>
+</h2>
 <ul>
-<li>AFFN (ASCII Free Format Numeric) is x, y pairs separated by ; or any amount of white space <span class="citation">(McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>, sec. 4.5.3)</span>. “A field that starts with a +, -, decimal point or digit is treated as a numeric field…E is the only other allowed character. A numeric field is terminated by E, comma or blank. If E is followed immediately by either + or - and a two- or three-digit integer, it gives the power of 10 by which the initial field must be multiplied.”</li>
-<li>ASDF (ASCII Squeezed Difference Form) is a particular means of compressing data in the sequence x, y1, y2, … <span class="citation">(covered in detail in McDonald and Wilks <a href="#ref-McDonald1988" role="doc-biblioref">1988</a>, sec. 5)</span>.</li>
+<li>AFFN (ASCII Free Format Numeric) is x, y pairs separated by ; or any amount of white space <span class="citation">(<a href="#ref-McDonald1988" role="doc-biblioref">McDonald and Wilks 1988, sec. 4.5.3</a>)</span>. “A field that starts with a +, -, decimal point or digit is treated as a numeric field…E is the only other allowed character. A numeric field is terminated by E, comma or blank. If E is followed immediately by either + or - and a two- or three-digit integer, it gives the power of 10 by which the initial field must be multiplied.”</li>
+<li>ASDF (ASCII Squeezed Difference Form) is a particular means of compressing data in the sequence x, y1, y2, … <span class="citation">(covered in detail in <a href="#ref-McDonald1988" role="doc-biblioref">McDonald and Wilks 1988, sec. 5</a>)</span>.</li>
 </ul>
 </div>
-<div class="section level1">
-<h1 id="program-flow">
+<div class="section level2" number="4">
+<h2 id="program-flow">
 <span class="header-section-number">4</span> Program Flow<a class="anchor" aria-label="anchor" href="#program-flow"></a>
-</h1>
+</h2>
 <p><code>readJDX</code> is coded in such a way that it should be easy to add features. Contributions to improve or expand the package, including pull requests, are always welcome! Figure <a href="#fig:PF">4.1</a> shows the overall flow of the function calls. Only a couple of these functions are exported, so take a look at the source code for documentation. Be sure to check out the <em>MiniDIFDUP_1</em> and <em>MiniDIFDUP_2</em> vignettes for additional information about the JCAMP-DX file structure and how <code>readJDX</code> functions extract the data.</p>
 <div class="figure">
 <span style="display:block;" id="fig:PF"></span>
@@ -260,18 +260,18 @@ Figure 4.1: Functions &amp; the flow of file processing.
 </p>
 </div>
 </div>
-<div class="section level1 unnumbered">
-<h1 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h1>
-<div id="refs" class="references">
-<div id="ref-Davies1993">
-<p>Davies, AN, and P Lampen. 1993. “JCAMP-DX for NMR.” <em>Applied Spectroscopy</em> 47 (8): 1093–9. <a href="https://doi.org/%7B10.1366/0003702934067874%7D" class="external-link">https://doi.org/{10.1366/0003702934067874}</a>.</p>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Davies1993" class="csl-entry">
+Davies, AN, and P Lampen. 1993. <span>“<span class="nocase">JCAMP-DX for NMR</span>.”</span> <em><span>Applied Spectroscopy</span></em> <span>47</span> (<span>8</span>): 1093–99. <a href="https://doi.org/%7B10.1366/0003702934067874%7D" class="external-link">https://doi.org/{10.1366/0003702934067874}</a>.
 </div>
-<div id="ref-Lampen1994">
-<p>Lampen, P, H Hillig, AN Davies, and M Linscheid. 1994. “JCAMP-DX for Mass Spectrometry.” <em>Applied Spectroscopy</em> 48 (12): 1545–52.</p>
+<div id="ref-Lampen1994" class="csl-entry">
+Lampen, P, H Hillig, AN Davies, and M Linscheid. 1994. <span>“<span class="nocase">JCAMP-DX for Mass Spectrometry</span>.”</span> <em><span>Applied Spectroscopy</span></em> <span>48</span> (<span>12</span>): 1545–52.
 </div>
-<div id="ref-McDonald1988">
-<p>McDonald, RS, and PA Wilks. 1988. “JCAMP-DX, A Standard Format for Exchange of Infrared-Spectra in Computer Readible Form.” <em>Applied Spectroscopy</em> 42 (1): 151–62. <a href="https://doi.org/%7B10.1366/0003702884428734%7D" class="external-link">https://doi.org/{10.1366/0003702884428734}</a>.</p>
+<div id="ref-McDonald1988" class="csl-entry">
+McDonald, RS, and PA Wilks. 1988. <span>“<span class="nocase">JCAMP-DX, A Standard Format for Exchange of Infrared-Spectra in Computer Readible Form</span>.”</span> <em><span>Applied Spectroscopy</span></em> <span>42</span> (<span>1</span>): 151–62. <a href="https://doi.org/%7B10.1366/0003702884428734%7D" class="external-link">https://doi.org/{10.1366/0003702884428734}</a>.
 </div>
 </div>
 </div>
@@ -294,7 +294,7 @@ Figure 4.1: Functions &amp; the flow of file processing.
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

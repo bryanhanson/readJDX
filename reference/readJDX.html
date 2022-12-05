@@ -23,7 +23,7 @@ supported but gives an error, please file an issue at Github and share the file.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">readJDX</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.3</span>
       </span>
     </div>
 
@@ -35,7 +35,7 @@ supported but gives an error, please file an issue at Github and share the file.
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -81,13 +81,15 @@ supported but gives an error, please file an issue at Github and share the file.
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">readJDX</span><span class="op">(</span>file <span class="op">=</span> <span class="st">""</span>, SOFC <span class="op">=</span> <span class="cn">TRUE</span>, debug <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">readJDX</span><span class="op">(</span>file <span class="op">=</span> <span class="st">""</span>, SOFC <span class="op">=</span> <span class="cn">TRUE</span>, debug <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>file</dt>
 <dd><p>Character.  The file name to import.</p></dd>
+
+
 <dt>SOFC</dt>
 <dd><p>Logical.  "Stop on Failed Check"
 The default is <code>TRUE</code> i.e. stop when something is not right.
@@ -109,6 +111,8 @@ and FIRSTY is given in Hz.  Since the field strength and center of the sweep fre
 to convert to ppm, and these are parameters not required in the standard, one cannot return an
 answer in either ppm or Hz automatically.
 In cases like this, one can set <code>SOFC = FALSE</code> and then manually convert the X axis.</p></dd>
+
+
 <dt>debug</dt>
 <dd><p>Integer.  The level of debug reporting desired.  For those options giving
        a lot of output, you may wish to consider directing the output via <code><a href="sinkall.html">sinkall</a></code>
@@ -121,14 +125,23 @@ In cases like this, one can set <code>SOFC = FALSE</code> and then manually conv
 <li><p>6 = detailed info about processing the Y values when DIF is in use (huge output!).</p></li>
 </ul><p>In cases when an error is about to stop execution, you get additional information regardless of
 the <code>debug</code> value.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list, as follows:</p><ul><li><p>The first element is a data frame summarizing the pieces of the imported file.</p></li>
+    
+
+<p>A list, as follows:</p>
+
+
+<ul><li><p>The first element is a data frame summarizing the pieces of the imported file.</p></li>
 <li><p>The second element is the file metadata.</p></li>
 <li><p>The third element is a integer vector giving the comment lines found
       (exclusive of the metdata, which typically contains many comments).</p></li>
-</ul><p>Additional elements contain the extracted data as follows:</p><ul><li><p>If the file contains one non-NMR spectrum, or a processed NMR spectrum (i.e. only 
+</ul><p>Additional elements contain the extracted data as follows:</p>
+
+
+<ul><li><p>If the file contains one non-NMR spectrum, or a processed NMR spectrum (i.e. only 
         the final real data), a single data frame.</p></li>
 <li><p>If the file contains the real and imaginary
          parts of a 1D NMR spectrum, there will be two data frames, one containing the real portion
@@ -216,32 +229,32 @@ helpful debugging messages and understandable code.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># IR spectrum</span></span>
-<span class="r-in"><span class="va">sbo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"SBO.jdx"</span>, package <span class="op">=</span> <span class="st">"readJDX"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu">readJDX</span><span class="op">(</span><span class="va">sbo</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chk</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>, <span class="va">chk</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span> <span class="op">/</span> <span class="fl">100</span>,</span>
-<span class="r-in">  type <span class="op">=</span> <span class="st">"l"</span>, main <span class="op">=</span> <span class="st">"Original Smart Balance Spread"</span>,</span>
-<span class="r-in">  xlab <span class="op">=</span> <span class="st">"wavenumber"</span>, ylab <span class="op">=</span> <span class="st">"Percent Transmission"</span></span>
-<span class="r-in"><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># IR spectrum</span></span></span>
+<span class="r-in"><span><span class="va">sbo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"SBO.jdx"</span>, package <span class="op">=</span> <span class="st">"readJDX"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu">readJDX</span><span class="op">(</span><span class="va">sbo</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chk</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>, <span class="va">chk</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span> <span class="op">/</span> <span class="fl">100</span>,</span></span>
+<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"l"</span>, main <span class="op">=</span> <span class="st">"Original Smart Balance Spread"</span>,</span></span>
+<span class="r-in"><span>  xlab <span class="op">=</span> <span class="st">"wavenumber"</span>, ylab <span class="op">=</span> <span class="st">"Percent Transmission"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="readJDX-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># 1H NMR spectrum</span></span>
-<span class="r-in"><span class="va">pcrf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"PCRF.jdx"</span>, package <span class="op">=</span> <span class="st">"readJDX"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu">readJDX</span><span class="op">(</span><span class="va">pcrf</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chk</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>, <span class="va">chk</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span>,</span>
-<span class="r-in">  type <span class="op">=</span> <span class="st">"l"</span>, main <span class="op">=</span> <span class="st">"Reduced Fat Potato Chip Extract"</span>,</span>
-<span class="r-in">  xlab <span class="op">=</span> <span class="st">"ppm"</span>, ylab <span class="op">=</span> <span class="st">"Intensity"</span></span>
-<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># 1H NMR spectrum</span></span></span>
+<span class="r-in"><span><span class="va">pcrf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"PCRF.jdx"</span>, package <span class="op">=</span> <span class="st">"readJDX"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu">readJDX</span><span class="op">(</span><span class="va">pcrf</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">chk</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">x</span>, <span class="va">chk</span><span class="op">[[</span><span class="fl">4</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">y</span>,</span></span>
+<span class="r-in"><span>  type <span class="op">=</span> <span class="st">"l"</span>, main <span class="op">=</span> <span class="st">"Reduced Fat Potato Chip Extract"</span>,</span></span>
+<span class="r-in"><span>  xlab <span class="op">=</span> <span class="st">"ppm"</span>, ylab <span class="op">=</span> <span class="st">"Intensity"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="readJDX-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Capturing processing for troubleshooting</span></span>
-<span class="r-in"><span class="va">mdd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"MiniDIFDUP.JDX"</span>, package <span class="op">=</span> <span class="st">"readJDX"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"Troubleshooting"</span>, fileext <span class="op">=</span> <span class="st">"txt"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="sinkall.html">sinkall</a></span><span class="op">(</span><span class="va">tf</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu">readJDX</span><span class="op">(</span><span class="va">mdd</span>, debug <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Capturing processing for troubleshooting</span></span></span>
+<span class="r-in"><span><span class="va">mdd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"MiniDIFDUP.JDX"</span>, package <span class="op">=</span> <span class="st">"readJDX"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"Troubleshooting"</span>, fileext <span class="op">=</span> <span class="st">"txt"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="sinkall.html">sinkall</a></span><span class="op">(</span><span class="va">tf</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu">readJDX</span><span class="op">(</span><span class="va">mdd</span>, debug <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Processing file /Users/runner/work/_temp/Library/readJDX/extdata/MiniDIFDUP.JDX which appears to contain XYY data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processing file /home/runner/work/_temp/Library/readJDX/extdata/MiniDIFDUP.JDX which appears to contain XYY data</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Processing variable list...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -928,24 +941,24 @@ helpful debugging messages and understandable code.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [46]    7793    7797    7801    7799    7800    7797    7797</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Done processing  /Users/runner/work/_temp/Library/readJDX/extdata/MiniDIFDUP.JDX </span>
-<span class="r-in"><span class="fu"><a href="sinkall.html">sinkall</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># close the file connection</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/file.show.html" class="external-link">file.show</a></span><span class="op">(</span><span class="va">tf</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># 2D HETCORR spectrum</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">nmr2d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"isasspc1.dx"</span>, package <span class="op">=</span> <span class="st">"readJDX"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu">readJDX</span><span class="op">(</span><span class="va">nmr2d</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/contour.html" class="external-link">contour</a></span><span class="op">(</span><span class="va">chk</span><span class="op">$</span><span class="va">Matrix</span>, drawlabels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># default contours not optimal</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># Line 265 has an N -&gt; G error.  Try with various levels of debug.</span></span>
-<span class="r-in"><span class="co"># Even with debug = 0 you get useful diagnostic info.</span></span>
-<span class="r-in"><span class="va">problem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"PCRF_line265.jdx"</span>, package <span class="op">=</span> <span class="st">"readJDX"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu">readJDX</span><span class="op">(</span><span class="va">problem</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Done processing  /home/runner/work/_temp/Library/readJDX/extdata/MiniDIFDUP.JDX </span>
+<span class="r-in"><span><span class="fu"><a href="sinkall.html">sinkall</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># close the file connection</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/file.show.html" class="external-link">file.show</a></span><span class="op">(</span><span class="va">tf</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># 2D HETCORR spectrum</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">nmr2d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"isasspc1.dx"</span>, package <span class="op">=</span> <span class="st">"readJDX"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu">readJDX</span><span class="op">(</span><span class="va">nmr2d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/contour.html" class="external-link">contour</a></span><span class="op">(</span><span class="va">chk</span><span class="op">$</span><span class="va">Matrix</span>, drawlabels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># default contours not optimal</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># Line 265 has an N -&gt; G error.  Try with various levels of debug.</span></span></span>
+<span class="r-in"><span><span class="co"># Even with debug = 0 you get useful diagnostic info.</span></span></span>
+<span class="r-in"><span><span class="va">problem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"PCRF_line265.jdx"</span>, package <span class="op">=</span> <span class="st">"readJDX"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu">readJDX</span><span class="op">(</span><span class="va">problem</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -960,7 +973,7 @@ helpful debugging messages and understandable code.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
