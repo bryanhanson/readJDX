@@ -1,3 +1,10 @@
+# readJDX 0.6.2 (2022-12-19)
+## Behind the Scenes
+* `master` branch renamed to `main`
+* Checked against latest R.
+* Not on CRAN.
+* Fix problem with author entry in .Rmd yaml (emitted "true")
+
 # readJDX 0.6.1 (2021-09-20)
 ## Enhancements
 * `readJDX` can now read the `##XYPOINTS=(XY..XY)` format.
