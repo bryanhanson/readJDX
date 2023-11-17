@@ -1,3 +1,7 @@
+# readJDX 0.6.3 (2023-11-16)
+## Behind the Scenes
+* Fixed a problem with a deprecation of the LaTeX package `usenames` which is no longer used by the LaTeX package `xcolor`, used in the vignettes.
+
 # readJDX 0.6.2 (2022-12-19)
 ## Behind the Scenes
 * `master` branch renamed to `main`
