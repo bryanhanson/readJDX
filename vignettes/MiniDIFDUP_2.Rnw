@@ -11,7 +11,7 @@
 \renewcommand*\familydefault{\ttdefault}
 \usepackage[T1]{fontenc}
 
-\usepackage[usenames, dvipsnames, svgnames, table]{xcolor}
+\usepackage[dvipsnames, svgnames, table]{xcolor}
 
 \usepackage[parfill]{parskip}
 
