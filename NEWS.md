@@ -1,6 +1,7 @@
-# readJDX 0.6.3 (2023-11-16)
+# readJDX 0.6.4 (2023-11-18)
 ## Behind the Scenes
-* Fixed a problem with a deprecation of the LaTeX package `usenames` which is no longer used by the LaTeX package `xcolor`, used in the vignettes.
+* Fixed a problem due to deprecation of the LaTeX package `usenames` which is no longer used by the LaTeX package `xcolor`, used in the vignettes.  Notified by B. Ripley/CRAN.
+* Updated and repaired some URLs in bibliography.
 
 # readJDX 0.6.2 (2022-12-19)
 ## Behind the Scenes

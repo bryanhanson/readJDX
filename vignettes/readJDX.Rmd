@@ -39,7 +39,7 @@ This vignette is based on `readJDX` version `r desc$Version`.
 
 # Background
 
-The JCAMP-DX format was developed as an manufacturer-independent means of sharing spectroscopic [data](http://www.jcamp-dx.org).  The standard is described in a series of publications [@McDonald1988; @Grasselli1991; @Davies1993; @Lampen1994; @Lampen1999;  @Bumbach2001; @Cammack2006; @Woollett2012].  JCAMP-DX was developed during a time when data storage was expensive, and hence makes extensive use of compression schemes.  The original application was to IR spectroscopy, but the standard has evolved over time to accommodate other spectroscopies.
+The JCAMP-DX format was developed as an manufacturer-independent means of sharing spectroscopic [data](http://www.jcamp-dx.org).  The standard is described in a series of publications [@McDonald1988; @Grasselli1991; @Davies1993; @Lampen1994; @Lampen1999;  @Bumbach2001; @Cammack2006; @Woollett2012].  There is a recent overview of the standard [@Davies2022]. JCAMP-DX was developed during a time when data storage was expensive, and hence makes extensive use of compression schemes.  The original application was to IR spectroscopy, but the standard has evolved over time to accommodate other spectroscopies.
 
 # File Structure
 
