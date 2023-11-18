@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">readJDX</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.6.4</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
                         <h4 data-toc-skip class="author">Bryan A. Hanson<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>
 </h4>
             
-            <h4 data-toc-skip class="date">2022-12-20</h4>
+            <h4 data-toc-skip class="date">2023-11-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/bryanhanson/readJDX/blob/HEAD/vignettes/readJDX.Rmd" class="external-link"><code>vignettes/readJDX.Rmd</code></a></small>
       <div class="hidden name"><code>readJDX.Rmd</code></div>
@@ -102,12 +102,12 @@
 <span><span class="co">## However, there are still challenging files out in the wild.</span></span>
 <span><span class="co">## If you have trouble importing a file, please file an issue at</span></span>
 <span><span class="co">## github.com/bryanhanson/readJDX/issues</span></span></code></pre>
-<p>This vignette is based on <code>readJDX</code> version 0.6.2.</p>
+<p>This vignette is based on <code>readJDX</code> version 0.6.4.</p>
 <div class="section level2" number="1">
 <h2 id="background">
 <span class="header-section-number">1</span> Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
-<p>The JCAMP-DX format was developed as an manufacturer-independent means of sharing spectroscopic <a href="http://www.jcamp-dx.org" class="external-link">data</a>. The standard is described in a series of publications <span class="citation">(<a href="#ref-McDonald1988" role="doc-biblioref">McDonald and Wilks 1988</a>; <a href="#ref-Grasselli1991" role="doc-biblioref">Grasselli 1991</a>; <a href="#ref-Davies1993" role="doc-biblioref">Davies and Lampen 1993</a>; <a href="#ref-Lampen1994" role="doc-biblioref">Lampen et al. 1994</a>, <a href="#ref-Lampen1999" role="doc-biblioref">1999</a>; <a href="#ref-Bumbach2001" role="doc-biblioref">Baumbach et al. 2001</a>; <a href="#ref-Cammack2006" role="doc-biblioref">Cammack et al. 2006</a>; <a href="#ref-Woollett2012" role="doc-biblioref">Woollett et al. 2012</a>)</span>. JCAMP-DX was developed during a time when data storage was expensive, and hence makes extensive use of compression schemes. The original application was to IR spectroscopy, but the standard has evolved over time to accommodate other spectroscopies.</p>
+<p>The JCAMP-DX format was developed as an manufacturer-independent means of sharing spectroscopic <a href="http://www.jcamp-dx.org" class="external-link">data</a>. The standard is described in a series of publications <span class="citation">(<a href="#ref-McDonald1988" role="doc-biblioref">McDonald and Wilks 1988</a>; <a href="#ref-Grasselli1991" role="doc-biblioref">Grasselli 1991</a>; <a href="#ref-Davies1993" role="doc-biblioref">A. Davies and Lampen 1993</a>; <a href="#ref-Lampen1994" role="doc-biblioref">Lampen et al. 1994</a>, <a href="#ref-Lampen1999" role="doc-biblioref">1999</a>; <a href="#ref-Bumbach2001" role="doc-biblioref">Baumbach et al. 2001</a>; <a href="#ref-Cammack2006" role="doc-biblioref">Cammack et al. 2006</a>; <a href="#ref-Woollett2012" role="doc-biblioref">Woollett et al. 2012</a>)</span>. There is a recent overview of the standard <span class="citation">(<a href="#ref-Davies2022" role="doc-biblioref">A. N. Davies et al. 2022</a>)</span>. JCAMP-DX was developed during a time when data storage was expensive, and hence makes extensive use of compression schemes. The original application was to IR spectroscopy, but the standard has evolved over time to accommodate other spectroscopies.</p>
 </div>
 <div class="section level2" number="2">
 <h2 id="file-structure">
@@ -205,31 +205,34 @@
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Bumbach2001" class="csl-entry">
-Baumbach, JI, AN Davies, P Lampen, and H Schmidt. 2001. <span>“<span class="nocase">JCAMP-DX. A Standard Format for the Exchange of Ion Mobility Spectrometry Data - (IUPAC recommendations 2001)</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>73</span> (<span>11</span>): 1765–82. <a href="https://doi.org/%7B10.1351/pac200173111765%7D" class="external-link">https://doi.org/{10.1351/pac200173111765}</a>.
+Baumbach, JI, AN Davies, P Lampen, and H Schmidt. 2001. <span>“<span class="nocase">JCAMP-DX. A Standard Format for the Exchange of Ion Mobility Spectrometry Data - (IUPAC recommendations 2001)</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>73</span> (<span>11</span>): 1765–82. <a href="https://www.degruyter.com/document/doi/10.1351/pac200173111765/html" class="external-link">https://www.degruyter.com/document/doi/10.1351/pac200173111765/html</a>.
 </div>
 <div id="ref-Cammack2006" class="csl-entry">
-Cammack, R, Y Fann, RJ Lancashire, JP Maher, PS McIntyre, and R Morse. 2006. <span>“<span class="nocase">JCAMP-DX for electron magnetic resonance(EMR)</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>78</span> (<span>3</span>): 613–31. <a href="https://doi.org/%7B10.1351/pac200678030613%7D" class="external-link">https://doi.org/{10.1351/pac200678030613}</a>.
+Cammack, R, Y Fann, RJ Lancashire, JP Maher, PS McIntyre, and R Morse. 2006. <span>“<span class="nocase">JCAMP-DX for electron magnetic resonance(EMR)</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>78</span> (<span>3</span>): 613–31. <a href="https://www.degruyter.com/document/doi/10.1351/pac200678030613/html" class="external-link">https://www.degruyter.com/document/doi/10.1351/pac200678030613/html</a>.
 </div>
 <div id="ref-Davies1993" class="csl-entry">
-Davies, AN, and P Lampen. 1993. <span>“<span class="nocase">JCAMP-DX for NMR</span>.”</span> <em><span>Applied Spectroscopy</span></em> <span>47</span> (<span>8</span>): 1093–99. <a href="https://doi.org/%7B10.1366/0003702934067874%7D" class="external-link">https://doi.org/{10.1366/0003702934067874}</a>.
+Davies, AN, and P Lampen. 1993. <span>“<span class="nocase">JCAMP-DX for NMR</span>.”</span> <em><span>Applied Spectroscopy</span></em> <span>47</span> (<span>8</span>): 1093–99.
+</div>
+<div id="ref-Davies2022" class="csl-entry">
+Davies, Antony N., Robert M. Hanson, Peter Lampen, and Robert J. Lancashire. 2022. <span>“An Overview of the JCAMP-DX Format.”</span> <em>Pure and Applied Chemistry</em> 94 (6): 705–23. <a href="https://www.degruyter.com/document/doi/10.1515/pac-2021-2010/html" class="external-link">https://www.degruyter.com/document/doi/10.1515/pac-2021-2010/html</a>.
 </div>
 <div id="ref-Gasteiger1991" class="csl-entry">
 Gasteiger, J., B. M. P. Hendricks, Hoever P., Jochum C., and Somberg H. 1991. <span>“<span class="nocase">JCAMP-CS: A Standard Exchange Format for Chemical Structure Information in a Computer-Readible Form</span>.”</span> <em><span>Applied Spectroscopy</span></em> 45 (1): 4–11.
 </div>
 <div id="ref-Grasselli1991" class="csl-entry">
-Grasselli, JG. 1991. <span>“<span class="nocase">JCAMP-DX, A Standard Format for Exchange of Infrared-Spectra in Computer Readible Form</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>63</span> (<span>12</span>): 1781–92. <a href="https://doi.org/%7B10.1351/pac199163121781%7D" class="external-link">https://doi.org/{10.1351/pac199163121781}</a>.
+Grasselli, JG. 1991. <span>“<span class="nocase">JCAMP-DX, A Standard Format for Exchange of Infrared-Spectra in Computer Readible Form</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>63</span> (<span>12</span>): 1781–92. <a href="https://www.degruyter.com/document/doi/10.1351/pac199163121781/html" class="external-link">https://www.degruyter.com/document/doi/10.1351/pac199163121781/html</a>.
 </div>
 <div id="ref-Lampen1994" class="csl-entry">
 Lampen, P, H Hillig, AN Davies, and M Linscheid. 1994. <span>“<span class="nocase">JCAMP-DX for Mass Spectrometry</span>.”</span> <em><span>Applied Spectroscopy</span></em> <span>48</span> (<span>12</span>): 1545–52.
 </div>
 <div id="ref-Lampen1999" class="csl-entry">
-Lampen, P, J Lambert, RJ Lancashire, RS McDonald, PS McIntyre, DN Rutledge, T Frohlich, and AN Davies. 1999. <span>“<span class="nocase">An Extension to the JCAMP-DX Standard File Format, JCAMP-DX V.5.01 (IUPAC Recommendations 1999)</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>71</span> (<span>8</span>): 1549–56. <a href="https://doi.org/%7B10.1351/pac199971081549%7D" class="external-link">https://doi.org/{10.1351/pac199971081549}</a>.
+Lampen, P, J Lambert, RJ Lancashire, RS McDonald, PS McIntyre, DN Rutledge, T Frohlich, and AN Davies. 1999. <span>“<span class="nocase">An Extension to the JCAMP-DX Standard File Format, JCAMP-DX V.5.01 (IUPAC Recommendations 1999)</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>71</span> (<span>8</span>): 1549–56. <a href="https://www.degruyter.com/document/doi/10.1351/pac199971081549/html" class="external-link">https://www.degruyter.com/document/doi/10.1351/pac199971081549/html</a>.
 </div>
 <div id="ref-McDonald1988" class="csl-entry">
-McDonald, RS, and PA Wilks. 1988. <span>“<span class="nocase">JCAMP-DX, A Standard Format for Exchange of Infrared-Spectra in Computer Readible Form</span>.”</span> <em><span>Applied Spectroscopy</span></em> <span>42</span> (<span>1</span>): 151–62. <a href="https://doi.org/%7B10.1366/0003702884428734%7D" class="external-link">https://doi.org/{10.1366/0003702884428734}</a>.
+McDonald, RS, and PA Wilks. 1988. <span>“<span class="nocase">JCAMP-DX, A Standard Format for Exchange of Infrared-Spectra in Computer Readible Form</span>.”</span> <em><span>Applied Spectroscopy</span></em> <span>42</span> (<span>1</span>): 151–62.
 </div>
 <div id="ref-Woollett2012" class="csl-entry">
-Woollett, Benjamin, Daniel Klose, Richard Cammack, Robert W. Janes, and B. A. Wallace. 2012. <span>“<span class="nocase">JCAMP-DX for circular dichroism spectra and metadata (IUPAC Recommendations 2012)</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>84</span> (<span>10</span>): 2171–82. <a href="https://doi.org/%7B10.1351/PAC-REC-12-02-03%7D" class="external-link">https://doi.org/{10.1351/PAC-REC-12-02-03}</a>.
+Woollett, Benjamin, Daniel Klose, Richard Cammack, Robert W. Janes, and B. A. Wallace. 2012. <span>“<span class="nocase">JCAMP-DX for circular dichroism spectra and metadata (IUPAC Recommendations 2012)</span>.”</span> <em><span>Pure and Applied Chemistry</span></em> <span>84</span> (<span>10</span>): 2171–82. <a href="https://www.degruyter.com/document/doi/10.1351/PAC-REC-12-02-03/html" class="external-link">https://www.degruyter.com/document/doi/10.1351/PAC-REC-12-02-03/html</a>.
 </div>
 </div>
 </div>
